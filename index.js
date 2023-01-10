@@ -20,7 +20,7 @@ const connect = async () => {
   try {
     mongoose.set('strictQuery', true);
     await mongoose.connect(
-      process.env.URL_MONGO,
+      process.env.URL,
       console.log('connected to MongoDB'),
       {
         useNewUrlParser: true,
@@ -172,7 +172,7 @@ app.use((err, req, res, next) => {
 
 
 
-app.listen(process.env.PORT|| 5000, () => {
+app.listen(process.env.PORT, () => {
   connect();
   console.log('connected to backend');
 });
