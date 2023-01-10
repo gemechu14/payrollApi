@@ -1,7 +1,8 @@
-const Deduction=require('../models/deduction.js');
+const Deduction = require('../models/deduction.js');
+//const Deduction=require('../models/deduction.js');
+const Employee=require('../models/employee.js')
 
-
-exports.add_Deduction = async (req, res) => {
+exports.add_Deduction1 = async (req, res) => {
   const newDeduction = new Deduction(req.body);
   try {
     const savedDeduction = await newDeduction.save();
@@ -70,7 +71,7 @@ exports.delete_Deduction= async (req, res) => {
 exports.Create_Allowances = async (req, res, next) => {
   
   const employeeId = req.params.employeeId;
-  const newAllowance = new Allowance(req.body);
+  const newAllowance = new Deduction(req.body);
   try {
       const savedAllowance = await newAllowance.save();
      try {
@@ -85,6 +86,36 @@ exports.Create_Allowances = async (req, res, next) => {
   }
 
   res.status(200).json(savedAllowance);
+} catch (err) {
+  next(err);
+}
+};
+
+
+
+//
+
+
+
+exports.Add_Deduction = async (req, res, next) => {
+  
+  const employeeId = req.params.employeeId;
+  const newDeduction = new Deduction(req.body);
+  console.log(employeeId);
+  try {
+      const savedDeduction = await newDeduction.save();
+     try {
+  
+    await Employee.findByIdAndUpdate(employeeId, {
+      $push: { deduction: savedDeduction._id },
+      
+    },      { new: true, useFindAndModify: false }
+    );
+  } catch (err) {
+    next(err);
+  }
+
+  res.status(200).json(savedDeduction);
 } catch (err) {
   next(err);
 }

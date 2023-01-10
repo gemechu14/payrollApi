@@ -28,6 +28,7 @@ exports.get_All_Employee = async (req, res, next) => {
     .populate('department')
     .populate('allowance')
     .populate('payroll')
+    .populate('deduction')
     ;
     res.status(200).json({
       count: employee.length,

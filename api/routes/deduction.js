@@ -3,7 +3,7 @@ const router = express.Router();
 const deductionController = require('../controllers/deduction.js');
 
 //CREATE
-router.post('/:employeeId', deductionController.Create_Allowances);
+router.post('/:employeeId', deductionController.Add_Deduction);
 //UPDATE
 router.put('/:id',deductionController.updateDeduction),
   //DELETE
