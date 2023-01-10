@@ -20,7 +20,7 @@ const connect = async () => {
   try {
     mongoose.set('strictQuery', true);
     await mongoose.connect(
-      process.env.URL,
+      process.env.URL_MONGO,
       console.log('connected to MongoDB'),
       {
         useNewUrlParser: true,
@@ -55,7 +55,7 @@ function sendEmail() {
   return new Promise((resolve, reject) => {
     let transporter = nodemailer.createTransport({
       service: 'hotmail',
-      secure:false,
+      secure: false,
       auth: {
         user: 'gemechu.bulti@yahoo.com',
         pass: process.env.PASS,
@@ -77,51 +77,48 @@ function sendEmail() {
   });
 }
 
-
-
 app.use(bodyParser.json());
 
-app.get("/", function(req, res) {
-    const transporter = nodemailer.createTransport({
-      host: "mail.yahoo.com",
-    
-      secure: false,
-      auth: {
-        user: 'gemechu.bulti@yahoo.com',
-        pass: 'gemechu@11',
-      },
-    });
+app.get('/', function (req, res) {
+  const transporter = nodemailer.createTransport({
+    host: 'mail.yahoo.com',
 
-    let mailOptions = {
-      from: 'gemechu.bulti@yahoo.com',
-      to: 'temamhashim72@yahoo.com',
-      subject: 'hi',
-      text: 'hi',
-    };
+    secure: false,
+    auth: {
+      user: 'gemechu.bulti@yahoo.com',
+      pass: 'gemechu@11',
+    },
+  });
 
-    // send mail with defined transport object
-    transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-            return console.log(error);
-        }
-        console.log('Message sent: %s', info.messageId);
-        res.sendStatus(200);
-    });
+  let mailOptions = {
+    from: 'gemechu.bulti@yahoo.com',
+    to: 'temamhashim72@yahoo.com',
+    subject: 'hi',
+    text: 'hi',
+  };
+
+  // send mail with defined transport object
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      return console.log(error);
+    }
+    console.log('Message sent: %s', info.messageId);
+    res.sendStatus(200);
+  });
 });
 
-
 ///////////////////////////
-app.get("/email", async (req, res) => {
+app.get('/email', async (req, res) => {
   try {
     // let testAccount = await nodemailer.createTestAccount();
     var transporter = nodemailer.createTransport({
       //service: "hotmail",
-        service: "gmail",
+      service: 'gmail',
       //port: 587,//Yahoo
       //port :465,//Gmail
       secure: false,
       auth: {
-        user: "gemechubulti11@gmail.com",
+        user: 'gemechubulti11@gmail.com',
         pass: 'jrimdincxsstntpo',
         // user: "gemechubulti@outlook.com",
         // pass: 'gemechu@outlook@11',
@@ -129,9 +126,9 @@ app.get("/email", async (req, res) => {
     });
 
     var mailOptions = {
-      from:  "gemechubulti11@gmail.com",
+      from: 'gemechubulti11@gmail.com',
       // to:'milkessagabai@gmail.com',
-      to:'etanaalemunew@gmail.com',
+      to: 'etanaalemunew@gmail.com',
       subject: 'Thank You for Your Kindness!',
       text: "Thank you so much for your patience. I'm sorry it took so long for me to get back to you I truly appreciate your understanding and willingness to wait It was a difficult situation, and I'm glad you were so understanding I want to thank you again for your patience It was much appreciated and it helped me a lot It's hard to ask for help but it's even harder to wait Thank you for making it easier Your kindness is much appreciated Thank you for being so understanding ",
     };
@@ -140,7 +137,7 @@ app.get("/email", async (req, res) => {
         console.log(error.message);
         res.status(404).json(error);
       } else {
-        console.log("Email sent: " + info.response);
+        console.log('Email sent: ' + info.response);
         res.status(250).json(info.response);
       }
     });
@@ -150,7 +147,6 @@ app.get("/email", async (req, res) => {
 });
 
 //////////////////////////////
-
 
 app.use((req, res, next) => {
   const error = new Error('Not Found');
@@ -168,9 +164,6 @@ app.use((err, req, res, next) => {
     stack: err.stack,
   });
 });
-
-
-
 
 app.listen(5000, () => {
   connect();
