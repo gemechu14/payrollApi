@@ -2,22 +2,6 @@ const Deduction = require('../models/deduction.js');
 //const Deduction=require('../models/deduction.js');
 const Employee=require('../models/employee.js')
 
-exports.add_Deduction1 = async (req, res) => {
-  const newDeduction = new Deduction(req.body);
-  try {
-    const savedDeduction = await newDeduction.save();
-    console.log(req.body);
-    res.status(200).json({
-      savedDeduction,
-    });
-   
-  } catch (err) {
-    res.status(404).json({
-      error: err,
-    });
-  }
-};
-
 
 //GET ALL
 exports.get_All_Deduction = async (req, res, next) => {
@@ -65,31 +49,6 @@ exports.delete_Deduction= async (req, res) => {
   }
 };
 
-
-
-
-exports.Create_Allowances = async (req, res, next) => {
-  
-  const employeeId = req.params.employeeId;
-  const newAllowance = new Deduction(req.body);
-  try {
-      const savedAllowance = await newAllowance.save();
-     try {
-  
-    await Employee.findByIdAndUpdate(employeeId, {
-      $push: { allowance: savedAllowance._id },
-      
-    },      { new: true, useFindAndModify: false }
-    );
-  } catch (err) {
-    next(err);
-  }
-
-  res.status(200).json(savedAllowance);
-} catch (err) {
-  next(err);
-}
-};
 
 
 

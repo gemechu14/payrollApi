@@ -94,3 +94,55 @@ exports.Create_Allowances = async (req, res, next) => {
   next(err);
 }
 };
+
+
+
+
+///UPDATE
+exports.Update_Allowances = async (req, res, next) => {
+  
+  const employeeId = req.params.employeeId;
+  const newAllowance = new Allowance(req.body);
+  try {
+      const savedAllowance = await newAllowance.save();
+     try {
+  
+    await Employee.findByIdAndUpdate(employeeId, {
+      $push: { allowance: req.body.id },
+      
+    },      { new: true, useFindAndModify: false }
+    );
+  } catch (err) {
+    next(err);
+  }
+
+  res.status(200).json(savedAllowance);
+} catch (err) {
+  next(err);
+}
+};
+
+//DELETE ALLOWANCE
+
+exports.delete_Allowances = async (req, res, next) => {
+  
+  const employeeId = req.params.employeeId;
+
+  try {
+    
+     try {
+  
+    await Employee.findByIdAndUpdate(employeeId, {
+      $pull: { allowance: req.body.id },
+      
+    },      { new: true, useFindAndModify: false }
+    );
+  } catch (err) {
+    next(err);
+  }
+
+ 
+} catch (err) {
+  next(err);
+}
+};

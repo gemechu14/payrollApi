@@ -5,9 +5,9 @@ const allowanceController = require('../controllers/Allowance.js');
 //CREATE
 router.post('/:employeeId', allowanceController.Create_Allowances);
 //UPDATE
-router.put('/:id', allowanceController.updateAllowance),
+router.put('/:employeeId/:id', allowanceController.updateAllowance),
   //DELETE
-  router.delete('/:id', allowanceController.delete_Allowance);
+  router.delete('/:employeeId/:id', allowanceController.delete_Allowances);
 
 //GET ONE
 router.get('/find/:id',allowanceController.get_single_Allowance);
