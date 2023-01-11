@@ -20,7 +20,7 @@ const connect = async () => {
   try {
     mongoose.set('strictQuery', true);
     await mongoose.connect(
-      process.env.MONGO,
+      process.env.URL,
       console.log('connected to MongoDB'),
       {
         useNewUrlParser: true,
@@ -35,11 +35,7 @@ const connect = async () => {
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(express.json());
-app.use(
-  cors({
-    origin: '*',
-  })
-);
+app.use(cors());
 //MIDDLEWARE
 app.use('/department', deptRoute);
 app.use('/payroll', payrollRoute);
@@ -151,16 +147,16 @@ app.get('/email', async (req, res) => {
   }
 });
 
-//////////////////////////////
+/////////////////////////////
 
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Orogin', '*');
   res.header(
     'Access-Control-Allow-Headers',
-    'Origin,X-Requested-With,Content-Type,Accept,Authorization'
+    '*'
   );
   if (req.method == 'OPTIONS') {
-    res.header(Access - Control - Allow - Methods, 'GET,POST,PATCH,DELETE,PUT');
+    res.header(Access-Control-Allow-Methods, 'GET,POST,PATCH,DELETE,PUT');
     return res.status(200).json({});
   }
 });
