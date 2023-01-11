@@ -59,61 +59,9 @@ app.use('/payrollMonth', payrollMonthRoute);
 
 //Send email
 const nodemailer = require('nodemailer');
-function sendEmail() {
-  return new Promise((resolve, reject) => {
-    let transporter = nodemailer.createTransport({
-      service: 'hotmail',
-      secure: false,
-      auth: {
-        user: 'gemechu.bulti@yahoo.com',
-        pass: process.env.PASS,
-      },
-    });
-    const mail_options = {
-      from: 'gemechu.bulti@yahoo.com',
-      to: 'temamhashim72@yahoo.com',
-      subject: 'hi',
-      text: 'hi',
-    };
-
-    transporter.sendMail(mail_options, function (error, info) {
-      if (error) {
-        return reject({ message: 'can not send' });
-      }
-      return resolve({ message: 'Email sent successfully' });
-    });
-  });
-}
 
 app.use(bodyParser.json());
 
-app.get('/', function (req, res) {
-  const transporter = nodemailer.createTransport({
-    host: 'mail.yahoo.com',
-
-    secure: false,
-    auth: {
-      user: 'gemechu.bulti@yahoo.com',
-      pass: 'gemechu@11',
-    },
-  });
-
-  let mailOptions = {
-    from: 'gemechu.bulti@yahoo.com',
-    to: 'temamhashim72@yahoo.com',
-    subject: 'hi',
-    text: 'hi',
-  };
-
-  // send mail with defined transport object
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      return console.log(error);
-    }
-    console.log('Message sent: %s', info.messageId);
-    res.sendStatus(200);
-  });
-});
 
 ///////////////////////////
 app.get('/email', async (req, res) => {
@@ -171,6 +119,16 @@ app.get('/email', async (req, res) => {
 // });
 
 ///////
+app.get("/", (req, res) => {
+  res.setHeader("Access-Control-Allow-Origin", "*")
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+  res.setHeader("Access-Control-Max-Age", "1800");
+  res.setHeader("Access-Control-Allow-Headers", "content-type");
+  res.setHeader( "Access-Control-Allow-Methods", "PUT, POST, GET, DELETE, PATCH, OPTIONS" ); 
+   });
+
+
+
 
 app.use((req, res, next) => {
   const error = new Error('Not Found');
