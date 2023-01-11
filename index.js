@@ -35,7 +35,15 @@ const connect = async () => {
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(express.json());
-app.use(cors());
+const corsOptions ={
+  origin:'*', 
+  credentials:true,            //access-control-allow-credentials:true
+  optionSuccessStatus:200
+}
+app.use(cors(corsOptions));
+
+
+
 //MIDDLEWARE
 app.use('/department', deptRoute);
 app.use('/payroll', payrollRoute);
@@ -149,17 +157,18 @@ app.get('/email', async (req, res) => {
 
 /////////////////////////////
 
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Orogin', '*');
-  res.header(
-    'Access-Control-Allow-Headers',
-    '*'
-  );
-  if (req.method == 'OPTIONS') {
-    res.header(Access-Control-Allow-Methods, 'GET,POST,PATCH,DELETE,PUT');
-    return res.status(200).json({});
-  }
-});
+// app.use((req, res, next) => {
+//   res.header('Access-Control-Allow-Orogin', '*');
+//   res.header(
+//     'Access-Control-Allow-Headers',
+//     '*'
+//   );
+//   if (req.method == 'OPTIONS') {
+//     res.header(Access-Control-Allow-Methods, 'GET,POST,PATCH,DELETE,PUT');
+//     return res.status(200).json({});
+//   }
+//   next();
+// });
 
 ///////
 
