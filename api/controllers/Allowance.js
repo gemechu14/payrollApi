@@ -61,15 +61,6 @@ exports.updateAllowance = async (req, res) => {
     res.status(200).json(updatedAllowance);
   } catch (error) {}
 };
-//DELETE
-exports.delete_Allowance= async (req, res) => {
-  try {
-    await Allowance.findByIdAndDelete(req.params.id);
-    res.status(200).json('Allowance has been deleted');
-  } catch (error) {
-    res.status(500).json(error);
-  }
-};
 
 
 exports.Create_Allowances = async (req, res, next) => {
@@ -122,26 +113,21 @@ exports.Update_Allowances = async (req, res, next) => {
 }
 };
 
-//DELETE ALLOWANCE
 
-exports.delete_Allowances = async (req, res, next) => {
-  
+//DELETE Allowances
+exports.delete_Allowances = async (req, res) => {
   const employeeId = req.params.employeeId;
-
+try {
+  await Allowance.findByIdAndDelete(req.params.id);
   try {
-    
-     try {
-  
+      console.log(req.params.id);
     await Employee.findByIdAndUpdate(employeeId, {
-      $pull: { allowance: req.body.id },
-      
-    },      { new: true, useFindAndModify: false }
-    );
+      $pull: {allowance: req.params.id },
+    });
   } catch (err) {
     next(err);
   }
-
- 
+  res.status(200).json("Allowance has been deleted.");
 } catch (err) {
   next(err);
 }

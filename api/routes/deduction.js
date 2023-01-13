@@ -5,9 +5,9 @@ const deductionController = require('../controllers/deduction.js');
 //CREATE
 router.post('/:employeeId', deductionController.Add_Deduction);
 //UPDATE
-router.put('/:id',deductionController.updateDeduction),
+router.put('/:employeeId/:id',deductionController.Update_DE),
   //DELETE
-  router.delete('/:id', deductionController.delete_Deduction);
+router.delete('/:employeeId/:id', deductionController.delete_Allowances);
 
 //GET ONE
 router.get('/find/:id', deductionController.get_single_Deduction);

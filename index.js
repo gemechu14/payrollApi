@@ -16,11 +16,18 @@ const allowanceRoute = require('./api/routes/Allowance.js');
 const deductionRoute = require('./api/routes/deduction.js');
 const payrollMonthRoute = require('./api/routes/payrollMonth.js');
 const cors = require('cors');
+mongoose.Promise = global.Promise;
+const morgan=require('morgan');
+app.use(morgan("dev"));
+
+app.use('/uploads', express.static('uploads'));
+
+
 const connect = async () => {
   try {
     mongoose.set('strictQuery', true);
     await mongoose.connect(
-      process.env.MONGO,
+      process.env.URL,
       console.log('connected to MongoDB'),
       {
         useNewUrlParser: true,
@@ -35,14 +42,21 @@ const connect = async () => {
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(express.json());
-const corsOptions ={
-  origin:'http://localhost:3000', 
-  credentials:true,            //access-control-allow-credentials:true
-  optionSuccessStatus:200
-}
-app.use(cors(corsOptions));
+app.use(morgan('dev'));
 
+// const corsOptions ={
+//   origin:'http://localhost:3000', 
+//   credentials:true,            //access-control-allow-credentials:true
+//   optionSuccessStatus:200
+// }
+// app.use(cors(corsOptions));
 
+app.use(
+  cors({
+    origin: 'http://localhost:3000',
+    credentials: true,
+  })
+);
 
 //MIDDLEWARE
 app.use('/department', deptRoute);
@@ -119,13 +133,13 @@ app.get('/email', async (req, res) => {
 // });
 
 ///////
-app.get("/", (req, res) => {
-  res.setHeader("Access-Control-Allow-Origin", "*")
-  res.setHeader("Access-Control-Allow-Credentials", "true");
-  res.setHeader("Access-Control-Max-Age", "1800");
-  res.setHeader("Access-Control-Allow-Headers", "content-type");
-  res.setHeader( "Access-Control-Allow-Methods", "PUT, POST, GET, DELETE, PATCH, OPTIONS" ); 
-   });
+// app.get("/", (req, res) => {
+//   res.setHeader("Access-Control-Allow-Origin", "*")
+//   res.setHeader("Access-Control-Allow-Credentials", "true");
+//   res.setHeader("Access-Control-Max-Age", "1800");
+//   res.setHeader("Access-Control-Allow-Headers", "content-type");
+//   res.setHeader( "Access-Control-Allow-Methods", "PUT, POST, GET, DELETE, PATCH, OPTIONS" ); 
+//    });
 
 
 

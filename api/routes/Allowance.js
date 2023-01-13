@@ -7,7 +7,7 @@ router.post('/:employeeId', allowanceController.Create_Allowances);
 //UPDATE
 router.put('/:employeeId/:id', allowanceController.updateAllowance),
   //DELETE
-  router.delete('/:employeeId/:id', allowanceController.delete_Allowances);
+router.delete('/:employeeId/:id', allowanceController.delete_Allowances);
 
 //GET ONE
 router.get('/find/:id',allowanceController.get_single_Allowance);

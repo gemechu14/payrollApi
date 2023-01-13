@@ -3,6 +3,9 @@ const Deduction = require('../models/deduction.js');
 const Employee=require('../models/employee.js')
 
 
+
+
+
 //GET ALL
 exports.get_All_Deduction = async (req, res, next) => {
   const failed = true;
@@ -39,20 +42,11 @@ exports.updateDeduction = async (req, res) => {
     res.status(200).json(updatedDeduction);
   } catch (error) {}
 };
-//DELETE
-exports.delete_Deduction= async (req, res) => {
-  try {
-    await Deduction.findByIdAndDelete(req.params.id);
-    res.status(200).json('Deduction has been deleted');
-  } catch (error) {
-    res.status(500).json(error);
-  }
-};
 
 
 
 
-//
+//ADD 
 
 
 
@@ -75,6 +69,75 @@ exports.Add_Deduction = async (req, res, next) => {
   }
 
   res.status(200).json(savedDeduction);
+} catch (err) {
+  next(err);
+}
+};
+
+
+//DELETE DEDUCTION
+ 
+ exports.delete_Deduction = async (req, res) => {
+  const employeeId = req.params.employeeId;
+try {
+  await Deduction.findByIdAndDelete(req.params.id);
+  try {
+      console.log(req.params.id);
+    await Employee.findByIdAndUpdate(employeeId, {
+      $pull: {deduction: req.params.id },
+    });
+  } catch (err) {
+    next(err);
+  }
+  res.status(200).json("Deductin has been deleted.");
+} catch (err) {
+  next(err);
+}
+};
+
+
+
+
+
+exports.Update_DE = async (req, res, next) => {
+  
+  const employeeId = req.params.employeeId;
+  const newDeduction = new Deduction(req.body);
+  try {
+      const savedDeduction = await newDeduction.save();
+     try {
+  
+    await Employee.findByIdAndUpdate(employeeId, {
+      $push: { deduction: req.body.id },
+      
+    },      { new: true, useFindAndModify: false }
+    );
+  } catch (err) {
+    next(err);
+  }
+
+  res.status(200).json(savedDeduction);
+} catch (err) {
+  next(err);
+}
+};
+
+
+
+//DELETE Allowances
+exports.delete_Allowances = async (req, res) => {
+  const employeeId = req.params.employeeId;
+try {
+  await Deduction.findByIdAndDelete(req.params.id);
+  try {
+      console.log(req.params.id);
+    await Employee.findByIdAndUpdate(employeeId, {
+      $pull: {deduction: req.params.id },
+    });
+  } catch (err) {
+    next(err);
+  }
+  res.status(200).json("Allowance has been deleted.");
 } catch (err) {
   next(err);
 }

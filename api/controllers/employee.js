@@ -4,8 +4,8 @@ const Department=require('../models/department.js')
 exports.add_employee = async (req, res) => {
   const newEmployee = new Employee(req.body);
   try {
-    const saved = await newEmployee;
-    const savedEmployee = await newEmployee.save();
+    // const saved = await newEmployee;
+    const savedEmployee = await newEmployee().save();
     console.log(req.body);
     res.status(200).json({
       savedEmployee,
