@@ -57,16 +57,18 @@ const createSendToken = ( user, statusCode, res) => {
 
 exports.signup = async (req, res, next) => {
   try {
-    const { email, password ,Name,address,phoneNumber,numberOfEmployee,CompanyName,jobTitle} = req.body;
+    const { email, password ,Name,address,phoneNumber,numberOfEmployee,CompanyName,jobTitle,companyCode} = req.body;
     const newUser =await  User.create({
       Name:Name,
       email:email,
       password:password,
+      companyCode:companyCode,
       address:address,
       phoneNumber:phoneNumber,
       numberOfEmployee:numberOfEmployee,
       CompanyName:CompanyName,
       jobTitle:jobTitle,
+      
       
     });
     console.log(newUser);
@@ -94,22 +96,24 @@ exports.signup = async (req, res, next) => {
 
 exports.login = async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    const { email, password,companyCode } = req.body;
     console.log(email);
     console.log(password);
-    //check if email and password exist
-    if (!email || !password) {
+    //check if email and password exist company code
+    if (!email || !password|| !companyCode)  {
       return res
         .status(404)
-        .json({ message: 'please provide email and password' });
+        .json({ message: 'please provide email, password or company code' });
     }
     //check if user exists and password is correct
     const user = await User.findOne({ email }).select('+password');
-  
-    console.log(user);
-    if (!user || !(await user.correctPassword(password, user.password))) {
-      return res.status(401).json({ message: 'Incorrect email or password' });
+    
+    console.log(user.companyCode);
+    if ( !user|| user.companyCode!=companyCode || !(await user.correctPassword(password, user.password))) {
+      return res.status(401).json({ message: 'Incorrect email, password or company Code' });
     }
+   
+  
 //const token=signToken(user._id);
     //if everything is ok send token to the client
     createSendToken( user, 200, res);
