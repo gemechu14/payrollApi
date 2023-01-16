@@ -45,7 +45,6 @@ router.get('/:id', adminAuth,userController.getUser);
 
 
 
-
 module.exports = router;
 
 

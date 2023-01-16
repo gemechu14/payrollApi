@@ -4,10 +4,39 @@ const app = express();
 const twilio = require('twilio');
 const bodyParser = require('body-parser');
 require('dotenv').config();
+const rateLimit=require('express-rate-limit');
+const helmet=require('helmet');
+const mongosanitize=require('express-mongo-sanitize');
+const hpp=require('hpp')
+const xss=require('xss-clean');
+app.use(helmet());
+
+
+//Security
+
+//DATA SANITIZATION AGAINST NO SQL QUERY ENJECTION
+app.use(mongosanitize());
+
+//DATA SANITIZATION AGAINST  XSS
+app.use(xss());
+//PARAMETER POLUTION
+app.use(hpp())
+const limiter = rateLimit({
+	windowMs: 15 * 60 * 1000, // 15 minutes
+	max: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+//	standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+//	legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  message:'Too many request please try later'
+});
+app.use(limiter);
+
+const authenticationRoute=require('./api/routes/authRoute.js')
 const deptRoute = require('./api/routes/department.js');
 const payrollRoute = require('./api/routes/payroll.js');
 const taxExamptionDateRoute = require('./api/routes/TaxExaptionDate.js');
 const providentFundRoute = require('./api/routes/providentFund.js');
+
+
 const taxSlabRoute = require('./api/routes/TaxSlab.js');
 const authRoute = require('./api/routes/auth.js');
 const userRoute = require('./api/routes/user.js');
@@ -75,7 +104,7 @@ app.use('/payrollMonth', payrollMonthRoute);
 const nodemailer = require('nodemailer');
 
 app.use(bodyParser.json());
-
+app.use('/api',authenticationRoute);
 
 ///////////////////////////
 app.get('/email', async (req, res) => {

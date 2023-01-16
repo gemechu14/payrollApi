@@ -6,6 +6,9 @@ const UserSchema = mongoose.Schema(
       required: true,
       unique: true,
     },
+    CompanyCode:{
+      type:String
+    },
     email: {
       type: String,
       required: true,
@@ -30,4 +33,4 @@ const UserSchema = mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports=mongoose.model("User", UserSchema);  
+module.exports=mongoose.model("User1", UserSchema);  
