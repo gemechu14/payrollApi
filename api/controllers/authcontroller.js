@@ -3,13 +3,15 @@ const User = require('../models/userModel.js');
 const jwt=require('jsonwebtoken');
 const { promisify } = require('util');
 const sendEmail=require('../utils/email.js');
-
+const createError=require('../utils/error.js');
+// const { create } = require('../models/userModel.js');
 const signToken = (id) => {
   try {
     return jwt.sign({ id }, "secret", {
       expiresIn: process.env.JWT_EXPIRES_IN,
     });
   } catch (err) {
+   
     res.status(404).json({
       status: 'fail',
       message: err,
@@ -58,6 +60,8 @@ const createSendToken = ( user, statusCode, res) => {
 exports.signup = async (req, res, next) => {
   try {
     const { email, password ,Name,address,phoneNumber,numberOfEmployee,CompanyName,jobTitle,companyCode} = req.body;
+    const user = await User.findOne({ email });
+    if (user) return next(createError.createError(404, 'Email is already provided!'));
     const newUser =await  User.create({
       Name:Name,
       email:email,
@@ -86,10 +90,11 @@ exports.signup = async (req, res, next) => {
   }
    catch (err) 
    {
-    res.status(404).json({
-      status: 'fail',
-      message: err,
-    });
+    next(err);
+    // res.status(404).json({
+    //   status: 'fail',
+    //   message: err,
+    // });
   }
 };
 
@@ -101,16 +106,18 @@ exports.login = async (req, res, next) => {
     console.log(password);
     //check if email and password exist company code
     if (!email || !password|| !companyCode)  {
-      return res
-        .status(404)
-        .json({ message: 'please provide email, password or company code' });
+      return next(createError.createError(404, 'please provide email, password or company code!'));//res
+      //   .status(404)
+      //   .json({ message: 'please provide email, password or company code' });
     }
     //check if user exists and password is correct
     const user = await User.findOne({ email }).select('+password');
     
     console.log(user.companyCode);
     if ( !user|| user.companyCode!=companyCode || !(await user.correctPassword(password, user.password))) {
-      return res.status(401).json({ message: 'Incorrect email, password or company Code' });
+      return    res.status(401).json({ message: 'Incorrect email, password or company Code' });
+      //next(createError.createError(401,'Incorrect email, password or company Code'))
+    
     }
    
   
@@ -125,10 +132,11 @@ exports.login = async (req, res, next) => {
     //   },
     // });
   } catch (err) {
-    res.status(404).json({
-      status: 'fail',
-      message: err,
-    });
+    next(createError.createError(404,'failed'))
+    // res.status(404).json({
+    //   status: 'fail',
+    //   message: err,
+    // });
   }
 };
 
@@ -178,10 +186,11 @@ exports.protect = async (req, res, next) => {
   }
 };
 
-
-exports.getAllUser = async (req,res,next)=>{
+//Get ALL COMPANY
+exports.getAllCompany = async (req,res,next)=>{
   try {
-    const user = await User.find();
+    
+    const user = await User.find({ role: { $ne: 'superAdmin' } });
   
     
     res.status(200).json({
@@ -192,6 +201,41 @@ exports.getAllUser = async (req,res,next)=>{
     next(err);
   }
 }
+
+//GET PENDING COMPANY
+exports.getAllPendingCompany = async (req,res,next)=>{
+  try {
+    
+    const user = await User.find({"$and": [{"status": "pending"}, { role: { $ne: 'superAdmin' }}]});
+  
+    
+    res.status(200).json({
+      count: user.length,
+      user:user
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+//GET Active COMPANY
+exports.getAllActiveCompany = async (req,res,next)=>{
+  try {
+    
+    const user = await User.find({"$and": [{"status": "Active"}, { role: { $ne: 'superAdmin' }}]});
+  
+    
+    res.status(200).json({
+      count: user.length,
+      user:user
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+
+
+
 
 //Restricted to
 exports.restrictTo = (...roles) => {
