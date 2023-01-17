@@ -221,7 +221,7 @@ exports.getAllPendingCompany = async (req,res,next)=>{
 exports.getAllActiveCompany = async (req,res,next)=>{
   try {
     
-    const user = await User.find({"$and": [{"status": "Active"}, { role: { $ne: 'superAdmin' }}]});
+    const user = await User.find({"$and": [{status: "active"}, { role: { $ne: 'superAdmin' }}]});
   
     
     res.status(200).json({
