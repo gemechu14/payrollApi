@@ -1,10 +1,10 @@
 const mongoose = require('mongoose');
 
-const packageSchema = mongoose.Schema({
+const defineSubscriptionSchema = mongoose.Schema({
   name: { type: String, enum: ['Monthly', 'Annual', 'Unlimited'] },
   no_Of_Employee: {
     range: String,
-    
+    required: true,
   },
   price: {
     type: Number,
@@ -17,6 +17,5 @@ discount:{
     type:Number,
     default:0
 }
-
 });
-module.exports = mongoose.model('Package', packageSchema);
+module.exports = mongoose.model('Package', defineSubscriptionSchema);

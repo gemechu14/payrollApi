@@ -12,8 +12,8 @@ const userSchema = new mongoose.Schema({
     enum: ['1-24', '25-75', '76-150', '151-300', '301-500', '500+'],
     default: '1-24',
   },
-  companyCode:{
-    type:String
+  companyCode: {
+    type: String,
   },
   phoneNumber: {
     type: String,
@@ -55,17 +55,41 @@ const userSchema = new mongoose.Schema({
     default: false,
     select: false,
   },
+  packageId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Package',
+  },
+  isTrial: {
+    type: Boolean,
+    default: false,
+  },
+  isPaid: {
+    type: Boolean,
+    default: false,
+  },
+  next_payment_date: {
+    type: Date,
+    default: null,
+  },
+  // endDate: {
+  //   type: Date,
+  //   default: null,
+  // },
+
   status: {
     type: String,
     enum: ['pending', 'active', 'blocked', 'denied'],
     default: 'pending',
   },
 
+  isApproved: {
+    type: Boolean,
+    default: false,
+  },
   passwordChangedAt: Date,
   passwordResetToken: String,
   passwordResetExpires: Date,
   photo: String,
-
   // confirmPassword: {
   //   type: String,
   //   required: [true, 'please confirm your password'],

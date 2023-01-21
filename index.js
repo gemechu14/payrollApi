@@ -10,8 +10,8 @@ const mongosanitize=require('express-mongo-sanitize');
 const hpp=require('hpp')
 const xss=require('xss-clean');
 app.use(helmet());
-
-
+const PackageRoute=require('./api/routes/Package.js')
+const TrialRoute=require('./api/routes/trial.js')
 //Security
 
 //DATA SANITIZATION AGAINST NO SQL QUERY ENJECTION
@@ -44,6 +44,8 @@ const employeeRoute = require('./api/routes/employee.js');
 const allowanceRoute = require('./api/routes/Allowance.js');
 const deductionRoute = require('./api/routes/deduction.js');
 const payrollMonthRoute = require('./api/routes/payrollMonth.js');
+const SubscriptionRoute=require('./api/routes/subscription.js')
+
 const cors = require('cors');
 mongoose.Promise = global.Promise;
 const morgan=require('morgan');
@@ -68,17 +70,8 @@ const connect = async () => {
     throw error;
   }
 };
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
-app.use(express.json());
-app.use(morgan('dev'));
 
-// const corsOptions ={
-//   origin:'http://localhost:3000', 
-//   credentials:true,            //access-control-allow-credentials:true
-//   optionSuccessStatus:200
-// }
-// app.use(cors(corsOptions));
+
 
 app.use(
   cors({
@@ -86,6 +79,10 @@ app.use(
     credentials: true,
   })
 );
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+app.use(express.json());
+app.use(morgan('dev'));
 
 //MIDDLEWARE
 app.use('/department', deptRoute);
@@ -99,7 +96,9 @@ app.use('/employee', employeeRoute);
 app.use('/allowance', allowanceRoute);
 app.use('/deduction', deductionRoute);
 app.use('/payrollMonth', payrollMonthRoute);
-
+app.use('/package',PackageRoute);
+app.use('/trial',TrialRoute);
+app.use('/subscription',SubscriptionRoute);
 //Send email
 const nodemailer = require('nodemailer');
 
