@@ -10,7 +10,7 @@ cron.schedule('* * * * *', async function (req, res, next) {
             let users = find_users[i];
             //format user date to same format as today date then compare
             let userDueDate = moment(users.next_payment_date).format("YYYY-MM-DD hh:mm");
-            if (today_date != userDueDate) {
+            if (today_date === userDueDate) {
                 let find_user = await User.findById(users._id);
                 find_user.isPaid = false;
                 find_user.save()

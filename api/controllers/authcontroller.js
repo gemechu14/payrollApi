@@ -7,7 +7,8 @@ const createError = require('../utils/error.js');
 // const { create } = require('../models/userModel.js');
 const signToken = (id) => {
   try {
-    return jwt.sign({ id }, 'secret', {
+   
+    return jwt.sign({ id }, process.env.JWT_CODE, {
       expiresIn: process.env.JWT_EXPIRES_IN,
     });
   } catch (err) {
@@ -30,7 +31,7 @@ const createSendToken = (user, statusCode, res) => {
   // const patientID = patient._id;
   const cookieOptions = {
     expires: new Date(
-      Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
+      Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 10000000000000
     ),
 
     secure: process.env.NODE_ENV === 'production' ? true : false,
@@ -170,9 +171,8 @@ exports.protect = async (req, res, next) => {
         message: 'You are not logged in, please log in to get access',
       });
     }
-
     //verification token
-    const decoded = await promisify(jwt.verify)(token, 'secret');
+    const decoded = await promisify(jwt.verify)(token, process.env.JWT_CODE);
 
     //check if user still exists
     const currentUser = await User.findById(decoded.id);
@@ -447,28 +447,28 @@ exports.updatePassword = async (req, res, next) => {
   try {
     console.log(hello);
 
-    //   //get user from collection
-    //   const user = await User.findById('req.user.id').select('+password');
-    //   console.log(req.user.id);
-    //   //check if posted password is correct
-    //   if (!user.correctPassword(req.body.currentPassword, user.password)) {
-    //     return res
-    //       .status(401)
-    //       .json({ message: 'Your current password is not correct' });
-    //   }
-    //   //id so, update the password
-    //   user.password = req.body.password;
-    //   console.log(req.body.password)
-    //   // user.confirmPassword = req.body.confirmPassword;
-    //   await user.save();
-    //   //log the user in, send JWT
-    //  // createSendToken(user, 200, res);
+      //get user from collection
+      const user = await User.findById(req.user.id).select('+password');
+      console.log(req.user.id);
+      //check if posted password is correct
+      if (!user.correctPassword(req.body.currentPassword, user.password)) {
+        return res
+          .status(401)
+          .json({ message: 'Your current password is not correct' });
+      }
+      //id so, update the password
+      user.password = req.body.password;
+      console.log(req.body.password)
+      // user.confirmPassword = req.body.confirmPassword;
+      await user.save();
+      //log the user in, send JWT
+     // createSendToken(user, 200, res);
 
-    // const token=signToken(user._id);
-    // res.status(200).json({
-    //  status:'success',
-    //  token
-    // })
+    const token=signToken(user._id);
+    res.status(200).json({
+     status:'success',
+     token
+    })
   } catch (err) {
     res.status(404).json({
       status: 'fail',
