@@ -11,6 +11,16 @@ router.get(
   authcontroller.restrictTo('superAdmin'),
   authcontroller.getAllCompany
 );
+
+// //SEARCH COMPANY
+// router.get(
+//   '/getAllCompany/:key',
+//   authcontroller.protect,
+//   authcontroller.restrictTo('superAdmin'),
+//   authcontroller.searchAllCompany
+// );
+
+
 //GET PENDING COMPANY
 router.get(
   '/getAllPendingCompany',
@@ -18,6 +28,23 @@ router.get(
   authcontroller.restrictTo('superAdmin'),
   authcontroller.getAllPendingCompany
 );
+
+//SEARCH PENDING COMPANY
+router.get(
+  '/getAllPendingCompany/:key',
+  authcontroller.protect,
+  authcontroller.restrictTo('superAdmin'),
+  authcontroller.searchPendingCompany
+);
+
+//SEARCH Active  COMPANY
+router.get(
+  '/getAllActiveCompany/:key',
+  authcontroller.protect,
+  authcontroller.restrictTo('superAdmin'),
+  authcontroller.searchActiveCompany
+);
+
 router.get(
   '/getAllActiveCompany',
   authcontroller.protect,
@@ -26,10 +53,10 @@ router.get(
 );
 //SEARCH COMPANY
 router.get(
-  '/searchCompany/:key',
+  '/searchAllCompany/:key',
   authcontroller.protect,
   authcontroller.restrictTo('superAdmin'),
-  authcontroller.searchCompanyByName
+  authcontroller.searchAllCompany
 );
 
 //APPROVE COMPANY

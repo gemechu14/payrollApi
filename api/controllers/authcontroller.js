@@ -239,25 +239,85 @@ exports.getAllActiveCompany = async (req, res, next) => {
     next(err);
   }
 };
-//SEARCH COMPANY BASED ON NAME
-
-exports.searchCompanyByName = async (req, res, next) => {
+//SEARCH PENDING COMPANY
+exports.searchPendingCompany = async (req, res, next) => {
   try {
     const key = req.params.key;
     
 
     const user = await User.find(
       {
-        "$or":[
-          {CompanyName:{$regex: new RegExp(key,'i'), }}
-        ]
+        $and: [{ status: 'pending' }, {CompanyName:{$regex: new RegExp(key,'i'), }}, { role: { $ne: 'superAdmin' } }],
+      
       }
     );
-
-    user.slice(0, 1);
-
     res.status(200).json({
-      // count: user.length,
+       count: user.length,
+      user: user,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+//SEARCH ACTIVE COMPANY
+exports.searchActiveCompany = async (req, res, next) => {
+  try {
+    const key = req.params.key;
+    
+
+    const user = await User.find(
+      {
+        $and: [{ status: 'active' }, {CompanyName:{$regex: new RegExp(key,'i'), }}, { role: { $ne: 'superAdmin' } }],
+      
+      }
+    );
+    res.status(200).json({
+       count: user.length,
+      user: user,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+
+//SEARCH ALL COMPANY 
+
+exports.searchAllCompany= async (req, res, next) => {
+  try {
+    const key = req.params.key;
+    
+
+    const user = await User.find(
+      {
+        $and: [ {CompanyName:{$regex: new RegExp(key,'i'), }}, { role: { $ne: 'superAdmin' } }],
+      
+      }
+    );
+    res.status(200).json({
+       count: user.length,
+      user: user,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+//SEARCH ACTIVE COMPANY
+exports.searchActiveCompany = async (req, res, next) => {
+  try {
+    const key = req.params.key;
+    
+
+    const user = await User.find(
+      {
+        $and: [{ status: 'active' }, {CompanyName:{$regex: new RegExp(key,'i'), }}, { role: { $ne: 'superAdmin' } }],
+      
+      }
+    );
+    res.status(200).json({
+       count: user.length,
       user: user,
     });
   } catch (err) {
