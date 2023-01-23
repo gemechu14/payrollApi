@@ -28,12 +28,11 @@ const filterObj = (obj, ...allowedFields) => {
 
 const createSendToken = (user, statusCode, res) => {
   const token = signToken(user._id);
-  console.log(token);
+  console.log(user._id);
   // const patientID = patient._id;
   const cookieOptions = {
-    expires:     new Date(
-      Date.now() + process.env.JWT_COOKIE_EXPIRES_IN
-    ),
+    expires: new Date(
+      Date.now() + process.env.JWT_COOKIE_EXPIRES_IN *24 * 60 * 60 * 1000),
 
     secure: process.env.NODE_ENV === 'production' ? true : false,
     httpOnly: true,
@@ -137,20 +136,20 @@ exports.login = async (req, res, next) => {
       //next(createError.createError(401,'Incorrect email, password or company Code'))
     }
 
-    const token=signToken(user._id);
+    // const token=signToken(user._id);
     //if everything is ok send token to the client
-    //createSendToken(user, 200, res);
-    res.status(200).json({
-      status: 'success',
-    token,
-      data: {
-        user: user
-      },
-    });
+    createSendToken(user, 200, res);
+    // res.status(200).json({
+    //   status: 'success',
+    // token,
+    //   data: {
+    //     user: user
+    //   },
+    // });
   } catch (err) {
     //next(createError.createError(404, 'failed'));
     res.status(404).json({
-      status: 'fail',
+      status: 'fail123',
       message: err,
     });
   }
@@ -269,7 +268,7 @@ exports.approveCompany = async (req, res, next) => {
     console.log(email);
     const approveCompany = await User.findOneAndUpdate(
       { email },
-      { $set: { isApproved: 'true',status:'active' } },
+      { $set: { isApproved: 'true', status: 'active' } },
       { new: true }
     );
     // const user = await User.find({"$and": [{status: "active"}, { role: { $ne: 'superAdmin' }}]});
@@ -318,7 +317,7 @@ exports.approveCompanyPayment = async (req, res, next) => {
       approveCompanyPayment: approveCompanyPayment.isPaid,
     });
   } catch (err) {
-    next(createError(404,err));
+    next(createError(404, err));
   }
 };
 
