@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const { promisify } = require('util');
 const sendEmail = require('../utils/email.js');
 const createError = require('../utils/error.js');
+const { signedCookies } = require('cookie-parser');
 // const { create } = require('../models/userModel.js');
 const signToken = (id) => {
   try {
@@ -27,15 +28,17 @@ const filterObj = (obj, ...allowedFields) => {
 
 const createSendToken = (user, statusCode, res) => {
   const token = signToken(user._id);
+  console.log(token);
   // const patientID = patient._id;
   const cookieOptions = {
-    expires: new Date(
-      Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000*10000
+    expires:     new Date(
+      Date.now() + process.env.JWT_COOKIE_EXPIRES_IN
     ),
 
     secure: process.env.NODE_ENV === 'production' ? true : false,
     httpOnly: true,
   };
+  //console.log(user);
 
   //remove password from the output
   user.password = undefined;
@@ -134,22 +137,22 @@ exports.login = async (req, res, next) => {
       //next(createError.createError(401,'Incorrect email, password or company Code'))
     }
 
-    //const token=signToken(user._id);
+    const token=signToken(user._id);
     //if everything is ok send token to the client
-    createSendToken(user, 200, res);
-    // res.status(200).json({
-    //   status: 'success',
-    // token,
-    //   data: {
-    //     user: user
-    //   },
-    // });
+    //createSendToken(user, 200, res);
+    res.status(200).json({
+      status: 'success',
+    token,
+      data: {
+        user: user
+      },
+    });
   } catch (err) {
-    next(createError.createError(404, 'failed'));
-    // res.status(404).json({
-    //   status: 'fail',
-    //   message: err,
-    // });
+    //next(createError.createError(404, 'failed'));
+    res.status(404).json({
+      status: 'fail',
+      message: err,
+    });
   }
 };
 
@@ -315,7 +318,7 @@ exports.approveCompanyPayment = async (req, res, next) => {
       approveCompanyPayment: approveCompanyPayment.isPaid,
     });
   } catch (err) {
-    next(createError.createError(404,err));
+    next(createError(404,err));
   }
 };
 
