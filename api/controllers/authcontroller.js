@@ -52,9 +52,6 @@ const createSendToken = (user, statusCode, res) => {
   });
 };
 
-// const ck={
-
-// }
 
 exports.signup = async (req, res, next) => {
   try {
@@ -246,10 +243,16 @@ exports.getAllActiveCompany = async (req, res, next) => {
 
 exports.searchCompanyByName = async (req, res, next) => {
   try {
-    const key = req.params.name;
-    console.log(key);
+    const key = req.params.key;
+    
 
-    const user = await User.find({ companyName: { $regex: '*' } }).exec();
+    const user = await User.find(
+      {
+        "$or":[
+          {CompanyName:{$regex: new RegExp(key,'i'), }}
+        ]
+      }
+    );
 
     user.slice(0, 1);
 
@@ -523,5 +526,25 @@ exports.deleteMe = async (req, res, next) => {
     data: {
       user: null,
     },
+  });
+};
+
+exports.searchCompanyByName
+
+
+exports.logout = async (req, res) => {
+  
+  const cookieOptions = {
+    expires: new Date(Date.now() + 10 * 1000),
+    secure: process.env.NODE_ENV === 'production' ? true : false,
+    httpOnly: true,
+  };
+ // console.log(req.headers.authorization.split(' ')[1]);
+  res.cookie('jwt', 'expiredtoken', cookieOptions);
+  
+
+  res.status(200).json({
+    status: 'success',
+    message: 'logged out successfully',
   });
 };

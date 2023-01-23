@@ -26,7 +26,7 @@ router.get(
 );
 //SEARCH COMPANY
 router.get(
-  '/searchCompanyByName/:name',
+  '/searchCompany/:key',
   authcontroller.protect,
   authcontroller.restrictTo('superAdmin'),
   authcontroller.searchCompanyByName
@@ -67,4 +67,6 @@ router
 router
   .route('/deleteMe')
   .delete(authcontroller.protect, authcontroller.deleteMe);
+
+  router.get('/logout',authcontroller.logout);
 module.exports = router;
