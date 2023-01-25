@@ -43,8 +43,8 @@ const  calculateNextPayment  =async (chargeType, normalDate)=> {
         console.log(trialDate.for);
         currentDate = moment(normalDate);
         currentDate.add(trialDate.for, 'days').format('YYYY-MM-DD hh:mm');
-        console.log(currentDate.toDate());
-        console.log()
+        // console.log(currentDate.toDate());
+        // console.log()
         return currentDate;
     }
     if (chargeType === 'Monthly') {

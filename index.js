@@ -10,6 +10,7 @@ const mongosanitize=require('express-mongo-sanitize');
 const hpp=require('hpp')
 const xss=require('xss-clean');
 app.use(helmet());
+
 const PackageRoute=require('./api/routes/Package.js')
 const TrialRoute=require('./api/routes/trial.js')
 //Security
@@ -17,7 +18,7 @@ const TrialRoute=require('./api/routes/trial.js')
 //DATA SANITIZATION AGAINST NO SQL QUERY ENJECTION
 app.use(mongosanitize());
 
-//DATA SANITIZATION AGAINST  XSS
+//DATA SANITIZATION AGAINST  XSSs
 app.use(xss());
 //PARAMETER POLUTION
 app.use(hpp())
@@ -82,7 +83,6 @@ app.use(
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(express.json());
-app.use(morgan('dev'));
 
 //MIDDLEWARE
 app.use('/department', deptRoute);
@@ -99,77 +99,10 @@ app.use('/payrollMonth', payrollMonthRoute);
 app.use('/package',PackageRoute);
 app.use('/trial',TrialRoute);
 app.use('/subscription',SubscriptionRoute);
-//Send email
-const nodemailer = require('nodemailer');
+
 
 app.use(bodyParser.json());
 app.use('/api',authenticationRoute);
-
-///////////////////////////
-app.get('/email', async (req, res) => {
-  try {
-    // let testAccount = await nodemailer.createTestAccount();
-    var transporter = nodemailer.createTransport({
-      //service: "hotmail",
-      service: 'gmail',
-      //port: 587,//Yahoo
-      //port :465,//Gmail
-      secure: false,
-      auth: {
-        user: 'gemechubulti11@gmail.com',
-        pass: 'jrimdincxsstntpo',
-        // user: "gemechubulti@outlook.com",
-        // pass: 'gemechu@outlook@11',
-      },
-    });
-
-    var mailOptions = {
-      from: 'gemechubulti11@gmail.com',
-      // to:'milkessagabai@gmail.com',
-      // to:'etanaalemunew@gmail.com',
-      to: 'dsichale@gmail.com',
-      subject: 'Thank You for Your Kindness!',
-      text: "Thank you so much for your patience. I'm sorry it took so long for me to get back to you I truly appreciate your understanding and willingness to wait It was a difficult situation, and I'm glad you were so understanding I want to thank you again for your patience It was much appreciated and it helped me a lot It's hard to ask for help but it's even harder to wait Thank you for making it easier Your kindness is much appreciated Thank you for being so understanding ",
-    };
-    transporter.sendMail(mailOptions, function (error, info) {
-      if (error) {
-        console.log(error.message);
-        res.status(404).json(error);
-      } else {
-        console.log('Email sent: ' + info.response);
-        res.status(250).json(info.response);
-      }
-    });
-  } catch (error) {
-    console.log(error);
-  }
-});
-
-/////////////////////////////
-
-// app.use((req, res, next) => {
-//   res.header('Access-Control-Allow-Orogin', '*');
-//   res.header(
-//     'Access-Control-Allow-Headers',
-//     '*'
-//   );
-//   if (req.method == 'OPTIONS') {
-//     res.header(Access-Control-Allow-Methods, 'GET,POST,PATCH,DELETE,PUT');
-//     return res.status(200).json({});
-//   }
-//   next();
-// });
-
-///////
-// app.get("/", (req, res) => {
-//   res.setHeader("Access-Control-Allow-Origin", "*")
-//   res.setHeader("Access-Control-Allow-Credentials", "true");
-//   res.setHeader("Access-Control-Max-Age", "1800");
-//   res.setHeader("Access-Control-Allow-Headers", "content-type");
-//   res.setHeader( "Access-Control-Allow-Methods", "PUT, POST, GET, DELETE, PATCH, OPTIONS" ); 
-//    });
-
-
 
 
 app.use((req, res, next) => {

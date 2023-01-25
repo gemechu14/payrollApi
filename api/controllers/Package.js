@@ -25,13 +25,14 @@ exports.createPlan = async (req, res, next) => {
 
 exports.listPlan = async (req, res, next) => {
     try {
-        const find_plan = await Package.find({});
-        if (!find_plan) {
-            return res.status(400)
-                .json(vm.ApiResponse(true, 400, 'Oops! an error occur'))
+        const subscription = await Package.find();
+        if (!subscription) {
+            return next('error occured')
         } else {
-            return res.status(200)
-                .json(vm.ApiResponse(true, 200, 'Success', find_plan))
+            res.status(200).json({
+                count: subscription.length,
+                subscription,
+              });
         }
     } catch (e) {
         return res.status(500)

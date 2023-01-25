@@ -7,7 +7,7 @@ const packageSchema = mongoose.Schema({
     
   },
   price: {
-    type: Number,
+    type: Number
   },
   description:{
     type:String,

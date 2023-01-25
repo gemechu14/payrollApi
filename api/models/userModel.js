@@ -14,6 +14,7 @@ const userSchema = new mongoose.Schema({
   },
   companyCode: {
     type: String,
+    required:true
   },
   phoneNumber: {
     type: String,
@@ -43,7 +44,7 @@ const userSchema = new mongoose.Schema({
     lowercase: true,
     validate: [validator.isEmail, 'please insert correct email address'],
   },
-
+ 
   password: {
     type: String,
     required: [true, 'user must have a password to login'],
@@ -63,6 +64,10 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  startDate: {
+    type: Date,
+    default: null,
+  },
   isPaid: {
     type: Boolean,
     default: false,
@@ -71,10 +76,7 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: null,
   },
-  // endDate: {
-  //   type: Date,
-  //   default: null,
-  // },
+
 
   status: {
     type: String,

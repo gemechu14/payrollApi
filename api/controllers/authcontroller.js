@@ -5,7 +5,13 @@ const { promisify } = require('util');
 const sendEmail = require('../utils/email.js');
 const createError = require('../utils/error.js');
 const { signedCookies } = require('cookie-parser');
+const moment = require("moment");
+const Package=require('../models/Package.js')
 // const { create } = require('../models/userModel.js');
+const {calculateNextPayment} =require('../utils/Helper.js');
+
+
+
 const signToken = (id) => {
   try {
     return jwt.sign({ id }, 'secret', {
@@ -53,6 +59,150 @@ const createSendToken = (user, statusCode, res) => {
 };
 
 
+const addTrial= async(email,status,res)=>{
+
+  
+   const userEmail=newUser.email;
+   console.log(email);
+     let nextpaymentDate;
+     let date = Date.now();
+    nextpaymentDate = await calculateNextPayment('Trial', date);
+
+     const updateUser = await User.findOneAndUpdate(
+     { email},
+     { $set: { isTrial: 'true',next_payment_date:nextpaymentDate} },
+     { new: true }
+   );
+  res.status(status).json({updateUser});
+}
+
+//Trial registration
+
+exports.trialRegistration=async(req,res,next)=>{
+  
+  try {
+    const {
+      email,
+      password,
+      Name,
+      address,
+      phoneNumber,
+      numberOfEmployee,
+      CompanyName,
+      jobTitle,
+      companyCode,
+      isApproved,
+      
+    } = req.body;
+    const user = await User.findOne({ email });
+    // console.log(user.isTrial);
+    if (user)
+      return next(createError.createError(404, 'Email is already provided!'));
+    //  console.log(user);
+    let nextpaymentDate;
+    let date = Date.now();
+    nextpaymentDate = await calculateNextPayment('Trial', date);
+    startDate=moment(Date.now());
+      const newUser = await User.create({
+      Name: Name,
+      email: email,
+      password: password,
+      companyCode: companyCode,
+      address: address,
+      phoneNumber: phoneNumber,
+      numberOfEmployee: numberOfEmployee,
+      CompanyName: CompanyName,
+      jobTitle: jobTitle,
+      isTrial:true,
+      next_payment_date:nextpaymentDate,
+      startDate:startDate
+     
+    });
+   
+   // console.log(newUser);
+    res.status(200).json({
+          status: 'Success',
+          message:"Trial period is provided to you ",
+        
+          data: {
+            user: newUser,
+          }}
+    );
+ 
+   
+  } catch (err) {
+    next(createError.createError(404, 'fail'));
+    // res.status(404).json({
+    //   status: 'fail',
+    //   message: err,
+    // });
+  }
+
+}
+
+
+exports.packageRegistration=async(req,res,next)=>{
+  try {
+    const {
+      email,
+      password,
+      Name,
+      address,
+      phoneNumber,
+      numberOfEmployee,
+      CompanyName,
+      jobTitle,
+      companyCode,
+      isApproved,
+      
+    } = req.body;
+    const user = await User.findOne({ email });
+    // console.log(user.isTrial);
+    if (user)
+      return next(createError.createError(404, 'Email is already provided!'));
+    //  console.log(user);
+
+    const packageId=req.params.packageId;
+    const packageInfo = await Package.findOne({ _id: packageId });
+    const packageType=packageInfo.name;
+    console.log(packageType);
+    let nextpaymentDate;
+    let date = Date.now();
+    nextpaymentDate = await calculateNextPayment(packageType, date);
+    startDate=moment(Date.now());
+      const newUser = await User.create({
+      Name: Name,
+      email: email,
+      password: password,
+      companyCode: companyCode,
+      address: address,
+      phoneNumber: phoneNumber,
+      numberOfEmployee: numberOfEmployee,
+      CompanyName: CompanyName,
+      jobTitle: jobTitle,
+     
+      next_payment_date:nextpaymentDate,
+      startDate:startDate,
+      packageId:packageId
+     
+    });
+   
+   // console.log(newUser);
+    res.status(200).json({
+          status: 'Success',
+          message:"Thank you for your subscription ",
+        
+          data: {
+            user: newUser,
+          }}
+    );
+ 
+   
+  } catch (err) {
+    next(createError.createError(404, 'fail'));
+   
+  }
+}
 exports.signup = async (req, res, next) => {
   try {
     const {
@@ -374,11 +524,27 @@ exports.approveCompanyPayment = async (req, res, next) => {
       { $set: { isPaid: 'true' } },
       { new: true }
     );
+
+
+      try {
+        await sendEmail({
+          email: email,
+          subject: 'Your password reset token (valid for 10 min)',
+        message,
+        });
+        res.status(200).json({
+          status: 'success',
+          message: 'Token sent to email',
+        });
+    } catch (error) {
+      res.status(404).json({
+        err
+      })
+      
+    }
     // const user = await User.find({"$and": [{status: "active"}, { role: { $ne: 'superAdmin' }}]});
 
-    res.status(200).json({
-      approveCompanyPayment: approveCompanyPayment.isPaid,
-    });
+   
   } catch (err) {
     next(createError(404, err));
   }
@@ -386,6 +552,8 @@ exports.approveCompanyPayment = async (req, res, next) => {
 
 //APPROVE COMPANY PAYMENT
 exports.approveCompanyPayment = async (req, res, next) => {
+      const text='Lorem, ipsum dolor sit amet consectetur adipisicing elit. Obcaecati voluptates accusantium eveniet voluptatum delectus, facere modi quis cupiditate maiores. Soluta, obcaecati enim consequuntur voluptatibus eos vitae fugit exercitationem officiis excepturi.'
+
   try {
     const email = req.body.email;
     console.log(email);
@@ -394,11 +562,25 @@ exports.approveCompanyPayment = async (req, res, next) => {
       { $set: { isPaid: 'true' } },
       { new: true }
     );
+    try {
+      await sendEmail({
+        email: email,
+        subject: 'Thank you for your subscription',
+        text
+      });
+      res.status(200).json({
+        status: 'success',
+        message: 'Message  sent to email',
+      });
+    } catch (err) {
+   
+      return res.status(500).json({
+        message: 'There was an error sending the email. Try again later!',
+      });
+    }
     // const user = await User.find({"$and": [{status: "active"}, { role: { $ne: 'superAdmin' }}]});
 
-    res.status(200).json({
-      approveCompanyPayment: approveCompanyPayment.isPaid,
-    });
+   
   } catch (err) {
     next(err);
   }

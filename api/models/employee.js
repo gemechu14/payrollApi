@@ -4,10 +4,10 @@ const employeeSchema = mongoose.Schema({
     //BASIC INFO
     
   fullname: { type: String, required: true },
-  ///images: { type: String, required: true },
+  images: { type: String },
 
   sex: { type: String, required: true },
-  date_ofBirth:{type:Date,required:true},
+ // date_ofBirth:{type:Date,required:true},
   nationality: { type: String, required: true },
   id_number:{type:String, required:true},
   
@@ -47,37 +47,38 @@ const employeeSchema = mongoose.Schema({
   TaxDeduction: { type: Number },
   netSalary: { type: Number },
 
-  allowance: [
-    {
-     type:mongoose.Schema.Types.ObjectId,
+//   allowance: [
+//     {
+//      type:mongoose.Schema.Types.ObjectId,
      
-     ref:'Allowance',}
+//      ref:'Allowance',}
      
-  ],
+//   ],
   
-  department: [
-    {
-     type:mongoose.Schema.Types.ObjectId,
+//   department: [
+//     {
+//      type:mongoose.Schema.Types.ObjectId,
      
-     ref:'Department',}
+//      ref:'Department',}
      
-  ],
-  payroll: [
-    {
-     type:mongoose.Schema.Types.ObjectId,
+//   ],
+//   payroll: [
+//     {
+//      type:mongoose.Schema.Types.ObjectId,
      
-     ref:'Payroll',
-    }
+//      ref:'Payroll',
+//     }
      
-  ],
+//   ],
 
 
-   deduction:[ {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Deduction',
+//    deduction:[ {
+//     type: mongoose.Schema.Types.ObjectId,
+//     ref: 'Deduction',
     
-   }],
+//    }],
 //   image:[],
+//productImage: { type: String, required: true }
 });
 
 module.exports = mongoose.model('Employee', employeeSchema);
