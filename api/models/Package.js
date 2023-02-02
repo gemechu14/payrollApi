@@ -16,7 +16,11 @@ const packageSchema = mongoose.Schema({
 discount:{
     type:Number,
     default:0
-}
+},
+
+services:[{
+  type:String
+}]
 
 });
 module.exports = mongoose.model('Package', packageSchema);
