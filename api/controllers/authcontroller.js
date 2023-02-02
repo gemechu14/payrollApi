@@ -345,6 +345,23 @@ exports.protect = async (req, res, next) => {
   }
 };
 
+
+//UPDATE COMPANY
+
+exports.updateCompany=async (req,res,next)=>{
+
+  try {
+    const updatedCompany = await User.findByIdAndUpdate(
+      req.params.companyId,
+      { $set: req.body },
+      { new: true }
+    );
+    res.status(200).json(updatedCompany);
+  } catch (error) {}
+
+
+
+}
 //Get ALL COMPANY
 exports.getAllCompany = async (req, res, next) => {
   try {
@@ -394,10 +411,29 @@ exports.searchPendingCompany = async (req, res, next) => {
   try {
     const key = req.params.key;
     
-
     const user = await User.find(
       {
         $and: [{ status: 'pending' }, {CompanyName:{$regex: new RegExp(key,'i'), }}, { role: { $ne: 'superAdmin' } }],
+      
+      }
+    );
+    res.status(200).json({
+       count: user.length,
+      user: user,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.querySearch = async (req, res, next) => {
+  try {
+    const key = req.params.key;
+    console.log(req.query.CompanyName);
+    const cm=req.query.CompanyName;
+    const user = await User.find(
+      {
+        $and: [{ status: 'pending' }, {CompanyName:{$regex: new RegExp(cm,'i'), }}, { role: { $ne: 'superAdmin' } }],
       
       }
     );
@@ -493,6 +529,44 @@ exports.approveCompany = async (req, res, next) => {
     next(err);
   }
 };
+
+//Block COMPANY
+exports.blockCompany = async (req, res, next) => {
+  try {
+    const email = req.body.email;
+    console.log(email);
+    const blockedCompany = await User.findOneAndUpdate(
+      { email },
+      { $set: { status: 'blocked' } },
+      { new: true }
+    );
+    // const user = await User.find({"$and": [{status: "active"}, { role: { $ne: 'superAdmin' }}]});
+
+    res.status(200).json({
+      blockedCompany: blockedCompany,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+//GET ALL BLOCKED COMPANY
+
+exports.getAllBlockedCompany = async (req, res, next) => {
+  try {
+    const user = await User.find({
+      $and: [{ status: 'blocked' }, { role: { $ne: 'superAdmin' } }],
+    });
+
+    res.status(200).json({
+      count: user.length,
+      user: user,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 
 //Unapprove COMPANY
 exports.unApproveCompany = async (req, res, next) => {

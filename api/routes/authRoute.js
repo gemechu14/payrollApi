@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const authcontroller = require('../controllers/authcontroller.js');
 const middleware=require('../middleware/auth.js');
+const sendEmail=require('../utils/email.js')
 //Registration
 router.post('/companyRegistration', authcontroller.signup);
 
@@ -18,6 +19,50 @@ router.get(
   // authcontroller.restrictTo('superAdmin'),
   authcontroller.getAllCompany
 );
+
+
+router.put(
+  '/updateCompany/:companyId',
+  middleware.protect,
+  middleware.restrictTo('superAdmin'),
+  // authcontroller.restrictTo('superAdmin'),
+  authcontroller.updateCompany
+);
+
+
+//Send Email
+
+
+
+router.get(
+  '/searchByQuery',
+  middleware.protect,
+  middleware.restrictTo('superAdmin'),
+  // authcontroller.restrictTo('superAdmin'),
+  authcontroller.querySearch
+);
+
+
+
+//BLOCK COMPANY
+router.post(
+  '/blockCompany',
+  middleware.protect,
+  middleware.restrictTo('superAdmin'),
+
+  authcontroller.blockCompany
+);
+
+//GET ALL BLOCKED COMPANY
+router.get(
+  '/blockedCompany',
+  middleware.protect,
+  middleware.restrictTo('superAdmin'),
+
+  authcontroller.getAllBlockedCompany
+);
+
+
 
 // //SEARCH COMPANY
 // router.get(
