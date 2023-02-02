@@ -59,14 +59,9 @@ exports.deletePackage=async (req,res,next)=>{
 
     try {
         const id=req.params.id;
-        const packageid=await Package.find(id);
         
-        if(packageid==null){
-            const package=await Package.findByIdAndDelete(id);
-            res.status(200).json('deleted successfully')
-
-        }
-        res.status('There is no such package')
+        const package=await Package.findByIdAndDelete(id);
+        res.status(200).json('deleted successfully')
     } catch (err) {
         res.status(404).json('error')
         
