@@ -18,9 +18,8 @@ discount:{
     default:0
 },
 
-services:[{
-  type:String
-}]
+services:[
+  String]
 
 });
 module.exports = mongoose.model('Package', packageSchema);
