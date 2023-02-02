@@ -22,7 +22,7 @@ router.get(
 
 
 router.put(
-  '/updateCompany/:companyId',
+  '/updateCompany/:email',
   middleware.protect,
   middleware.restrictTo('superAdmin'),
   // authcontroller.restrictTo('superAdmin'),

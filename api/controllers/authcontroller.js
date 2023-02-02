@@ -351,8 +351,9 @@ exports.protect = async (req, res, next) => {
 exports.updateCompany=async (req,res,next)=>{
 
   try {
-    const updatedCompany = await User.findByIdAndUpdate(
-      req.params.companyId,
+    console.log(req.params.email)
+    const updatedCompany = await User.findOneAndUpdate(
+      {email:req.params.email},
       { $set: req.body },
       { new: true }
     );
@@ -512,6 +513,7 @@ exports.searchActiveCompany = async (req, res, next) => {
 };
 //Approve COMPANY
 exports.approveCompany = async (req, res, next) => {
+  const text='We are pleased to inform you that your status has been approved. Please enjoy'
   try {
     const email = req.body.email;
     console.log(email);
@@ -520,11 +522,26 @@ exports.approveCompany = async (req, res, next) => {
       { $set: { isApproved: 'true', status: 'active' } },
       { new: true }
     );
+
+    
     // const user = await User.find({"$and": [{status: "active"}, { role: { $ne: 'superAdmin' }}]});
 
-    res.status(200).json({
-      approveCompany: approveCompany.isApproved,
-    });
+    try {
+      await sendEmail({
+        email: email,
+        subject:"THANK YOU FOR GOING WITH US.",
+        text
+      });
+      res.status(200).json({
+        status: 'success',
+        message: 'Message  sent to email',
+      });
+    } catch (err) {
+   
+      return res.status(500).json({
+        message: 'There was an error sending the email. Try again later!',
+      });
+    }
   } catch (err) {
     next(err);
   }
@@ -532,6 +549,7 @@ exports.approveCompany = async (req, res, next) => {
 
 //Block COMPANY
 exports.blockCompany = async (req, res, next) => {
+  //const text='You have been blocked from accessing your account. Contact cooppayroll@gmail.com and resolve the issue';
   try {
     const email = req.body.email;
     console.log(email);
@@ -695,7 +713,7 @@ exports.sendEmail=async (req,res,next)=>{
 
 //APPROVE COMPANY PAYMENT
 exports.approveCompanyPayment = async (req, res, next) => {
-      const text='Lorem, ipsum dolor sit amet consectetur adipisicing elit. Obcaecati voluptates accusantium eveniet voluptatum delectus, facere modi quis cupiditate maiores. Soluta, obcaecati enim consequuntur voluptatibus eos vitae fugit exercitationem officiis excepturi.'
+  const text='Lorem, ipsum dolor sit amet consectetur adipisicing elit. Obcaecati voluptates accusantium eveniet voluptatum delectus, facere modi quis cupiditate maiores. Soluta, obcaecati enim consequuntur voluptatibus eos vitae fugit exercitationem officiis excepturi.'
 
   try {
     const email = req.body.email;
