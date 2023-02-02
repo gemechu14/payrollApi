@@ -119,6 +119,8 @@ router.post(
   authcontroller.approveCompany
 );
 
+
+router.post('/sendEmail',authcontroller.sendEmail);
 //UNAPPROVE COMPANY
 router.post(
   '/unapproveCompany',
