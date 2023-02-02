@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 const employeeController = require('../controllers/employee.js');
-const middleware=require('../middleware/auth.js');
+const middleware = require('../middleware/auth.js');
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -31,21 +31,52 @@ const upload = multer({
 });
 
 //upload.single('images'),
-//router.post('/', upload.single('images'), employeeController.add_employee);
+router.post(
+  '/',
+  middleware.protect,
+  middleware.restrictTo('Companyadmin'),
+  upload.single('images'),
+  employeeController.add_employee
+);
 
-//INSERT EMPLOYEE
-router.post('/', upload.single('images'), employeeController.Create_Employee);
 
 //UPDATE
-router.put('/:employeeId', employeeController.updateEmployee),
+router.put('/:employeeId', 
+middleware.protect,
+middleware.restrictTo('Companyadmin'),
+employeeController.updateEmployee),
+
   //DELETE
-  router.delete('/:id', employeeController.delete_Employee);
+router.delete('/:key', 
+middleware.protect,
+middleware.restrictTo('Companyadmin'),
+employeeController.delete_Employee);
 
 //GET ONE
-router.get('/find/:id', employeeController.get_single_Employee);
+router.get(
+  'find/:id',
+  middleware.protect,
+  middleware.restrictTo('Companyadmin'),
+  employeeController.get_single_Employee
+);
 //GET ALL
-router.get('/', employeeController.get_All_Employee);
+router.get(
+  '/',
+  middleware.protect,
+  middleware.restrictTo('Companyadmin'),
+  employeeController.get_All_Employee
+);
 
-router.get('/:departmentId', employeeController.search_By_Department);
+router.get('/department/:departmentId', 
+middleware.protect,
+middleware.restrictTo('Companyadmin'),
+employeeController.get_By_Department);
+//SEARCH EMPLOYEE
 
+router.get(
+  '/searchAllEmployee/:key',
+  middleware.protect,
+  middleware.restrictTo('Companyadmin'),
+  employeeController.searchAllEmployee
+);
 module.exports = router;

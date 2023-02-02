@@ -9,8 +9,8 @@ const userSchema = new mongoose.Schema({
   },
   numberOfEmployee: {
     type: String,
-    enum: ['1-24', '25-75', '76-150', '151-300', '301-500', '500+'],
-    default: '1-24',
+    enum: ['1-100', '100-500', '500+'],
+    default: '1-100',
   },
   companyCode: {
     type: String,

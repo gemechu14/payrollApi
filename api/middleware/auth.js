@@ -19,11 +19,11 @@ exports.protect = async (req, res, next) => {
           message: 'You are not logged in, please log in to get access',
         });
       }
-      console.log(token);
-      console.log(process.env.JWT_CODE);
+      //console.log(token);
+      //console.log(process.env.JWT_CODE);
       //verification token
       const decoded = await promisify(jwt.verify)(token, process.env.JWT_CODE);
-      console.log(decoded.id);
+     // console.log(decoded.id);
       //check if user still exists
       const currentUser = await User.findById(decoded.id);
       //    console.log(currentUser);
@@ -38,7 +38,7 @@ exports.protect = async (req, res, next) => {
       }
       //grant access to protected route
       req.user = currentUser;
-      console.log(currentUser);
+      // console.log(currentUser);
       next();
     } catch (err) {
       res.status(404).json({

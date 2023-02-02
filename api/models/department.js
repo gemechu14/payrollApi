@@ -9,9 +9,7 @@ const departmentSchema = mongoose.Schema({
     required: true,
   },
 
-  deptID: {
-    type: String,
-  },
+  
   location: {
     type: String,
   },

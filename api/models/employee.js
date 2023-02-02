@@ -47,38 +47,42 @@ const employeeSchema = mongoose.Schema({
   TaxDeduction: { type: Number },
   netSalary: { type: Number },
 
-//   allowance: [
-//     {
-//      type:mongoose.Schema.Types.ObjectId,
+  allowance: [
+    {
+     type:mongoose.Schema.Types.ObjectId,
      
-//      ref:'Allowance',}
+     ref:'Allowance',}
      
-//   ],
+  ],
   
-//   department: [
-//     {
-//      type:mongoose.Schema.Types.ObjectId,
+  department: 
+    {
+     type:mongoose.Schema.Types.ObjectId,
      
-//      ref:'Department',}
+     ref:'Department',
+      default:'63d21f8bea3fbb360d5c6980'
+    }  ,
+    companyId:{
+      type:String,
+      required:true
+    }   
+  ,
+  payroll: [
+    {
+     type:mongoose.Schema.Types.ObjectId,
      
-//   ],
-//   payroll: [
-//     {
-//      type:mongoose.Schema.Types.ObjectId,
+     ref:'Payroll',
+    }
      
-//      ref:'Payroll',
-//     }
-     
-//   ],
+  ],
 
 
-//    deduction:[ {
-//     type: mongoose.Schema.Types.ObjectId,
-//     ref: 'Deduction',
+   deduction:[ {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Deduction',
     
-//    }],
-//   image:[],
-//productImage: { type: String, required: true }
+   }],
+
 });
 
 module.exports = mongoose.model('Employee', employeeSchema);

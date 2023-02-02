@@ -4,6 +4,7 @@ const authcontroller = require('../controllers/authcontroller.js');
 const middleware=require('../middleware/auth.js');
 //Registration
 router.post('/companyRegistration', authcontroller.signup);
+
 //Trial registration
 router.post('/trialRegistration',authcontroller.trialRegistration);
 //PACKAGE SUBSCRIPTION
