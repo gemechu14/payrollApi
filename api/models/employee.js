@@ -76,7 +76,6 @@ const employeeSchema = mongoose.Schema({
      
   ],
 
-
    deduction:[ {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Deduction',

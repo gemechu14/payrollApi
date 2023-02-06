@@ -1,28 +1,22 @@
 const Allowance=require('../models/Allowance.js');
 const Employee=require('../models/employee.js');
 
-// exports.add_Allowance = async (req, res) => {
-//   const employeeId=req.params.employeeId;
-
-//   const newAllowance = new Allowance(req.body);
-//   try {
-//     const savedAllowance = await newAllowance.save();
-//     await Employee.findByIdAndUpdate(employeeId, {
-//       $push: { allowance: savedAllowance._id },
-      
-//     },      { new: true, useFindAndModify: false }
-//     );
-//     console.log(req.body);
-//     res.status(200).json({
-//       savedAllowance,
-//     });
+exports.add_Allowance = async (req, res) => {
+ 
+try{
+    const newAllowance = new Allowance(req.body);
+   savedAllowance=await newAllowance.save();
+    console.log(req.body);
+    res.status(200).json({
+      savedAllowance,
+    });
    
-//   } catch (err) {
-//     res.status(404).json({
-//       error: err,
-//     });
-//   }
-// };
+  } catch (err) {
+    res.status(404).json({
+      error: err,
+    });
+  }
+};
 
 
 //GET ALL
@@ -132,3 +126,27 @@ try {
   next(err);
 }
 };
+
+
+//ADD EXISTING ALLOWANCE TO EMPLOY
+
+
+exports.addExistingAllowances=async (req,res,next)=>{
+  try {
+    const allowanceId=req.params.allowanceId;
+   const employeeId=req.params.employeeId;
+  console.log(allowanceId);
+  console.log(employeeId);
+
+  const updated=  await Employee.findByIdAndUpdate(employeeId, {
+      $push: { allowance: allowanceId},
+      
+    },      { new: true, useFindAndModify: false }
+    );
+
+    res.status(200).json(updated);
+  } catch (err) {
+    next(err);
+  }
+
+}

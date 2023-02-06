@@ -13,11 +13,11 @@ exports.createPlan = async (req, res, next) => {
         //         .json(vm.ApiResponse(false, 400, 'all fields are required'))
         // }
        // const _expected_body = _.pick(req.body, ['price', 'name']);
-        const create_plan = new Package(req.body);
-        const save_plan = create_plan.save();
+        const create_plan = await Package(req.body);
+        const save_plan = await create_plan.save();
         if (save_plan) {
             return res.status(200)
-                .json(vm.ApiResponse(true, 200, 'success', save_plan))
+                .json(save_plan)
         } else {
             return res.status(400)
                 .json(vm.ApiResponse(false, 400, 'Oops! an error occurr,please try again later '))
@@ -29,15 +29,22 @@ exports.createPlan = async (req, res, next) => {
 
 exports.listPlan = async (req, res, next) => {
     try {
+
+    //  const sub=await Package.aggregate(
+    //         [
+    //            { $project: { no_of_Employee: { $concat: [ "$min_number_of_Emp", " - ", "$max_number_of_Emp" ] } } }
+    //         ]
+    //      )
         const subscription = await Package.find();
-        if (!subscription) {
-            return next('error occured')
-        } else {
+        // if (!subscription) {
+        //     return next('error occured')
+        // } else {
             res.status(200).json({
+               
                 count: subscription.length,
                 subscription,
               });
-        }
+        
     } catch (e) {
         return res.status(500)
     }

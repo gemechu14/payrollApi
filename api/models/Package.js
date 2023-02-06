@@ -2,9 +2,12 @@ const mongoose = require('mongoose');
 
 const packageSchema = mongoose.Schema({
   name: { type: String, enum: ['Monthly', 'Annual', 'Unlimited'] },
-  no_Of_Employee: {
-    range: String,
-    
+
+  min_number_of_Emp:{
+    type:String
+  },
+  max_number_of_Emp:{
+    type:String
   },
   price: {
     type: Number

@@ -354,7 +354,7 @@ exports.updateCompany=async (req,res,next)=>{
     console.log(req.params.email);
     
 
-  console.log()
+  console.log(req.body);
 
 
     const updatedCompany = await User.findOneAndUpdate(

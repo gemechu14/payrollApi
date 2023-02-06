@@ -10,9 +10,16 @@ const mongosanitize=require('express-mongo-sanitize');
 const hpp=require('hpp')
 const xss=require('xss-clean');
 app.use(helmet());
+const cron = require('node-cron');
+const User = require('./api/models/userModel.js');
+const moment = require("moment");
+
+
+
 
 const PackageRoute=require('./api/routes/Package.js')
-const TrialRoute=require('./api/routes/trial.js')
+const TrialRoute=require('./api/routes/trial.js');
+const scheduler=require('./api/utils/jobs.js')
 //Security
 
 //DATA SANITIZATION AGAINST NO SQL QUERY ENJECTION
@@ -121,6 +128,28 @@ app.use((err, req, res, next) => {
     stack: err.stack,
   });
 });
+
+
+
+cron.schedule('* * * * *', async function (req, res, next) {
+    let today_date = moment(new Date()).format("YYYY-MM-DD hh:mm");
+    const find_users = await User.find()
+    if (find_users) {
+        for (let i = 0; i < find_users.length; i++) {
+            let users = find_users[i];
+            //format user date to same format as today date then compare
+            let userDueDate = moment(users.next_payment_date).format("YYYY-MM-DD hh:mm");
+            if (today_date === userDueDate && today_date>userDueDate) {
+                let find_user = await User.findById(users._id);
+                find_user.isPaid = false;
+                find_user.next_payment_date=null;
+                find_user.startDate=null;
+
+                find_user.save()
+            }
+        }
+    }
+})
 
 app.listen(process.env.PORT, () => {
   connect();
