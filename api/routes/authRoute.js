@@ -32,6 +32,14 @@ router.put(
 
 //Send Email
 
+///DEcline Company
+router.post(
+  '/declineCompany',
+  middleware.protect,
+  middleware.restrictTo('superAdmin'),
+
+  authcontroller.declineCompany
+);
 
 
 router.get(

@@ -351,7 +351,12 @@ exports.protect = async (req, res, next) => {
 exports.updateCompany=async (req,res,next)=>{
 
   try {
-    console.log(req.params.email)
+    console.log(req.params.email);
+    
+
+  console.log()
+
+
     const updatedCompany = await User.findOneAndUpdate(
       {email:req.params.email},
       { $set: req.body },
@@ -543,6 +548,38 @@ exports.approveCompany = async (req, res, next) => {
       });
     }
   } catch (err) {
+    next(err);
+  }
+};
+//DEcline COMPANY
+exports.declineCompany = async (req, res, next) => {
+  const text='You have been blocked from accessing your account. Contact cooppayroll@gmail.com and resolve the issue';
+  try {
+    const email = req.body.email;
+    console.log(email);
+    const declinedCompany = await User.findOneAndUpdate(
+      { email },
+      { $set: { status: 'denied' } },
+      { new: true }
+    );
+    // const user = await User.find({"$and": [{status: "active"}, { role: { $ne: 'superAdmin' }}]});
+    try {
+      await sendEmail({
+        email: email,
+        subject:"Sorry Your account has been declined.",
+        text
+      });
+      res.status(200).json({
+        declinedCompany:declinedCompany,
+        status: 'success',
+        message: 'Message  sent to email',
+      });
+    } catch (err) {
+   
+      return res.status(500).json({
+        message: 'There was an error sending the email. Try again later!',
+      });}
+     } catch (err) {
     next(err);
   }
 };
