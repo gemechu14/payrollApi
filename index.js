@@ -100,7 +100,7 @@ app.use('/taxSlab', taxSlabRoute);
 app.use('/auth', authRoute);
 app.use('/user', userRoute);
 app.use('/employee', employeeRoute);
-app.use('/allowance', allowanceRoute);
+app.use('/allowance', allowanceRoute)
 app.use('/deduction', deductionRoute);
 app.use('/payrollMonth', payrollMonthRoute);
 app.use('/package',PackageRoute);

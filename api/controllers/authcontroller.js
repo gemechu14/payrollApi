@@ -244,11 +244,11 @@ exports.signup = async (req, res, next) => {
       },
     });
   } catch (err) {
-    next(createError.createError(404, 'fail'));
-    // res.status(404).json({
-    //   status: 'fail',
-    //   message: err,
-    // });
+   // next(createError.createError(404, 'fail'));
+    res.status(404).json({
+      status: 'fail',
+      message: err,
+    });
   }
 };
 

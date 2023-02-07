@@ -7,11 +7,14 @@ const departmentSchema = mongoose.Schema({
   deptName: {
     type: String,
     required: true,
+   
+   unique: true,
   },
 
   
   location: {
     type: String,
+    required:true
   },
  
 });

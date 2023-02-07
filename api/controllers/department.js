@@ -2,24 +2,34 @@ const Department = require('../models/department.js');
 const Employee = require('../models/employee.js');
 
 exports.add_dept = async (req, res) => {
-  const employeeId=req.params.employeeId;
-  const newDept = new Department(req.body);
+
   try {
-    const savedDept = await newDept.save();
-    console.log(req.body);
+    const employeeId = req.params.employeeId;
+    const {
 
-    try {
-      await Employee.findByIdAndUpdate(employeeId, {
-        $push: { department: savedDept._id },
+      deptName,
+      location
+    } = req.body;
+    //companyName,
+    const departmentName = await Department.findOne({deptName});
+    console.log(departmentName)
+    if (!departmentName) {
+      const newDept = new Department({
+        companyName: req.user.CompanyName,
+        deptName: deptName,
+        location: location
       });
-    } catch (err) {
-      next(err);
-    }
+      const savedDept = await newDept.save();
+      console.log(req.body);
 
-    res.status(200).json({ savedDept });
+      res.status(200).json({ savedDept });
+    }
+    else {
+      next('helloo')
+    }
   } catch (err) {
     res.status(404).json({
-      error: err,
+      error: 'Department name cannot be the same',
     });
   }
 };
@@ -58,7 +68,7 @@ exports.updateDept = async (req, res) => {
       { new: true }
     );
     res.status(200).json(updatedDept);
-  } catch (error) {}
+  } catch (error) { }
 };
 //DELETE
 exports.delete_Dept = async (req, res) => {
@@ -79,3 +89,23 @@ exports.search_By_Department = async (req, res) => {
     next(err);
   }
 };
+//SEARCH DEPARTMENT
+
+exports.searchDepartment = async (req, res, next) => {
+  try {
+    const key = req.params.key;
+
+    const department = await Department.find(
+      {
+        $and: [{ deptName: { $regex: new RegExp(key, 'i'), } },],
+
+      }
+    );
+    res.status(200).json({
+      count: department.length,
+      department: department,
+    });
+  } catch (err) {
+    next(err);
+  }
+}
