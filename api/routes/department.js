@@ -16,7 +16,10 @@ router.put('/:id', deptController.updateDept),
 //GET SINGLE Dept
 router.get('/find/:id', deptController.get_singe_Dept);
 //GET ALL Depts
-router.get('/', deptController.get_All_Dept);
+router.get('/',
+middleware.protect,
+middleware.restrictTo('Companyadmin'),
+deptController.get_All_Dept);
 
 //SEARCH
 router.get('/:key',deptController.searchDepartment)

@@ -6,6 +6,7 @@ const departmentSchema = mongoose.Schema({
   },
   deptName: {
     type: String,
+    default:'General',
     required: true,
    
    unique: true,
@@ -14,6 +15,7 @@ const departmentSchema = mongoose.Schema({
   
   location: {
     type: String,
+    default:'location',
     required:true
   },
  

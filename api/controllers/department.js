@@ -37,10 +37,10 @@ exports.add_dept = async (req, res) => {
 //GET ALL
 exports.get_All_Dept = async (req, res, next) => {
   const failed = true;
-  // if(failed) return next(createError(401,"You are not authenticated"))
+  // if(failed) return next(createError(401,"You are not authenticated"));
 
   try {
-    const depts = await Department.find();
+    const depts = await Department.find({companyName: req.user.CompanyName});
     res.status(200).json({
       count: depts.length,
       depts,
