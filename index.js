@@ -59,7 +59,7 @@ mongoose.Promise = global.Promise;
 const morgan=require('morgan');
 app.use(morgan("dev"));
 
-app.use('/uploads', express.static('uploads'));
+app.use('/uploads', express.static('./uploads'));
 
 
 const connect = async () => {

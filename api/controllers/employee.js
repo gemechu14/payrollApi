@@ -19,8 +19,7 @@ exports.add_employee = async (req, res, next) => {
   try {
     const x = await companyId1(req, res);
     console.log(x);
-    //   companyId=req.user.id;
-    //  console.log(companyId)
+ 
 
     const {
       fullname,
