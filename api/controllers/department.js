@@ -11,7 +11,7 @@ exports.add_dept = async (req, res) => {
       location
     } = req.body;
     //companyName,
-    const departmentName = await Department.findOne({deptName});
+    const departmentName = await Department.findOne({deptName,companyName: req.user.CompanyName});
     console.log(departmentName)
     if (!departmentName) {
       const newDept = new Department({

@@ -28,6 +28,8 @@ exports.add_employee = async (req, res, next) => {
       sex,
       id_number,
       email,
+
+      date_of_birth,
       images,
       phoneNumber,
       optionalNumber,
@@ -72,6 +74,7 @@ exports.add_employee = async (req, res, next) => {
       department: department,
       images: req.file.path,
       phoneNumber: phoneNumber,
+      date_of_birth:date_of_birth,
       optionalNumber: optionalNumber,
       emergency_contact: emergency_contact,
       hireDate: hireDate,

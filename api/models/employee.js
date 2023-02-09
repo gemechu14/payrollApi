@@ -7,7 +7,7 @@ const employeeSchema = mongoose.Schema({
   images: { type: String },
 
   sex: { type: String, required: true },
- // date_ofBirth:{type:Date,required:true},
+  date_of_birth:{type:Date,required:true},
   nationality: { type: String, required: true },
   id_number:{type:String, required:true},
   
