@@ -9,36 +9,36 @@ const employeeSchema = mongoose.Schema({
   sex: { type: String, required: true },
   date_of_birth:{type:Date,required:true},
   nationality: { type: String, required: true },
-  id_number:{type:String, required:true},
+  id_number:{type:String,},
   
 //     //CONTACT INFO
   email: { type: String, required: true, unique: true },
 
   phoneNumber: { type: String, required: true },
-  optionalNumber: { type: String, required: true },
-  emergency_contact:{type:String,required:true},
+  optionalNumber: { type: String, },
+  emergency_contact:{type:String,},
     //EMPLOYEMENT INFO
      
   hireDate: { type: Date, default: Date.now },
   joiningDate: { type: Date, default: Date.now },
-  employeeCode: { type: String, required: true },
-  employeeType: { type: String, required: true },
-  accountTitle: { type: String, required: true },
-  accountNumber: { type: String, required: true },
-  paymentMethod: { type: String, required: true },
-  separationDate: { type: String, required: true },
+  employeeCode: { type: String,  },
+  employeeType: { type: String,  },
+  accountTitle: { type: String,  },
+  accountNumber: { type: String,},
+  paymentMethod: { type: String,  },
+  separationDate: { type: String, },
 // //SALARY INFO
   basicSalary: { type: String, required: true },
-  housingAllowance: { type: String, required: true },
-  positionAllowance: { type: String, required: true },
-  hardshipAllowance: { type: String, required: true },
-  desertAllowance: { type: String, required: true },
-  transportAllowance: { type: String, required: true },
-  cashIndeminityAllowance: { type: String, required: true },
-  fieldAllowance: { type: String, required: true },
-  overtimeEarning: { type: String, required: true },
-  otherEarning: { type: String, required: true },
-  lateSittingOverTime: { type: String, required: true },
+  housingAllowance: { type: String,  },
+  positionAllowance: { type: String, },
+  hardshipAllowance: { type: String,},
+  desertAllowance: { type: String,  },
+  transportAllowance: { type: String, },
+  cashIndeminityAllowance: { type: String,  },
+  fieldAllowance: { type: String,  },
+  overtimeEarning: { type: String, },
+  otherEarning: { type: String,  },
+  lateSittingOverTime: { type: String, },
   arrears: { type: Number },
   dayDeduction: { type: Number },
   socialSecurity: { type: Number },
@@ -60,7 +60,7 @@ const employeeSchema = mongoose.Schema({
      type:mongoose.Schema.Types.ObjectId,
      
      ref:'Department',
-      default:'63d21f8bea3fbb360d5c6980'
+     
     }  ,
     companyId:{
       type:String,
@@ -81,7 +81,11 @@ const employeeSchema = mongoose.Schema({
     ref: 'Deduction',
     
    }],
-
+  //  img:
+  //  {
+  //      data: Buffer,
+  //      contentType: String
+  //  }
 });
 
 module.exports = mongoose.model('Employee', employeeSchema);

@@ -5,11 +5,20 @@ const twilio = require('twilio');
 const bodyParser = require('body-parser');
 require('dotenv').config();
 const rateLimit=require('express-rate-limit');
-const helmet=require('helmet');
+
+// const helmet=require('helmet');
 const mongosanitize=require('express-mongo-sanitize');
 const hpp=require('hpp')
 const xss=require('xss-clean');
-app.use(helmet());
+// helmet({
+//   crossOriginResourcePolicy: false,
+  
+// })
+// app.use(helmet.crossOriginEmbedderPolicy(true));
+// app.use(helmet({
+//   crossOriginEmbedderPolicy: false,
+// }));
+
 const cron = require('node-cron');
 const User = require('./api/models/userModel.js');
 const moment = require("moment");
@@ -83,7 +92,7 @@ const connect = async () => {
 
 app.use(
   cors({
-    origin: ['http://localhost:3000','http://localhost:3001','http://localhost:3002','http://localhost:*'],
+    origin: ['http://localhost:3000','http://localhost:3001','http://localhost:3002','http://localhost:*','*'],
     credentials: true,
   })
 );
@@ -118,6 +127,8 @@ app.use((req, res, next) => {
   next(error);
 });
 app.use((err, req, res, next) => {
+
+  res.removeHeader("Cross-Origin-Embedder-Policy");
   const errorStatus = err.status || 500;
   const errorMessage = err.message || 'Something went Wrong';
 

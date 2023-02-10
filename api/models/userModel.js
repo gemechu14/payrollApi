@@ -14,7 +14,7 @@ const userSchema = new mongoose.Schema({
   },
   companyCode: {
     type: String,
-    required:true
+    required:true,
   },
   phoneNumber: {
     type: String,
@@ -71,6 +71,10 @@ const userSchema = new mongoose.Schema({
   isPaid: {
     type: Boolean,
     default: false,
+  },
+  isDeleted:{
+    type:Boolean,
+  default:false
   },
   next_payment_date: {
     type: Date,

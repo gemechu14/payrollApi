@@ -7,6 +7,11 @@ const { promisify } = require('util');
 const User = require('../models/userModel.js');
 const { createError } = require('../utils/error.js');
 
+
+var fs = require('fs');
+var path = require('path');
+
+
 const companyId = '';
 //protect
 const companyId1 = async (req, res) => {
@@ -15,6 +20,9 @@ const companyId1 = async (req, res) => {
 };
 
 //Add
+
+
+
 exports.add_employee = async (req, res, next) => {
   try {
     const x = await companyId1(req, res);
@@ -63,7 +71,7 @@ exports.add_employee = async (req, res, next) => {
       netSalary,
     } = req.body;
 
-    //console.log(id);
+    console.log(req.file.filename);
     const newEmployee = await Employee.create({
       fullname: fullname,
       nationality: nationality,
@@ -72,7 +80,7 @@ exports.add_employee = async (req, res, next) => {
       email: email,
       department: department,
       images: req.file.path,
-      phoneNumber: phoneNumber,
+      phoneNumber: phoneNumber,//
       date_of_birth:date_of_birth,
       optionalNumber: optionalNumber,
       emergency_contact: emergency_contact,
@@ -80,7 +88,7 @@ exports.add_employee = async (req, res, next) => {
       joiningDate: joiningDate,
       employeeCode: employeeCode,
       employeeType: employeeType,
-      accountTitle: accountTitle,
+      accountTitle: accountTitle, 
       accountNumber: accountNumber,
       paymentMethod: paymentMethod,
 
@@ -104,11 +112,16 @@ exports.add_employee = async (req, res, next) => {
       TaxDeduction: TaxDeduction,
       netSalary: netSalary,
       companyId: req.user.id,
+      // img:{
+      //   data: fs.readFileSync("uploads/" + req.file.filename),
+      //   contentType: "image/png",
+      // }
     });
     const y = await companyId1(req, res);
     res.status(200).json({
       companyId: req.user.id,
       employee: newEmployee,
+
     });
   } catch (err) {
     next(err);
@@ -138,12 +151,53 @@ exports.get_All_Employee = async (req, res, next) => {
       .populate('deduction');
     res.status(200).json({
       count: employee.length,
-      employee,
+      employee
+     
+      
     });
   } catch (err) {
     next(err);
   }
 };
+ //   fullname: employee,
+      // nationality: employee.nationality,
+      // sex: employee.sex,
+      // id_number: employee.id_number,
+      // email: employee.email,
+      // department: employee.department,
+      // //images: req.file.path,
+      // phoneNumber: employee.phoneNumber,//
+      // date_of_birth:employee.date_of_birth,
+      // optionalNumber: employee.optionalNumber,
+      // emergency_contact: employee.emergency_contact,
+      // hireDate: employee.hireDate,
+      // joiningDate: employee.joiningDate,
+      // employeeCode: employee.employeeCode,
+      // employeeType: employee.employeeType,
+      // accountTitle: employee.accountTitle, 
+      // accountNumber: employee.accountNumber,
+      // paymentMethod: employee.paymentMethod,
+
+      // separationDate: employee.separationDate,
+      // basicSalary: employee.basicSalary,
+      // housingAllowance: employee.housingAllowance,
+      // positionAllowance: employee.positionAllowance,
+      // hardshipAllowance: employee.hardshipAllowance,
+      // desertAllowance: employee.desertAllowance,
+      // transportAllowance: employee.transportAllowance,
+      // cashIndeminityAllowance: employee.cashIndeminityAllowance,
+      // fieldAllowance: employee.fieldAllowance,
+      // overtimeEarning: employee.overtimeEarning,
+      // otherEarning: employee.otherEarning,
+      // lateSittingOverTime: employee.lateSittingOverTime,
+      // arrears: employee.arrears,
+      // dayDeduction: employee.dayDeduction,
+      // socialSecurity: employee.socialSecurity,
+      // providentFund: employee.providentFund,
+      // EOTBDeduction: employee.EOTBDeduction,
+      // TaxDeduction: employee.TaxDeduction,
+      // netSalary: employee.netSalary,
+      // companyId: employee.companyId,
 //GET one
 exports.get_single_Employee = async (req, res) => {
   try {
@@ -157,7 +211,9 @@ exports.get_single_Employee = async (req, res) => {
       .populate('deduction');
     res.status(200).json({
       count: employee.length,
-      employee,
+      employee:{
+        name:employee.fullname,
+      },
     });
   } catch (err) {
     next(err);
@@ -194,12 +250,14 @@ exports.delete_Employee = async (req, res,next) => {
 
 exports.searchAllEmployee = async (req, res, next) => {
   try {
+  const   query = req.query.search_query;
+    console.log(query);
     const key = req.params.key;
     console.log(req.user.id);
     const employee = await Employee.find({
       $and: [
         { companyId: req.user.id },
-        { fullname: { $regex: new RegExp(key, 'i') } },
+        { fullname: { $regex: new RegExp(query, 'i') } },
       ],
     })
       .populate('department')

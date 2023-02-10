@@ -4,6 +4,36 @@ const multer = require('multer');
 const employeeController = require('../controllers/employee.js');
 const middleware = require('../middleware/auth.js');
 
+
+
+
+//////
+const storage2 = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads");
+  },
+  filename: (req, file, cb) => {
+    cb(null, file.originalname);
+  },
+});
+
+const upload2 = multer({ storage: storage2 });
+////
+
+var storage1 = multer.diskStorage({
+  destination: (req, file, cb) => {
+      cb(null, './uploads/')
+  },
+  filename: (req, file, cb) => {
+      cb(null, +Date.now() + '' + file.originalname);
+  }
+});
+
+var upload1 = multer({ storage: storage1 });
+//////
+
+
+
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, './uploads/');
@@ -29,6 +59,9 @@ const upload = multer({
   },
   fileFilter: fileFilter,
 });
+
+
+
 
 //upload.single('images'),
 router.post(
@@ -74,7 +107,8 @@ employeeController.get_By_Department);
 //SEARCH EMPLOYEE
 
 router.get(
-  '/searchAllEmployee/:key',
+  '/employee/',
+  
   middleware.protect,
   middleware.restrictTo('Companyadmin'),
   employeeController.searchAllEmployee
