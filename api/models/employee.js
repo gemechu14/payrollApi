@@ -12,7 +12,7 @@ const employeeSchema = mongoose.Schema({
 //   id_number:{type:String,},
   
 // //     //CONTACT INFO
-//   email: { type: String, required: true, unique: true },
+  email: { type: String, required: true, unique: true },
 
 //   phoneNumber: { type: String, required: true },
 //   optionalNumber: { type: String, },
@@ -65,8 +65,8 @@ const employeeSchema = mongoose.Schema({
     companyId:{
       type:String,
       
-    }   
-  ,
+    }   ,
+  
   payroll: [
     {
      type:mongoose.Schema.Types.ObjectId,
