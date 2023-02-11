@@ -31,14 +31,14 @@ exports.add_employee = async (req, res, next) => {
 
     const {
       fullname,
-      // nationality,
-      // sex,
-      // id_number,
+      nationality,
+      sex,
+      id_number,
        email,
 
-      // date_of_birth,
-      // images,
-      // phoneNumber,
+      date_of_birth,
+      images,
+      phoneNumber,
       // optionalNumber,
       // emergency_contact,
       // hireDate,
@@ -73,14 +73,14 @@ exports.add_employee = async (req, res, next) => {
 
     const newEmployee = await Employee.create({
       fullname: fullname,
-      // nationality: nationality,
-      // sex: sex,
-      // id_number: id_number,
+      nationality: nationality,
+      sex: sex,
+      id_number: id_number,
        email: email,
       // department: department,
-      // images: req.file.path,
-      // phoneNumber: phoneNumber,//
-      // date_of_birth:date_of_birth,
+      images: req.file.path,
+      phoneNumber: phoneNumber,//
+      date_of_birth:date_of_birth,
       // optionalNumber: optionalNumber,
       // emergency_contact: emergency_contact,
       // hireDate: hireDate,

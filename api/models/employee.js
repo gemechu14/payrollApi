@@ -4,17 +4,17 @@ const employeeSchema = mongoose.Schema({
     //BASIC INFO
     
   fullname: { type: String, required: true },
-//   images: { type: String },
+  images: { type: String },
 
-//   sex: { type: String, required: true },
-//   date_of_birth:{type:Date,required:true},
-//   nationality: { type: String, required: true },
-//   id_number:{type:String,},
+  sex: { type: String, required: true },
+  date_of_birth:{type:Date,required:true},
+  nationality: { type: String, required: true },
+  id_number:{type:String,},
   
 // //     //CONTACT INFO
   email: { type: String, required: true, unique: true },
 
-//   phoneNumber: { type: String, required: true },
+  phoneNumber: { type: String, required: true },
 //   optionalNumber: { type: String, },
 //   emergency_contact:{type:String,},
 //     //EMPLOYEMENT INFO
