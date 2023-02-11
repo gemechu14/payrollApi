@@ -110,7 +110,7 @@ exports.add_employee = async (req, res, next) => {
       // EOTBDeduction: EOTBDeduction,
       // TaxDeduction: TaxDeduction,
       // netSalary: netSalary,
-      // companyId: req.user.id,
+      companyId: req.user.id,
       // img:{
       //   data: fs.readFileSync("uploads/" + req.file.filename),
       //   contentType: "image/png",
