@@ -64,15 +64,21 @@ const upload = multer({
 
 
 //upload.single('images'),
+// router.post(
+//   '/',
+//   middleware.protect,
+//   middleware.restrictTo('Companyadmin'),
+//   upload.single('images'),
+//   employeeController.add_employee
+// );
+
 router.post(
   '/',
   middleware.protect,
   middleware.restrictTo('Companyadmin'),
-  upload.single('images'),
+
   employeeController.add_employee
 );
-
-
 //UPDATE
 router.put('/:employeeId', 
 middleware.protect,
