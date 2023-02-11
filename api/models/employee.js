@@ -19,8 +19,8 @@ const employeeSchema = mongoose.Schema({
   emergency_contact:{type:String,},
     //EMPLOYEMENT INFO
      
-  hireDate: { type: Date, default: Date.now },
-  joiningDate: { type: Date, default: Date.now },
+  hireDate: { type: Date, },
+  joiningDate: { type: Date, },
   employeeCode: { type: String,  },
   employeeType: { type: String,  },
   accountTitle: { type: String,  },
