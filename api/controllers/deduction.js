@@ -4,8 +4,6 @@ const Employee=require('../models/employee.js')
 
 
 
-
-
 //GET ALL
 exports.get_All_Deduction = async (req, res, next) => {
   const failed = true;
@@ -47,8 +45,6 @@ exports.updateDeduction = async (req, res) => {
 
 
 //ADD 
-
-
 
 exports.Add_Deduction = async (req, res, next) => {
   

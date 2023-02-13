@@ -19,14 +19,14 @@ const employeeSchema = mongoose.Schema({
   emergency_contact:{type:String,},
     //EMPLOYEMENT INFO
      
-  // hireDate: { type: Date, },
-  // joiningDate: { type: Date, },
-  // employeeCode: { type: String,  },
-  // employeeType: { type: String,  },
-  // accountTitle: { type: String,  },
-  // accountNumber: { type: String,},
-  // paymentMethod: { type: String,  },
-  // separationDate: { type: String, },
+  hireDate: { type: Date, },
+  joiningDate: { type: Date, },
+  employeeCode: { type: String,  },
+  employeeType: { type: String,  },
+  accountTitle: { type: String,  },
+  accountNumber: { type: String,},
+  paymentMethod: { type: String,  },
+  separationDate: { type: String, },
 // //SALARY INFO
   basicSalary: { type: String, required: true },
   housingAllowance: { type: String,  },

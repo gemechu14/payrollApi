@@ -9,6 +9,10 @@ const payrollMonthSchema = mongoose.Schema({
     type: Date,
     required: true,
   },
+  companyId:{
+    type:String
+  }
+
 });
 
 module.exports = mongoose.model('PayrollMonth', payrollMonthSchema);

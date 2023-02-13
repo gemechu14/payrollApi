@@ -1,12 +1,21 @@
+const payrollMonth = require('../models/payrollMonth.js');
 const PayrollMonth=require('../models/payrollMonth.js');
 
 exports.add_payrollMonth = async (req, res) => {
-  const newpayrollMonth = new PayrollMonth(req.body);
+ 
   try {
-    const savedpayrollMonth = await newpayrollMonth.save();
-    console.log(req.body);
+    const {
+      startDate,
+      endDate
+    }=req.body;
+    const newpayrollMonth = await payrollMonth.create({
+      startDate:startDate,
+      endDate:endDate,
+      companyId:req.user.id
+    })
+ 
     res.status(200).json({
-      savedpayrollMonth,
+      newpayrollMonth,
     });
    
   } catch (err) {
@@ -22,7 +31,7 @@ exports.get_All_monthPayroll = async (req, res, next) => {
 
 
   try {
-    const monthPayroll = await PayrollMonth.find();
+    const monthPayroll = await PayrollMonth.find({companyId:req.user.id});
     res.status(200).json({
       count: monthPayroll.length,
       monthPayroll,

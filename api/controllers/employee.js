@@ -84,14 +84,14 @@ exports.add_employee = async (req, res, next) => {
       optionalNumber: optionalNumber,
       emergency_contact: emergency_contact,
       
-      // hireDate: hireDate,
-      // joiningDate: joiningDate,
-      // employeeCode: employeeCode,
-      // employeeType: employeeType,
-      // accountTitle: accountTitle, 
-      // accountNumber: accountNumber,
-      // paymentMethod: paymentMethod,
-      // separationDate: separationDate,
+      hireDate: hireDate,
+      joiningDate: joiningDate,
+      employeeCode: employeeCode,
+      employeeType: employeeType,
+      accountTitle: accountTitle, 
+      accountNumber: accountNumber,
+      paymentMethod: paymentMethod,
+      separationDate: separationDate,
 
 
       //Salary Information
