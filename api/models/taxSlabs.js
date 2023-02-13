@@ -22,5 +22,6 @@ const taxSlabmodel = mongoose.Schema({
     type: String,
     required:true
   },
+
 });
 module.exports = mongoose.model('TaxSlab', taxSlabmodel);

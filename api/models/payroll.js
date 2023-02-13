@@ -19,6 +19,9 @@ const payrollmodel = mongoose.Schema({
     type: String,
     required: true,
   },
+  companyId:{
+    type:String
+  }
   //PROVIDENT FUND
 
 //  type: {

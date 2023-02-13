@@ -12,7 +12,7 @@ const taxSlabController = require('../controllers/taxSlab.js');
 //GET SINGLE Payroll
 router.get('/find/:id',taxSlabController.get_single_TaxSlab);
 // //GET ALL 
-router.get('/gammee', taxSlabController.get_All_TaxSlab);
+router.get('/', taxSlabController.get_All_TaxSlab);
 router.post('/:payrollId',taxSlabController.add_taxslab)
 
 module.exports = router;

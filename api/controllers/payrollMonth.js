@@ -43,7 +43,7 @@ exports.get_All_monthPayroll = async (req, res, next) => {
 //GET One
 exports.get_single_monthPayroll = async (req, res) => {
   try {
-    const monthPayroll = await PayrollMonth.findById(req.params.id);
+    const monthPayroll = await PayrollMonth.find({companyId:req.user.id,_id:req.params.id});
     res.status(200).json(monthPayroll);
   } catch (error) {
     res.status(500).json(error);

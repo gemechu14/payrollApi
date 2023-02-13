@@ -19,8 +19,7 @@ payrollMonthController.updatemonthPayroll),
 //DELETE
 router.delete("/:id",
 
-middleware.protect,
-middleware.restrictTo('Companyadmin'),
+
 payrollMonthController.delete_monthPayroll);
 
 //GET ONE

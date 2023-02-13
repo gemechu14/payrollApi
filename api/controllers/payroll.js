@@ -3,14 +3,30 @@ const Employee = require('../models/employee.js');
 const { set } = require('mongoose');
 
 exports.add_payroll = async (req, res) => {
-  const newPayroll = new Payroll(req.body);
+  //const newPayroll = new Payroll(req.body);
 
   try {
-    const savedPayroll = await newPayroll.save();
+    const {
+      payrollID,
+      payrollName,
+      taxSlab,
+      payrollYear
+    }=req.body;
+    const newpayroll = await Payroll.create({
+      payrollID:payrollID,
+      payrollName:payrollName,
+      taxSlab:taxSlab,
+      payrollYear:payrollYear,
+      companyId:req.user.id
+    })
+ 
+
+
+    //const savedPayroll = await newPayroll.save();
 
     console.log(req.body);
     res.status(200).json({
-      savedPayroll,
+      newpayroll,
     });
   } catch (err) {
     res.status(404).json({
@@ -25,7 +41,7 @@ exports.get_All_Payroll = async (req, res, next) => {
 
 
   try {
-    const payrolls = await Payroll.find().populate('taxSlab');
+    const payrolls = await Payroll.find({companyId:req.user.id}).populate('taxSlab');
     res.status(200).json({
       count: payrolls.length,
       payrolls,
