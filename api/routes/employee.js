@@ -68,7 +68,7 @@ router.post(
   '/',
   middleware.protect,
   middleware.restrictTo('Companyadmin'),
- // upload.single('images'),
+ //upload.single('images'),
   employeeController.add_employee
 );
 

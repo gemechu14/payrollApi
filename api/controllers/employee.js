@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken');
 const { promisify } = require('util');
 const User = require('../models/userModel.js');
 const { createError } = require('../utils/error.js');
+const multer = require('multer');
 
 
 var fs = require('fs');
@@ -18,6 +19,63 @@ const companyId1 = async (req, res) => {
   let companyId = req.user.id;
   return companyId;
 };
+
+const storage2 = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads");
+  },
+  filename: (req, file, cb) => {
+    cb(null, file.originalname);
+  },
+});
+
+const upload2 = multer({ storage: storage2 });
+////
+
+var storage1 = multer.diskStorage({
+  destination: (req, file, cb) => {
+      cb(null, './uploads/')
+  },
+  filename: (req, file, cb) => {
+      cb(null, +Date.now() + '' + file.originalname);
+  }
+});
+
+var upload1 = multer({ storage: storage1 });
+//////
+
+
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, './uploads/');
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname);
+  },
+});
+
+const fileFilter = (req, file, cb) => {
+  // reject a file
+  if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
+    cb(null, true);
+  } else {
+    cb(null, false);
+  }
+};
+
+const upload = multer({
+  storage: storage,
+  limits: {
+
+    fileSize: 1024 * 1024 * 5,
+  },
+  fileFilter: fileFilter,
+});
+
+
+
+
 
 //Add
 
@@ -37,7 +95,7 @@ exports.add_employee = async (req, res, next) => {
        email,
 
       date_of_birth,
-      //images,
+    images,
       phoneNumber,
       optionalNumber,
       emergency_contact,
@@ -71,6 +129,12 @@ exports.add_employee = async (req, res, next) => {
       netSalary,
     } = req.body;
 
+    if (req.files) {
+       {
+       console.log(req.files)
+       
+      };
+    }
     const newEmployee = await Employee.create({
       fullname: fullname,
       nationality: nationality,
@@ -78,7 +142,7 @@ exports.add_employee = async (req, res, next) => {
       id_number: id_number,
        email: email,
       department: department,
-      //images: req.file.path,
+      
       phoneNumber: phoneNumber,//
       date_of_birth:date_of_birth,
       optionalNumber: optionalNumber,
@@ -115,6 +179,10 @@ exports.add_employee = async (req, res, next) => {
       TaxDeduction: TaxDeduction,
       netSalary: netSalary,
       companyId: req.user.id,
+      images:req.files
+      
+
+    
       // img:{
       //   data: fs.readFileSync("uploads/" + req.file.filename),
       //   contentType: "image/png",

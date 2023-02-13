@@ -21,31 +21,32 @@ const payrollmodel = mongoose.Schema({
   },
   companyId:{
     type:String
-  }
+  },
   //PROVIDENT FUND
 
-//  type: {
-//     type: String,
-//     required: true,
-//   },
-//   Employer_contribution: {
-//     type: String,
-//     required: true,
-//   },
-//   Employee_contribution: {
-//     type: String,
-//     required: true,
-//   },
+ type: {
+    type: String,
+    enum:['Percentage','Amount']
+    
+  },
+  employeer_Contribution: {
+    type: String,
+   
+  },
+  employee_Contribution: {
+    type: String,
+    
+  },
 
-//   //TAX EXAMPTION
-//   income_limit: {
-//     type: String,
-//   },
-//   age_limit: {
-//     type: String,
-//   },
-//   Exampt_percentage: {
-//     type: String,
-//   },
+  //TAX EXAMPTION
+  taxable_income_limit: {
+    type: String,
+  },
+  Exampt_age_limit: {
+    type: String,
+  },
+  Exampt_percentage: {
+    type: String,
+  },
 });
 module.exports = mongoose.model('Payroll', payrollmodel);
