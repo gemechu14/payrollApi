@@ -39,7 +39,11 @@ middleware.restrictTo('Companyadmin'),
 deductionController.get_All_Deduction);
 
 //ADD EXISTING ALLOWANCE TO EMPLOYEE
-router.post('/:employeeId/:deductionId',deductionController.addExistingDeduction
+router.post('/:employeeId/:deductionId',
+middleware.protect,
+middleware.restrictTo('Companyadmin'),
+
+deductionController.addExistingDeduction
 );
 
 

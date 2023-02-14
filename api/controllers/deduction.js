@@ -1,7 +1,7 @@
 const Deduction = require('../models/deduction.js');
 //const Deduction=require('../models/deduction.js');
 const Employee=require('../models/employee.js')
-
+const mongoose=require('mongoose');
 
 
 //GET ALL
@@ -192,10 +192,13 @@ exports.addExistingDeduction=async (req,res,next)=>{
 
   console.log(deductionId);
 
-  // const check=await Employee.find({_id:employeeId,deduction:[deductionId]});
-  // console.log(check);
+  const check=await Employee.find({_id:employeeId});
 
+  //console.log(mongoose.Types.ObjectId(deductionId));
+//console.log(!Zcheck[0].deduction.includes(mongoose.Types.ObjectId(deductionId)))
+  //console.log( check.deduction.includes(mongoose.Types.ObjectId(deductionId)));
 
+if(!check[0].deduction.includes(mongoose.Types.ObjectId(deductionId))){
   const updated=  await Employee.findByIdAndUpdate(employeeId, {
       $push: { deduction: deductionId},
       
@@ -205,7 +208,10 @@ exports.addExistingDeduction=async (req,res,next)=>{
 
     res.status(200).json(updated);
 
-    res.status(404).json('deduction already added')
+  }
+  else{
+    res.status(404).json('already added')
+  }
   
   } catch (err) {
     next(err);

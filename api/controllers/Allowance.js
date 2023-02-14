@@ -1,6 +1,6 @@
 const Allowance=require('../models/Allowance.js');
 const Employee=require('../models/employee.js');
-
+const mongoose=require('mongoose')
 exports.add_Allowance = async (req, res) => {
   try {
     const {
@@ -182,7 +182,9 @@ exports.addExistingAllowances=async (req,res,next)=>{
    const employeeId=req.params.employeeId;
   console.log(allowanceId);
   console.log(employeeId);
+  const check=await Employee.find({_id:employeeId});
 
+  if(!check[0].allowance.includes(mongoose.Types.ObjectId(allowanceId))){
   const updated=  await Employee.findByIdAndUpdate(employeeId, {
       $push: { allowance: allowanceId},
       
@@ -190,6 +192,10 @@ exports.addExistingAllowances=async (req,res,next)=>{
     );
 
     res.status(200).json(updated);
+  }
+  else{
+    res.status(404).json('already added')
+  }
   } catch (err) {
     next(err);
   }
