@@ -3,12 +3,16 @@ const router = express.Router();
 const deductionController = require('../controllers/deduction.js');
 const middleware=require('../middleware/auth.js')
 //CREATE
-router.post('/:employeeId',
+router.post('/',
 
 middleware.protect,
 middleware.restrictTo('Companyadmin'),
 
-deductionController.Add_Deduction);
+deductionController.add_new_deduction);
+
+
+
+
 //UPDATE
 router.put('/:employeeId/:id',
 middleware.protect,
@@ -33,5 +37,10 @@ router.get('/',
 middleware.protect,
 middleware.restrictTo('Companyadmin'),
 deductionController.get_All_Deduction);
+
+//ADD EXISTING ALLOWANCE TO EMPLOYEE
+router.post('/:employeeId/:deductionId',deductionController.addExistingDeduction
+);
+
 
 module.exports = router;

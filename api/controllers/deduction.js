@@ -10,7 +10,7 @@ exports.get_All_Deduction = async (req, res, next) => {
   // if(failed) return next(createError(401,"You are not authenticated"))
 
   try {
-    const deduction = await Deduction.find();
+    const deduction = await Deduction.find({companyId:req.user.id});
     res.status(200).json({
       count: deduction.length,
       deduction,
@@ -39,6 +39,43 @@ exports.updateDeduction = async (req, res) => {
     );
     res.status(200).json(updatedDeduction);
   } catch (error) {}
+};
+
+
+///////////////
+exports.add_new_deduction = async (req, res) => {
+  try {
+    const {
+      name,
+      amount,
+      month,
+      year,
+      description,
+      
+    }=req.body;
+    const newDeduction = await Deduction.create({
+      name:name,
+      amount:amount,
+      month:month,
+      year:year,
+      description:description,
+      companyId:req.user.id
+    })
+ 
+
+
+    //const savedPayroll = await newPayroll.save();
+
+    console.log(req.body);
+    res.status(200).json({
+      newDeduction,
+    });
+   
+  } catch (err) {
+    res.status(404).json({
+      error: err,
+    });
+  }
 };
 
 
@@ -139,3 +176,39 @@ try {
   next(err);
 }
 };
+
+
+
+
+
+
+//ADD EXISTING Deduction TO EMPLOY
+
+
+exports.addExistingDeduction=async (req,res,next)=>{
+  try {
+    const deductionId=req.params.deductionId;
+   const employeeId=req.params.employeeId;
+
+  console.log(deductionId);
+
+  // const check=await Employee.find({_id:employeeId,deduction:[deductionId]});
+  // console.log(check);
+
+
+  const updated=  await Employee.findByIdAndUpdate(employeeId, {
+      $push: { deduction: deductionId},
+      
+    },      { new: true, useFindAndModify: false }
+    ).populate('deduction')
+    .populate('allowance');
+
+    res.status(200).json(updated);
+
+    res.status(404).json('deduction already added')
+  
+  } catch (err) {
+    next(err);
+  }
+
+}

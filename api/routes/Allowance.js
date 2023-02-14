@@ -17,7 +17,7 @@ middleware.restrictTo('Companyadmin'),
 
  allowanceController.Create_Allowances);
 //UPDATE
-router.post('/:employeeId/:id', 
+router.put('/:id', 
 middleware.protect,
 middleware.restrictTo('Companyadmin'),
 allowanceController.updateAllowance),

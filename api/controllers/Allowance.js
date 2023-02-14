@@ -141,11 +141,36 @@ try {
   } catch (err) {
     next(err);
   }
+
+  
   res.status(200).json("Allowance has been deleted.");
 } catch (err) {
   next(err);
 }
 };
+
+
+
+//DELETE Allowances
+exports.deleteAllowances = async (req, res) => {
+  const employeeId = req.params.employeeId;
+try {
+  await Allowance.findByIdAndDelete(req.params.id);
+ 
+
+  
+  res.status(200).json("Allowance has been deleted.");
+} catch (err) {
+  next(err);
+}
+};
+
+
+
+
+
+
+
 
 
 //ADD EXISTING ALLOWANCE TO EMPLOY
@@ -171,3 +196,17 @@ exports.addExistingAllowances=async (req,res,next)=>{
 
 }
 
+
+exports.deleteAllowance=async(req,res,next)=>{
+
+  try {
+
+const deletedAllowance=  await Allowance.findByIdAndDelete(req.params.id);
+
+res.status(200).json(deletedAllowance);
+    
+  } catch (error) {
+    next(error)
+    
+  }
+}
