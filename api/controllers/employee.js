@@ -129,12 +129,15 @@ exports.add_employee = async (req, res, next) => {
       netSalary,
     } = req.body;
 
-    // if (req.file.isEmpty) {
-    //   images = req.files.map((file) => {
-    //     return { img: file.filename };
-    //   });
-    // }
-  
+    let newPath = null;
+    if (req.file) {
+      console.log('images')
+      const {originalname,path} = req.file;
+      const parts = originalname.split('.');
+      const ext = parts[parts.length - 1];
+      newPath = path+'.'+ext;
+      fs.renameSync(path, newPath);
+    }
     const newEmployee = await Employee.create({
       fullname: fullname,
       nationality: nationality,
@@ -179,7 +182,7 @@ exports.add_employee = async (req, res, next) => {
       TaxDeduction: TaxDeduction,
       netSalary: netSalary,
       companyId: req.user.id,
-     // images:req.file.filename
+      images: newPath ? newPath : null,
 
 
     

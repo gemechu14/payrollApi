@@ -2,13 +2,30 @@ const Allowance=require('../models/Allowance.js');
 const Employee=require('../models/employee.js');
 
 exports.add_Allowance = async (req, res) => {
+  try {
+    const {
+      name,
+      amount,
+      month,
+      year,
+      description
+    }=req.body;
+    const newAllowance = await Allowance.create({
+      name:name,
+      amount:amount,
+      month:month,
+      year:year,
+      description:description,
+      companyId:req.user.id
+    })
  
-try{
-    const newAllowance = new Allowance(req.body);
-   savedAllowance=await newAllowance.save();
+
+
+    //const savedPayroll = await newPayroll.save();
+
     console.log(req.body);
     res.status(200).json({
-      savedAllowance,
+      newAllowance,
     });
    
   } catch (err) {
@@ -25,7 +42,7 @@ exports.get_All_Allowance = async (req, res, next) => {
   // if(failed) return next(createError(401,"You are not authenticated"))
 
   try {
-    const allowance = await Allowance.find();
+    const allowance = await Allowance.find({companyId:req.user.id});
     res.status(200).json({
       count: allowance.length,
       allowance,
@@ -37,7 +54,7 @@ exports.get_All_Allowance = async (req, res, next) => {
 //GET one
 exports.get_single_Allowance = async (req, res) => {
   try {
-    const allowance = await Allowance.findById(req.params.id);
+    const allowance = await Allowance.findById({companyId:req.user.id,_id:req.params.id});
     res.status(200).json(allowance);
   } catch (error) {
     res.status(500).json(error);
@@ -48,12 +65,15 @@ exports.get_single_Allowance = async (req, res) => {
 exports.updateAllowance = async (req, res) => {
   try {
     const updatedAllowance = await Allowance.findByIdAndUpdate(
-      req.params.id,
+      {companyId:req.user.id,_id:req.params.id},
       { $set: req.body },
       { new: true }
     );
     res.status(200).json(updatedAllowance);
-  } catch (error) {}
+  } catch (error) {
+
+    error
+  }
 };
 
 
@@ -150,3 +170,4 @@ exports.addExistingAllowances=async (req,res,next)=>{
   }
 
 }
+

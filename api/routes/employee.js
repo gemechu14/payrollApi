@@ -68,7 +68,7 @@ router.post(
   '/',
   middleware.protect,
   middleware.restrictTo('Companyadmin'),
- upload.single('file'),
+ upload.single('images'),
   employeeController.add_employee
 );
 
@@ -134,7 +134,7 @@ router.post('/gammee', middleware.protect, middleware.restrictTo('Companyadmin')
       const {originalname,path} = req.file;
       const parts = originalname.split('.');
       const ext = parts[parts.length - 1];
-      newPath = path;
+      newPath = path+'.'+ext;
       fs.renameSync(path, newPath);
     }
 
