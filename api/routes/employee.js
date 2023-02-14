@@ -4,8 +4,8 @@ const multer = require('multer');
 const employeeController = require('../controllers/employee.js');
 const middleware = require('../middleware/auth.js');
 
-
-
+const fs=require('fs');
+const Employee=require('../models/employee.js')
 
 //////
 const storage2 = multer.diskStorage({
@@ -68,9 +68,11 @@ router.post(
   '/',
   middleware.protect,
   middleware.restrictTo('Companyadmin'),
- upload.single('images'),
+ upload.single('file'),
   employeeController.add_employee
 );
+
+
 
 // router.post(
 //   '/',
@@ -119,4 +121,155 @@ router.get(
   middleware.restrictTo('Companyadmin'),
   employeeController.searchAllEmployee
 );
+
+
+/////
+router.post('/gammee', middleware.protect, middleware.restrictTo('Companyadmin'), upload.single('file'),async(req,res,next)=>{
+
+  try {
+
+    let newPath = null;
+    if (req.file) {
+      console.log('images')
+      const {originalname,path} = req.file;
+      const parts = originalname.split('.');
+      const ext = parts[parts.length - 1];
+      newPath = path;
+      fs.renameSync(path, newPath);
+    }
+
+    
+      const {
+      fullname,
+      nationality,
+      sex,
+      id_number,
+       email,
+
+      date_of_birth,
+    images,
+      phoneNumber,
+      optionalNumber,
+      emergency_contact,
+      hireDate,
+      joiningDate,
+      employeeCode,
+      employeeType,
+      accountTitle,
+      accountNumber,
+      paymentMethod,
+      department,
+
+      separationDate,
+      basicSalary,
+      housingAllowance,
+      positionAllowance,
+      hardshipAllowance,
+      desertAllowance,
+      transportAllowance,
+      cashIndeminityAllowance,
+      fieldAllowance,
+      overtimeEarning,
+      otherEarning,
+      lateSittingOverTime,
+      arrears,
+      dayDeduction,
+      socialSecurity,
+      providentFund,
+      EOTBDeduction,
+      TaxDeduction,
+      netSalary,
+    } = req.body;
+
+    // if (req.file.isEmpty) {
+    //   images = req.files.map((file) => {
+    //     return { img: file.filename };
+    //   });
+    // }
+  
+    const newEmployee = await Employee.create({
+      fullname: fullname,
+      nationality: nationality,
+      sex: sex,
+      id_number: id_number,
+       email: email,
+      department: department,
+      
+      phoneNumber: phoneNumber,//
+      date_of_birth:date_of_birth,
+      optionalNumber: optionalNumber,
+      emergency_contact: emergency_contact,
+      
+      hireDate: hireDate,
+      joiningDate: joiningDate,
+      employeeCode: employeeCode,
+      employeeType: employeeType,
+      accountTitle: accountTitle, 
+      accountNumber: accountNumber,
+      paymentMethod: paymentMethod,
+      separationDate: separationDate,
+
+
+      //Salary Information
+
+      basicSalary: basicSalary,
+      housingAllowance: housingAllowance,
+      positionAllowance: positionAllowance,
+      hardshipAllowance: hardshipAllowance,
+      desertAllowance: desertAllowance,
+      transportAllowance: transportAllowance,
+      cashIndeminityAllowance: cashIndeminityAllowance,
+      fieldAllowance: fieldAllowance,
+      overtimeEarning: overtimeEarning,
+      otherEarning: otherEarning,
+      lateSittingOverTime: lateSittingOverTime,
+      arrears: arrears,
+      dayDeduction: dayDeduction,
+      socialSecurity: socialSecurity,
+      providentFund: providentFund,
+      EOTBDeduction: EOTBDeduction,
+      TaxDeduction: TaxDeduction,
+      netSalary: netSalary,
+      companyId: req.user.id,
+      images: newPath ? newPath : null,
+
+
+    
+      // img:{
+      //   data: fs.readFileSync("uploads/" + req.file.filename),
+      //   contentType: "image/png",
+      // }
+    });
+  
+    res.status(200).json({
+      //companyId: req.user.id,
+      employee: newEmployee,
+
+    });
+  } catch (err) {
+    next(err);
+    // const newEmployee = new Employee(req.body);
+    // try {
+    //   // const saved = await newEmployee;
+    //   const savedEmployee = await newEmployee().save();
+    //   console.log(req.body);
+    //   res.status(200).json({
+    //     savedEmployee,
+    //   });
+    // } catch (err) {
+    //   res.status(404).json({
+    //     error: err,
+    //   });
+    // }
+  }
+
+}
+);
+
+
+
+
+
+
+
 module.exports = router;

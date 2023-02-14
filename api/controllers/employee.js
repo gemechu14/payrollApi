@@ -179,7 +179,7 @@ exports.add_employee = async (req, res, next) => {
       TaxDeduction: TaxDeduction,
       netSalary: netSalary,
       companyId: req.user.id,
-      images:req.file.filename
+     // images:req.file.filename
 
 
     

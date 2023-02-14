@@ -10,14 +10,26 @@ exports.add_payroll = async (req, res) => {
       payrollID,
       payrollName,
       taxSlab,
-      payrollYear
+      payrollYear,
+      type,
+      employeer_Contribution,
+      employee_Contribution,
+      taxable_income_limit,
+      exampt_age_limit,
+      exampt_percentage
     }=req.body;
     const newpayroll = await Payroll.create({
       payrollID:payrollID,
       payrollName:payrollName,
       taxSlab:taxSlab,
       payrollYear:payrollYear,
-      companyId:req.user.id
+      companyId:req.user.id,
+      type:type,
+      employeer_Contribution:employee_Contribution,
+      employee_Contribution:employee_Contribution,
+      taxable_income_limit:taxable_income_limit,
+      exampt_age_limit:exampt_age_limit,
+      exampt_percentage:exampt_percentage
     })
  
 
