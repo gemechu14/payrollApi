@@ -142,7 +142,7 @@ app.use((err, req, res, next) => {
 
 
 
-cron.schedule('* * * * *', async function (req, res, next) {
+cron.schedule('*/60 * * * *', async function (req, res, next) {
     let today_date = moment(new Date()).format("YYYY-MM-DD hh:mm");
     const find_users = await User.find()
     if (find_users) {

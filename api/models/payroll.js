@@ -42,10 +42,10 @@ const payrollmodel = mongoose.Schema({
   taxable_income_limit: {
     type: String,
   },
-  Exampt_age_limit: {
+  exampt_age_limit: {
     type: String,
   },
-  Exampt_percentage: {
+  exampt_percentage: {
     type: String,
   },
 });

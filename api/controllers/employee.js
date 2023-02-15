@@ -182,7 +182,7 @@ exports.add_employee = async (req, res, next) => {
       TaxDeduction: TaxDeduction,
       netSalary: netSalary,
       companyId: req.user.id,
-      images: newPath ? newPath : null,
+     // images: newPath ? newPath : null,
 
 
     
