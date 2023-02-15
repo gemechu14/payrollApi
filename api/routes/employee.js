@@ -108,10 +108,10 @@ router.get(
   employeeController.get_All_Employee
 );
 
-router.get('/department/:departmentId', 
+router.get('/find', 
 middleware.protect,
 middleware.restrictTo('Companyadmin'),
-employeeController.get_By_Department);
+employeeController.getbydept);
 //SEARCH EMPLOYEE
 
 router.get(

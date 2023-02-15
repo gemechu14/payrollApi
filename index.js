@@ -10,6 +10,8 @@ const rateLimit=require('express-rate-limit');
 const mongosanitize=require('express-mongo-sanitize');
 const hpp=require('hpp')
 const xss=require('xss-clean');
+const path=require('path');
+const multer=require('multer');
 // helmet({
 //   crossOriginResourcePolicy: false,
   
@@ -22,9 +24,6 @@ const xss=require('xss-clean');
 const cron = require('node-cron');
 const User = require('./api/models/userModel.js');
 const moment = require("moment");
-
-
-
 
 const PackageRoute=require('./api/routes/Package.js')
 const TrialRoute=require('./api/routes/trial.js');
@@ -161,6 +160,26 @@ cron.schedule('*/60 * * * *', async function (req, res, next) {
         }
     }
 })
+
+
+app.use("/images", express.static(path.join(__dirname, "/images")));
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "images");
+  },
+  filename: (req, file, cb) => {
+    cb(null, req.body.name);
+  },
+});
+
+const upload = multer({ storage: storage });
+app.post("/api/upload", upload.single("file"), (req, res) => {
+  res.status(200).json("File has been uploaded");
+});
+
+
+
 
 app.listen(process.env.PORT, () => {
   connect();

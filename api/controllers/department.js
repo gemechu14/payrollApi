@@ -30,12 +30,12 @@ const len=departmentName.length;
       res.status(200).json({ newDept });
     }
     else{
-      res.status(404).json('already entered')
+      res.status(404).json('Department allready added')
     }
    
   } catch (err) {
     res.status(404).json({
-      error: 'Department name cannot be the same',
+      error: err,
     });
   }
 };

@@ -7,8 +7,7 @@ const { promisify } = require('util');
 const User = require('../models/userModel.js');
 const { createError } = require('../utils/error.js');
 const multer = require('multer');
-
-
+const mongoose=require('mongoose')
 var fs = require('fs');
 var path = require('path');
 
@@ -127,7 +126,15 @@ exports.add_employee = async (req, res, next) => {
       EOTBDeduction,
       TaxDeduction,
       netSalary,
+      position
     } = req.body;
+
+
+
+//const dateFormatter = Intl.DateTimeFormat('sv-SE');
+// x= ISODate(hireDate)
+// Use the formatter to format the date
+//console.log(hireDate.toLocaleDateString('en-US'));
 
     let newPath = null;
     if (req.file) {
@@ -145,8 +152,9 @@ exports.add_employee = async (req, res, next) => {
       id_number: id_number,
        email: email,
       department: department,
-      
-      phoneNumber: phoneNumber,//
+      images:images,
+      position:position,       
+      phoneNumber: phoneNumber,
       date_of_birth:date_of_birth,
       optionalNumber: optionalNumber,
       emergency_contact: emergency_contact,
@@ -159,7 +167,7 @@ exports.add_employee = async (req, res, next) => {
       accountNumber: accountNumber,
       paymentMethod: paymentMethod,
       separationDate: separationDate,
-
+   
 
       //Salary Information
 
@@ -353,13 +361,36 @@ exports.get_By_Department = async (req, res, next) => {
     const list_of_employee = await Employee.find({
       companyId: req.user.id,
       departmentId: departmentId,
-    })
-      .populate('department')
-      .populate('allowance')
-      .populate('payroll')
-      .populate('deduction');
+    });
+     
 
-    res.status(200).json({ list_of_employee: list_of_employee });
+    res.status(200).json({ 
+    len:list_of_employee.length,
+      
+      list_of_employee: list_of_employee });
+  } catch (err) {
+    next(err);
+  }
+};
+
+
+exports.getbydept = async (req, res, next) => {
+  try {
+    const query=req.query.department;
+    console.log(query);
+
+  console.log('helooo');
+    const employee = await Employee.find({
+           $and: [ { companyId:req.user.id },{ department :query
+           },],}
+  
+    );
+
+    console.log(employee);;
+   res.status(200).json({
+     count1: employee.length,
+     employee: employee,
+   });
   } catch (err) {
     next(err);
   }

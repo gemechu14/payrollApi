@@ -5,7 +5,6 @@ const employeeSchema = mongoose.Schema({
     
   fullname: { type: String, required: true },
   images: { type: String },
-
   sex: { type: String, required: true },
   date_of_birth:{type:Date,required:true},
   nationality: { type: String, required: true },
@@ -18,8 +17,8 @@ const employeeSchema = mongoose.Schema({
   optionalNumber: { type: String, },
   emergency_contact:{type:String,},
     //EMPLOYEMENT INFO
-     
-  hireDate: { type: Date, },
+  
+  hireDate: { type: Date,  default:new Date()},
   joiningDate: { type: Date, },
   employeeCode: { type: String,  },
   employeeType: { type: String,  },
@@ -67,7 +66,9 @@ const employeeSchema = mongoose.Schema({
       type:String,
       
     }   ,
-  
+   position:{
+    type:String
+   },
   payroll: [
     {
      type:mongoose.Schema.Types.ObjectId,
