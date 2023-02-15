@@ -973,18 +973,46 @@ exports.searchCompanyByName
 
 
 exports.logout = async (req, res) => {
+
+//   try {
+//     req.user.tokens = req.user.tokens.filter((token) =>{
+//      return token.token !== req.token 
+//     })
+//     await req.user.save()
+//     res.send()
+// } catch (error) {
+//     res.status(500).send()
+// }
+
+
+
+    // console.log('User Id', req.user.id);
+    // User.findByIdAndRemove(req.user.id, function (err) {
+    //   if (err) res.send(err);
+    //   res.json({ message: 'User Deleted!' });
+    // })
+
+    
+  
+    // res.clearCookie()
+    // req.session.destroy();
+    // res.sendStatus(200);
+
   
   const cookieOptions = {
     expires: new Date(Date.now() + 10 * 1000),
     secure: process.env.NODE_ENV === 'production' ? true : false,
     httpOnly: true,
   };
- // console.log(req.headers.authorization.split(' ')[1]);
+ //console.log(req.headers.authorization);
   res.cookie('jwt', 'expiredtoken', cookieOptions);
-  
-
+  req.headers.authorization='expiredtoken'  
+  console.log(req.headers.authorization);
   res.status(200).json({
     status: 'success',
     message: 'logged out successfully',
   });
 };
+
+
+

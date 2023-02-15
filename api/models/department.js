@@ -4,7 +4,7 @@ const departmentSchema = mongoose.Schema({
   companyName: {
     type: String,
   },
-  deptsName: {
+  deptName: {
     type: String,
     default:'General',
     required: true,

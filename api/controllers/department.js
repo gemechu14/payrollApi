@@ -17,7 +17,7 @@ exports.add_dept = async (req, res) => {
       $and: [ { companyName:req.user.CompanyName },{ deptName: deptName },],}
     );
 const len=departmentName.length;
-    //console.log(len)
+    console.log(departmentName)
     if (len===0) {
           const newDept = await Department.create({
         companyName: req.user.CompanyName,
