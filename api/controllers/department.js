@@ -11,22 +11,28 @@ exports.add_dept = async (req, res) => {
       location
     } = req.body;
     //companyName,
-    const departmentName = await Department.findOne({deptName,companyName: req.user.CompanyName});
-    console.log(departmentName)
-    if (!departmentName) {
-      const newDept = new Department({
+   // const departmentName = await Department.find({deptName:deptName,companyName: req.user.CompanyName});
+
+    const departmentName = await Department.find({
+      $and: [ { companyName:req.user.CompanyName },{ deptName: deptName },],}
+    );
+const len=departmentName.length;
+    //console.log(len)
+    if (len===0) {
+          const newDept = await Department.create({
         companyName: req.user.CompanyName,
         deptName: deptName,
         location: location
       });
-      const savedDept = await newDept.save();
+      //const savedDept = await newDept.save();
       console.log(req.body);
 
-      res.status(200).json({ savedDept });
+      res.status(200).json({ newDept });
     }
-    else {
-      next('helloo')
+    else{
+      res.status(404).json('already entered')
     }
+   
   } catch (err) {
     res.status(404).json({
       error: 'Department name cannot be the same',

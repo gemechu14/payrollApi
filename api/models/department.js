@@ -4,12 +4,12 @@ const departmentSchema = mongoose.Schema({
   companyName: {
     type: String,
   },
-  deptName: {
+  deptsName: {
     type: String,
     default:'General',
     required: true,
    
-   unique: true,
+   //unique: true,
   },
 
   
@@ -18,6 +18,7 @@ const departmentSchema = mongoose.Schema({
     default:'location',
     required:true
   },
+
  
 });
 

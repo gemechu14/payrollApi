@@ -60,6 +60,7 @@ const employeeSchema = mongoose.Schema({
      type:mongoose.Schema.Types.ObjectId,
      
      ref:'Department',
+     required:true
      
     }  ,
     companyId:{
