@@ -7,41 +7,14 @@ const { promisify } = require('util');
 const User = require('../models/userModel.js');
 const { createError } = require('../utils/error.js');
 const multer = require('multer');
-const mongoose=require('mongoose')
+const mongoose = require('mongoose')
 var fs = require('fs');
 var path = require('path');
 
 
-const companyId = '';
-//protect
-const companyId1 = async (req, res) => {
-  let companyId = req.user.id;
-  return companyId;
-};
 
-const storage2 = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads");
-  },
-  filename: (req, file, cb) => {
-    cb(null, file.originalname);
-  },
-});
 
-const upload2 = multer({ storage: storage2 });
-////
 
-var storage1 = multer.diskStorage({
-  destination: (req, file, cb) => {
-      cb(null, './uploads/')
-  },
-  filename: (req, file, cb) => {
-      cb(null, +Date.now() + '' + file.originalname);
-  }
-});
-
-var upload1 = multer({ storage: storage1 });
-//////
 
 
 
@@ -82,19 +55,16 @@ const upload = multer({
 
 exports.add_employee = async (req, res, next) => {
   try {
-    const x = await companyId1(req, res);
-    console.log(x);
- 
 
     const {
       fullname,
       nationality,
       sex,
       id_number,
-       email,
-   year,
+      email,
+      year,
       date_of_birth,
-    images,
+      images,
       phoneNumber,
       optionalNumber,
       emergency_contact,
@@ -106,7 +76,7 @@ exports.add_employee = async (req, res, next) => {
       accountNumber,
       paymentMethod,
       department,
-
+  
       separationDate,
       basicSalary,
       housingAllowance,
@@ -131,43 +101,44 @@ exports.add_employee = async (req, res, next) => {
 
 
 
-//const dateFormatter = Intl.DateTimeFormat('sv-SE');
-// x= ISODate(hireDate)
-// Use the formatter to format the date
-//console.log(hireDate.toLocaleDateString('en-US'));
+    //const dateFormatter = Intl.DateTimeFormat('sv-SE');
+    // x= ISODate(hireDate)
+    // Use the formatter to format the date
+    //console.log(hireDate.toLocaleDateString('en-US'));
 
     let newPath = null;
     if (req.file) {
       console.log('images')
-      const {originalname,path} = req.file;
+      const { originalname, path } = req.file;
       const parts = originalname.split('.');
       const ext = parts[parts.length - 1];
-      newPath = path+'.'+ext;
+      newPath = path + '.' + ext;
       fs.renameSync(path, newPath);
     }
+    //console.log(!req.files[0].path);
     const newEmployee = await Employee.create({
       fullname: fullname,
       nationality: nationality,
       sex: sex,
       id_number: id_number,
-       email: email,
+      email: email,
       department: department,
-      images:images,
-      position:position,       
+      //images:  req.file.path,
+      position: position,
       phoneNumber: phoneNumber,
-      date_of_birth:date_of_birth,
+      date_of_birth: date_of_birth,
       optionalNumber: optionalNumber,
       emergency_contact: emergency_contact,
-      
+
       hireDate: hireDate,
       joiningDate: joiningDate,
       employeeCode: employeeCode,
       employeeType: employeeType,
-      accountTitle: accountTitle, 
+      accountTitle: accountTitle,
       accountNumber: accountNumber,
       paymentMethod: paymentMethod,
       separationDate: separationDate,
-     
+
 
       //Salary Information
 
@@ -191,37 +162,31 @@ exports.add_employee = async (req, res, next) => {
       netSalary: netSalary,
       companyId: req.user.id,
 
-      year: [{
-        name:'2013',
-        month:[
-          {
-            name:'Jan',
-            payroll:'63eb2c646e8057d17e62cde8'
-           },
-           {
-            name:'FEB',
-            payroll:'63eb2c646e8057d17e62cde8'
-           },
-          
-
-        ]
-         
-      
-            
-      }
-    
-    
-       ]
-     // images: newPath ? newPath : null,
+      // year: [{
+      //   name: '2013',
+      //   month: [
+      //     {
+      //       name: 'Jan',
+      //       payroll: '63eb2c646e8057d17e62cde8'
+      //     },
+      //     {
+      //       name: 'FEB',
+      //       payroll: '63eb2c646e8057d17e62cde8'
+      //     },  ]
+      // }
 
 
-    
+      // ]
+      // images: newPath ? newPath : null,
+
+
+
       // img:{
       //   data: fs.readFileSync("uploads/" + req.file.filename),
       //   contentType: "image/png",
       // }
     });
-    const y = await companyId1(req, res);
+   // const y = await companyId1(req, res);
     res.status(200).json({
       //companyId: req.user.id,
       employee: newEmployee,
@@ -240,7 +205,8 @@ exports.add_employee = async (req, res, next) => {
     // } catch (err) {
     //   res.status(404).json({
     //     error: err,
-    //   });
+    //   });+-
+
     // }
   }
 };
@@ -249,59 +215,59 @@ exports.add_employee = async (req, res, next) => {
 exports.get_All_Employee = async (req, res, next) => {
   try {
     const employee = await Employee.find({ companyId: req.user.id })
-     .populate('department')
+      .populate('department')
       .populate('allowance')
       .populate('payroll')
       .populate('deduction');
     res.status(200).json({
       count: employee.length,
       employee
-     
-      
+
+
     });
   } catch (err) {
     next(err);
   }
 };
- //   fullname: employee,
-      // nationality: employee.nationality,
-      // sex: employee.sex,
-      // id_number: employee.id_number,
-      // email: employee.email,
-      // department: employee.department,
-      // //images: req.file.path,
-      // phoneNumber: employee.phoneNumber,//
-      // date_of_birth:employee.date_of_birth,
-      // optionalNumber: employee.optionalNumber,
-      // emergency_contact: employee.emergency_contact,
-      // hireDate: employee.hireDate,
-      // joiningDate: employee.joiningDate,
-      // employeeCode: employee.employeeCode,
-      // employeeType: employee.employeeType,
-      // accountTitle: employee.accountTitle, 
-      // accountNumber: employee.accountNumber,
-      // paymentMethod: employee.paymentMethod,
+//   fullname: employee,
+// nationality: employee.nationality,
+// sex: employee.sex,
+// id_number: employee.id_number,
+// email: employee.email,
+// department: employee.department,
+// //images: req.file.path,
+// phoneNumber: employee.phoneNumber,//
+// date_of_birth:employee.date_of_birth,
+// optionalNumber: employee.optionalNumber,
+// emergency_contact: employee.emergency_contact,
+// hireDate: employee.hireDate,
+// joiningDate: employee.joiningDate,
+// employeeCode: employee.employeeCode,
+// employeeType: employee.employeeType,
+// accountTitle: employee.accountTitle, 
+// accountNumber: employee.accountNumber,
+// paymentMethod: employee.paymentMethod,
 
-      // separationDate: employee.separationDate,
-      // basicSalary: employee.basicSalary,
-      // housingAllowance: employee.housingAllowance,
-      // positionAllowance: employee.positionAllowance,
-      // hardshipAllowance: employee.hardshipAllowance,
-      // desertAllowance: employee.desertAllowance,
-      // transportAllowance: employee.transportAllowance,
-      // cashIndeminityAllowance: employee.cashIndeminityAllowance,
-      // fieldAllowance: employee.fieldAllowance,
-      // overtimeEarning: employee.overtimeEarning,
-      // otherEarning: employee.otherEarning,
-      // lateSittingOverTime: employee.lateSittingOverTime,
-      // arrears: employee.arrears,
-      // dayDeduction: employee.dayDeduction,
-      // socialSecurity: employee.socialSecurity,
-      // providentFund: employee.providentFund,
-      // EOTBDeduction: employee.EOTBDeduction,
-      // TaxDeduction: employee.TaxDeduction,
-      // netSalary: employee.netSalary,
-      // companyId: employee.companyId,
+// separationDate: employee.separationDate,
+// basicSalary: employee.basicSalary,
+// housingAllowance: employee.housingAllowance,
+// positionAllowance: employee.positionAllowance,
+// hardshipAllowance: employee.hardshipAllowance,
+// desertAllowance: employee.desertAllowance,
+// transportAllowance: employee.transportAllowance,
+// cashIndeminityAllowance: employee.cashIndeminityAllowance,
+// fieldAllowance: employee.fieldAllowance,
+// overtimeEarning: employee.overtimeEarning,
+// otherEarning: employee.otherEarning,
+// lateSittingOverTime: employee.lateSittingOverTime,
+// arrears: employee.arrears,
+// dayDeduction: employee.dayDeduction,
+// socialSecurity: employee.socialSecurity,
+// providentFund: employee.providentFund,
+// EOTBDeduction: employee.EOTBDeduction,
+// TaxDeduction: employee.TaxDeduction,
+// netSalary: employee.netSalary,
+// companyId: employee.companyId,
 //GET one
 exports.get_single_Employee = async (req, res) => {
   try {
@@ -315,8 +281,8 @@ exports.get_single_Employee = async (req, res) => {
       .populate('deduction');
     res.status(200).json({
       count: employee.length,
-      employee:{
-        name:employee.fullname,
+      employee: {
+        name: employee.fullname,
       },
     });
   } catch (err) {
@@ -333,16 +299,16 @@ exports.updateEmployee = async (req, res) => {
       { new: true }
     );
     res.status(200).json(updatedEmployee);
-  } catch (error) {}
+  } catch (error) { }
 };
 
 //DELETE EMPLOYEE
-exports.delete_Employee = async (req, res,next) => {
-    try {
-      console.log(req.params.key);
-  const response= await Employee.findByIdAndDelete(req.params.key);
-     
-    res.status(200).json({response});
+exports.delete_Employee = async (req, res, next) => {
+  try {
+    console.log(req.params.key);
+    const response = await Employee.findByIdAndDelete(req.params.key);
+
+    res.status(200).json({ response });
   } catch (err) {
     next(err);
   }
@@ -354,7 +320,7 @@ exports.delete_Employee = async (req, res,next) => {
 
 exports.searchAllEmployee = async (req, res, next) => {
   try {
-  const   query = req.query.search_query;
+    const query = req.query.search_query;
     console.log(query);
     const key = req.params.key;
     console.log(req.user.id);
@@ -384,12 +350,13 @@ exports.get_By_Department = async (req, res, next) => {
       companyId: req.user.id,
       departmentId: departmentId,
     });
-     
 
-    res.status(200).json({ 
-    len:list_of_employee.length,
-      
-      list_of_employee: list_of_employee });
+
+    res.status(200).json({
+      len: list_of_employee.length,
+
+      list_of_employee: list_of_employee
+    });
   } catch (err) {
     next(err);
   }
@@ -398,21 +365,23 @@ exports.get_By_Department = async (req, res, next) => {
 
 exports.getbydept = async (req, res, next) => {
   try {
-    const query=req.query.department;
+    const query = req.query.department;
     console.log(query);
 
-  console.log('helooo');
+    console.log('helooo');
     const employee = await Employee.find({
-           $and: [ { companyId:req.user.id },{ department :query
-           },],}
+      $and: [{ companyId: req.user.id }, {
+        department: query
+      },],
+    }
 
     );
 
     console.log(employee);;
-   res.status(200).json({
-     count1: employee.length,
-     employee: employee,
-   });
+    res.status(200).json({
+      count1: employee.length,
+      employee: employee,
+    });
   } catch (err) {
     next(err);
   }

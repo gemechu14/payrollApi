@@ -198,7 +198,7 @@ async function run() {
     // const collection = database.collection('my-collection'); // Replace with your collection name
 
     // Schedule a task to run every day at midnight
-    cron.schedule('* * *  * * *', async () => {
+    cron.schedule('*  * * * *', async () => {
       let today_date = moment(new Date()).format("YYYY-MM-DD hh:mm");
       const find_users = await User.find();
       if (find_users)
@@ -211,7 +211,7 @@ async function run() {
         
             let  currentDate = moment(Date.now()).format("YYYY-MM-DD hh:mm");
  
-
+      console.log(users.next_payment_date);
               let userDueDate = moment(users.next_payment_date).format("YYYY-MM-DD hh:mm");
               //console.log(currentDate>userDueDate);
               //let today_date=moment(Date.now().format("YYYY-MM-DD hh:mm"))
@@ -226,10 +226,10 @@ async function run() {
                 //   find_user.next_payment_date=null;
                 //   find_user.startDate=null;
                 //     find_user.save();
-                 const result = await User.updateMany({ status: 'active' }, { $set: { status: 'pending',isPaid:false,next_payment_date:null,startDate:null } },
+                 //const result = await User.updateMany({ status: 'active' }, { $set: { status: 'pending',isPaid:false,next_payment_date:null,startDate:null } },
                 
-                );
-                console.log(`Updated ${result.modifiedCount} documents`);
+               // );
+                //console.log(`Updated ${result.modifiedCount} documents`);
               //    // let find_user = await User.findById(users._id);
                   // find_user.isPaid = false;
                   // find_user.next_payment_date=null;
@@ -258,6 +258,6 @@ async function run() {
 
 app.listen(process.env.PORT, () => {
   connect();
-  //run();
+ // run();
   console.log('connected to backend');
 });
