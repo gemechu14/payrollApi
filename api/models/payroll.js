@@ -48,5 +48,6 @@ const payrollmodel = mongoose.Schema({
   exampt_percentage: {
     type: String,
   },
+
 });
 module.exports = mongoose.model('Payroll', payrollmodel);

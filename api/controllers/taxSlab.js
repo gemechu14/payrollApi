@@ -61,3 +61,8 @@ const payrollId=req.params.payrollId;
     });
   }
 };
+
+
+///
+
+//exports.updatePayroll=async(req,res)

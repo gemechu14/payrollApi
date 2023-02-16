@@ -113,15 +113,63 @@ exports.add_payroll_to_Employee= async (req,res,next) => {
    const payrollId=req.params.payrollId;
     
     try {
+   const {
+    month,
+    year,
+    payrollId
+   }=req.body;
+
+  //  year: [{
+  //   name:'2013',
+  //   month:[
+  //     {
+  //       name:'Jan',
+  //       payroll:'63eb2c646e8057d17e62cde8'
+  //      },
+  //      {
+  //       name:'FEB',
+  //       payroll:'63eb2c646e8057d17e62cde8'
+  //      },
+      
+
+  //   ]
+     
+  
+        
+  // }
+
+
+  //  ]
+
+
       console.log(departmentId);
-  const updated=await Employee.updateMany({department:departmentId},{$set:{payroll:payrollId}})
+  const updated=await Employee.updateMany({department:departmentId},{
+
+
+    $push:{  year: [{
+        name:year,
+        month:[
+          {
+            name:month,
+            payroll:payrollId           },
+            
+   
+    
+        ]
+           
+            
+      }
+    
+    
+       ]    
+    }})
 
       // await Employee.findByIdAndUpdate(departmentId, {
       //   $push: { payroll: req.params.id },
       // });
        res.status(200).json(updated)
     } catch (err) {
-      next(err);
+      res.status(404).json(err)
     }
 
  

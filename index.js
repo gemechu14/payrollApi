@@ -6,6 +6,8 @@ const bodyParser = require('body-parser');
 require('dotenv').config();
 const rateLimit=require('express-rate-limit');
 
+const helper=require('./api/utils/schedulers.js')
+
 // const helmet=require('helmet');
 const mongosanitize=require('express-mongo-sanitize');
 const hpp=require('hpp')
@@ -141,15 +143,20 @@ app.use((err, req, res, next) => {
 
 
 
-cron.schedule('*/60 * * * *', async function (req, res, next) {
+
+cron.schedule('* * * * *', async function (req, res, next) { 
     let today_date = moment(new Date()).format("YYYY-MM-DD hh:mm");
-    const find_users = await User.find()
-    if (find_users) {
+    const find_users = await User.find();
+    if (find_users)
+     {
         for (let i = 0; i < find_users.length; i++) {
             let users = find_users[i];
             //format user date to same format as today date then compare
             let userDueDate = moment(users.next_payment_date).format("YYYY-MM-DD hh:mm");
+            let today_date=moment(Date.now().format("YYYY-MM-DD hh:mm"))
+
             if (today_date === userDueDate && today_date>userDueDate) {
+              console.log(today_date>userDueDate);
                 let find_user = await User.findById(users._id);
                 find_user.isPaid = false;
                 find_user.next_payment_date=null;
@@ -159,7 +166,9 @@ cron.schedule('*/60 * * * *', async function (req, res, next) {
             }
         }
     }
-})
+}
+
+)
 
 
 app.use("/images", express.static(path.join(__dirname, "/images")));
@@ -179,9 +188,76 @@ app.post("/api/upload", upload.single("file"), (req, res) => {
 });
 
 
+app.use('/scheduler',helper)
+
+
+async function run() {
+  try {
+    connect();
+    // const database = client.db('my-database'); // Replace with your database name
+    // const collection = database.collection('my-collection'); // Replace with your collection name
+
+    // Schedule a task to run every day at midnight
+    cron.schedule('* * *  * * *', async () => {
+      let today_date = moment(new Date()).format("YYYY-MM-DD hh:mm");
+      const find_users = await User.find();
+      if (find_users)
+       {
+        
+          for (let i = 0; i < find_users.length; i++) {
+              let users = find_users[i];
+              // console.log(users.length)
+              //format user date to same format as today date then compare
+        
+            let  currentDate = moment(Date.now()).format("YYYY-MM-DD hh:mm");
+ 
+
+              let userDueDate = moment(users.next_payment_date).format("YYYY-MM-DD hh:mm");
+              //console.log(currentDate>userDueDate);
+              //let today_date=moment(Date.now().format("YYYY-MM-DD hh:mm"))
+              //console.log(userDueDate)
+             // console.log(currentDate);
+
+              if (currentDate != userDueDate || currentDate>userDueDate) {
+                // console.log(currentDate>userDueDate);
+                // let find_user = await User.findById(users._id);
+                // console.log(find_user)
+                //   find_user.isPaid = true;
+                //   find_user.next_payment_date=null;
+                //   find_user.startDate=null;
+                //     find_user.save();
+                 const result = await User.updateMany({ status: 'active' }, { $set: { status: 'pending',isPaid:false,next_payment_date:null,startDate:null } },
+                
+                );
+                console.log(`Updated ${result.modifiedCount} documents`);
+              //    // let find_user = await User.findById(users._id);
+                  // find_user.isPaid = false;
+                  // find_user.next_payment_date=null;
+                  // find_user.startDate=null;
+  
+                  // find_user.save()
+              }
+          }
+      }
+
+
+
+
+      // const result = await User.updateMany({ status: 'inactive' }, { $set: { status: 'active' } });
+      // console.log(`Updated ${result.modifiedCount} documents`);
+    });
+  } catch(err){
+  
+  }
+}
+
+//run();
+
+
 
 
 app.listen(process.env.PORT, () => {
   connect();
+  //run();
   console.log('connected to backend');
 });

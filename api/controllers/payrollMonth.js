@@ -6,12 +6,14 @@ exports.add_payrollMonth = async (req, res) => {
   try {
     const {
       startDate,
-      endDate
+      endDate,
+      name
     }=req.body;
     const newpayrollMonth = await payrollMonth.create({
       startDate:startDate,
       endDate:endDate,
-      companyId:req.user.id
+      companyId:req.user.id,
+      name:name
     })
  
     res.status(200).json({

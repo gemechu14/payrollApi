@@ -21,7 +21,7 @@ middleware.restrictTo('Companyadmin'),
 payrollController.get_All_Payroll);
 
 //ADD PAYROLL TO EMPLOYEE
-router.put('/put/:departmentId/:payrollId',payrollController.add_payroll_to_Employee);
+router.post('/:departmentId/',payrollController.add_payroll_to_Employee);
 
 //ADD PAYROLL ON SELECTED DEPARTMENT
 

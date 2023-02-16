@@ -92,7 +92,7 @@ exports.add_employee = async (req, res, next) => {
       sex,
       id_number,
        email,
-
+   year,
       date_of_birth,
     images,
       phoneNumber,
@@ -167,7 +167,7 @@ exports.add_employee = async (req, res, next) => {
       accountNumber: accountNumber,
       paymentMethod: paymentMethod,
       separationDate: separationDate,
-   
+     
 
       //Salary Information
 
@@ -190,6 +190,28 @@ exports.add_employee = async (req, res, next) => {
       TaxDeduction: TaxDeduction,
       netSalary: netSalary,
       companyId: req.user.id,
+
+      year: [{
+        name:'2013',
+        month:[
+          {
+            name:'Jan',
+            payroll:'63eb2c646e8057d17e62cde8'
+           },
+           {
+            name:'FEB',
+            payroll:'63eb2c646e8057d17e62cde8'
+           },
+          
+
+        ]
+         
+      
+            
+      }
+    
+    
+       ]
      // images: newPath ? newPath : null,
 
 
@@ -383,7 +405,7 @@ exports.getbydept = async (req, res, next) => {
     const employee = await Employee.find({
            $and: [ { companyId:req.user.id },{ department :query
            },],}
-  
+
     );
 
     console.log(employee);;
