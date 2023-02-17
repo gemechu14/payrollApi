@@ -5,14 +5,13 @@ const middleware = require('../middleware/auth.js');
 const jwt = require('jsonwebtoken');
 const { promisify } = require('util');
 const User = require('../models/userModel.js');
-const { createError } = require('../utils/error.js');
+const createError = require('../utils/error.js');
 const multer = require('multer');
 const mongoose = require('mongoose')
 var fs = require('fs');
 var path = require('path');
-
-
-
+//const createError=required('../utils/error.js');
+//const IMAGE_BASE_URL = "http://localhost:5000/image?name=";
 
 
 
@@ -101,21 +100,32 @@ exports.add_employee = async (req, res, next) => {
 
 
 
+
+
+
     //const dateFormatter = Intl.DateTimeFormat('sv-SE');
     // x= ISODate(hireDate)
     // Use the formatter to format the date
     //console.log(hireDate.toLocaleDateString('en-US'));
 
-    let newPath = null;
-    if (req.file) {
-      console.log('images')
-      const { originalname, path } = req.file;
-      const parts = originalname.split('.');
-      const ext = parts[parts.length - 1];
-      newPath = path + '.' + ext;
-      fs.renameSync(path, newPath);
-    }
-    //console.log(!req.files[0].path);
+  //   let newPath = null;
+  //   if (req.files[0].path) {
+  //     console.log(req.files[0].path)
+  //     images=req.files[0].path;
+  //     // const { originalname, path } = req.file;
+  //     // const parts = originalname.split('.');
+  //     // const ext = parts[parts.length - 1];
+  //     // newPath = path + '.' + ext;
+  //     // fs.renameSync(path, newPath);
+  //   }
+  //  // console.log(req.files[0].path);
+
+   if (req.files == undefined) {
+    res.status(400).json({ message: "Please upload a file!" });
+  }
+
+  
+else{   console.log(req.files.length);
     const newEmployee = await Employee.create({
       fullname: fullname,
       nationality: nationality,
@@ -123,7 +133,7 @@ exports.add_employee = async (req, res, next) => {
       id_number: id_number,
       email: email,
       department: department,
-      //images:  req.file.path,
+      images:  images,
       position: position,
       phoneNumber: phoneNumber,
       date_of_birth: date_of_birth,
@@ -192,8 +202,15 @@ exports.add_employee = async (req, res, next) => {
       employee: newEmployee,
 
     });
+
+  }
   } catch (err) {
-    next(err);
+
+    next(createError.createError(404, err));
+    // res.status(404).json({
+    //   error:err
+    // })
+    // next(404,'please enter all required fields');
     // const newEmployee = new Employee(req.body);
     // try {
     //   // const saved = await newEmployee;

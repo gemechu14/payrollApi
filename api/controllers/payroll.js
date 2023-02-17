@@ -1,8 +1,8 @@
 const Payroll = require('../models/payroll.js');
 const Employee = require('../models/employee.js');
 const { set } = require('mongoose');
-
-exports.add_payroll = async (req, res) => {
+const createError=require('../utils/error.js')
+exports.add_payroll = async (req, res,next) => {
   //const newPayroll = new Payroll(req.body);
 
   try {
@@ -12,6 +12,7 @@ exports.add_payroll = async (req, res) => {
       taxSlab,
       payrollYear,
       type,
+      
       employeer_Contribution,
       employee_Contribution,
       taxable_income_limit,
@@ -25,7 +26,7 @@ exports.add_payroll = async (req, res) => {
       payrollYear:payrollYear,
       companyId:req.user.id,
       type:type,
-      employeer_Contribution:employee_Contribution,
+      employeer_Contribution:employeer_Contribution,
       employee_Contribution:employee_Contribution,
       taxable_income_limit:taxable_income_limit,
       exampt_age_limit:exampt_age_limit,
@@ -41,9 +42,7 @@ exports.add_payroll = async (req, res) => {
       newpayroll,
     });
   } catch (err) {
-    res.status(404).json({
-      error: err,
-    });
+   next(createError.createError(404,err))
   }
 };
 
@@ -141,19 +140,22 @@ exports.add_payroll_to_Employee= async (req,res,next) => {
 
   //  ]
 
+const emp=await Employee.find({department:departmentId});
+//console.log(emp);
+
+
+console.log(emp.department);
 
       console.log(departmentId);
   const updated=await Employee.updateMany({department:departmentId},{
 
-
-    $push:{  year: [{
+    $set:{  year: [{
         name:year,
         month:[
           {
             name:month,
             payroll:payrollId           },
-            
-   
+               
     
         ]
            

@@ -1,5 +1,6 @@
 const TaxSlab = require('../models/taxSlabs.js');
 const Payroll = require('../models/payroll.js');
+const  createError  = require('../utils/error.js');
 
 
 //GET ALL
@@ -11,7 +12,7 @@ exports.get_All_TaxSlab = async (req, res, next) => {
       taxSlab,
     });
   } catch (err) {
-    next(err);
+    next(createError.createError(404,err));
   }
 };
 //GET SINGLE
@@ -63,6 +64,49 @@ const payrollId=req.params.payrollId;
 };
 
 
+//add taxslab
+
+exports.add_only_taxslab = async (req, res) => {
+
+    const newTaxSlab = new TaxSlab(req.body);
+    try {
+      const savedTaxSlab = await newTaxSlab.save();
+      console.log(req.body);
+  
+     
+  
+      res.status(200).json({ savedTaxSlab });
+    } catch (err) {
+      res.status(404).json({
+        error: err,
+      });
+    }
+  };
+  
+
+
 ///
+
+///Update payroll with taxslab id
+
+exports.add_taxslab_on_payroll = async (req, res) => {
+  const taxslabId=req.params.taxslabId;
+const payrollId=req.params.payrollId;
+    
+      try {
+    const updatedpayroll   = await Payroll.findByIdAndUpdate(payrollId, {
+          $push: { taxSlab: taxslabId},
+        });
+
+        res.status(200).json({ updatedpayroll });
+      } catch (err) {
+        next(err);
+      }
+  
+    
+    
+  };
+  
+
 
 //exports.updatePayroll=async(req,res)
