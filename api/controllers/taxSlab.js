@@ -6,7 +6,7 @@ const  createError  = require('../utils/error.js');
 //GET ALL
 exports.get_All_TaxSlab = async (req, res, next) => {
   try {
-    const taxSlab = await TaxSlab.find();
+    const taxSlab = await TaxSlab.find({companyId:req.user.id});
     res.status(200).json({
       count: taxSlab.length,
       taxSlab,
@@ -42,10 +42,22 @@ exports.delete_TaxSlab = async (req, res) => {
 
 exports.add_taxslab = async (req, res) => {
 const payrollId=req.params.payrollId;
-  const newTaxSlab = new TaxSlab(req.body);
+  //const newTaxSlab = new TaxSlab(req.body);
   try {
-    const savedTaxSlab = await newTaxSlab.save();
-    console.log(req.body);
+
+    const{
+      deductible_Fee,income_tax_payable,to_Salary,from_Salary
+    }=req.body;
+    // const savedTaxSlab = await newTaxSlab.save();
+    // console.log(req.body);
+
+    const savedTaxSlab=await TaxSlab.create({
+      deductible_Fee:deductible_Fee,
+      income_tax_payable:income_tax_payable,
+      to_Salary:to_Salary,
+      from_Salary:from_Salary,
+      companyId:req.user.id
+    })
 
     try {
       await Payroll.findByIdAndUpdate(payrollId, {

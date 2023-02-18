@@ -17,8 +17,8 @@ exports.add_dept = async (req, res) => {
       $and: [ { companyName:req.user.CompanyName },{ deptName: deptName },],}
     );
 const len=departmentName.length;
-    console.log(departmentName)
-    if (len===0) {
+    console.log(departmentName.length);
+    if (!departmentName ||departmentName.length==0) {
           const newDept = await Department.create({
         companyName: req.user.CompanyName,
         deptName: deptName,
@@ -28,12 +28,12 @@ const len=departmentName.length;
       console.log(req.body);
 
       res.status(200).json({ newDept });
+    }else{
+    
+      res.status(404).json('The department already exists')
     }
-    else{
-      res.status(404).json('Department allready added')
-    }
-   
-  } catch (err) {
+  }
+  catch (err) {
     res.status(404).json({
       error: err,
     });

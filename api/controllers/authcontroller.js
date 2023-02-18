@@ -9,7 +9,8 @@ const moment = require("moment");
 const Package=require('../models/Package.js')
 // const { create } = require('../models/userModel.js');
 const {calculateNextPayment} =require('../utils/Helper.js');
-const nodemailer=require('nodemailer')
+const nodemailer=require('nodemailer');
+const Department = require('../models/department.js');
 
 
 const signToken = (id) => {
@@ -527,9 +528,21 @@ exports.approveCompany = async (req, res, next) => {
       { $set: { isApproved: 'true', status: 'active' } },
       { new: true }
     );
+const dept=await Department.find({companyName:approveCompany.CompanyName});
 
-    
-    // const user = await User.find({"$and": [{status: "active"}, { role: { $ne: 'superAdmin' }}]});
+console.log(dept.length);
+  if(dept.length==0){
+   const newDept=await Department.create({
+    companyName:approveCompany.CompanyName,
+    deptName:'General',
+    location:'unspecified',
+    companyId:approveCompany._id
+   })
+   console.log(newDept);
+  }    
+
+
+    const user = await User.find({"$and": [{status: "active"}, { role: { $ne: 'superAdmin' }}]});
 
     try {
       await sendEmail({

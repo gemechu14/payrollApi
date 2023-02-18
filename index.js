@@ -69,10 +69,10 @@ mongoose.Promise = global.Promise;
 const morgan=require('morgan');
 app.use(morgan("dev"));
 
-app.use('/uploads', express.static('./uploads'));
+app.use('/uploads1', express.static('./uploads'));
 
 
-const connect = async () => {
+const connect = async (req,res,next) => {
   try {
     mongoose.set('strictQuery', true);
     await mongoose.connect(
@@ -82,10 +82,12 @@ const connect = async () => {
         useNewUrlParser: true,
 
         useUnifiedTopology: true,
+        useCreateIndex: true, //make this true
+        autoIndex: true,
       }
     );
   } catch (error) {
-    throw error;
+    next(error)
   }
 };
 
@@ -183,7 +185,7 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage: storage });
-app.post("/api/upload", upload.single("file"), (req, res) => {
+app.post("/upload", upload.single("file"), (req, res) => {
   res.status(200).json("File has been uploaded");
 });
 
@@ -256,8 +258,8 @@ async function run() {
 
 
 
-app.listen(process.env.PORT, () => {
-  connect();
+app.listen(process.env.PORT, (req,res,next) => {
+  connect(req,res,next);
  // run();
   console.log('connected to backend');
 });

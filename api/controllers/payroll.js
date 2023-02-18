@@ -140,7 +140,7 @@ exports.add_payroll_to_Employee= async (req,res,next) => {
 
   //  ]
 
-const emp=await Employee.find({department:departmentId});
+//const emp=await Employee.find({department:departmentId});
 //console.log(emp);
 
 
@@ -149,7 +149,7 @@ console.log(emp.department);
       console.log(departmentId);
   const updated=await Employee.updateMany({department:departmentId},{
 
-    $set:{  year: [{
+    $push:{  year: [{
         name:year,
         month:[
           {

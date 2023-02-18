@@ -6,6 +6,7 @@ const userSchema = new mongoose.Schema({
   CompanyName: {
     type: String,
     required: [true, 'user must have a name'],
+    unique:true
   },
   numberOfEmployee: {
     type: String,
@@ -15,6 +16,7 @@ const userSchema = new mongoose.Schema({
   companyCode: {
     type: String,
     required:true,
+    unique:true
   },
   phoneNumber: {
     type: String,

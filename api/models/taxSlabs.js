@@ -22,8 +22,10 @@ const taxSlabmodel = mongoose.Schema({
 deductible_Fee:{
   type: String,
   
-}
-  
+},
+companyId:{
+  type:String
+} 
   
 
 });

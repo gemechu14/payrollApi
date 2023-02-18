@@ -2,7 +2,7 @@ const Deduction = require('../models/deduction.js');
 //const Deduction=require('../models/deduction.js');
 const Employee=require('../models/employee.js')
 const mongoose=require('mongoose');
-
+const createError=require('../utils/error.js')
 
 //GET ALL
 exports.get_All_Deduction = async (req, res, next) => {
@@ -16,7 +16,7 @@ exports.get_All_Deduction = async (req, res, next) => {
       deduction,
     });
   } catch (err) {
-    next(err);
+    next(createError.createError(404,err));
   }
 };
 //GET one
