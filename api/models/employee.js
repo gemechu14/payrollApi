@@ -85,17 +85,17 @@ const employeeSchema = mongoose.Schema({
     {
       name:{
         type:String,
-        unique:true,
-        required:true
+        //unique:true,
+        //required:true
       },
       month:[
         {
           name:
           {
             type:String,
-            unique:true,
+          //  unique:true,
             
-            required:true
+            
           },
          
           netSalary:String,
@@ -129,7 +129,7 @@ const employeeSchema = mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
 
     ref: 'Department',
-    required: true
+   required: true
 
   },
   companyId: {
@@ -159,5 +159,5 @@ const employeeSchema = mongoose.Schema({
   //      contentType: String
   //  }
 });
-employeeSchema.index({ "year.name": 1, "year.month.name": 1 }, { unique: true })
+//employeeSchema.index({ "year.name": 1, "year.month.name": 1 }, { unique: true })
 module.exports = mongoose.model('Employee', employeeSchema);

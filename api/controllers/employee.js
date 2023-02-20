@@ -120,12 +120,12 @@ exports.add_employee = async (req, res, next) => {
   //   }
   //  // console.log(req.files[0].path);
 
-   if (req.files == undefined) {
-    res.status(400).json({ message: "Please upload a file!" });
-  }
+  //  if (req.files == undefined) {
+  //   res.status(400).json({ message: "Please upload a file!" });
+  // }
 
   
-else{   console.log(req.files.length);
+
     const newEmployee = await Employee.create({
       fullname: fullname,
       nationality: nationality,
@@ -199,40 +199,27 @@ else{   console.log(req.files.length);
    // const y = await companyId1(req, res);
     res.status(200).json({
       //companyId: req.user.id,
+
+      status:'success',
       employee: newEmployee,
 
     });
 
-  }
+  
   } catch (err) {
 
     next(createError.createError(404, err));
     // res.status(404).json({
     //   error:err
     // })
-    // next(404,'please enter all required fields');
-    // const newEmployee = new Employee(req.body);
-    // try {
-    //   // const saved = await newEmployee;
-    //   const savedEmployee = await newEmployee().save();
-    //   console.log(req.body);
-    //   res.status(200).json({
-    //     savedEmployee,
-    //   });
-    // } catch (err) {
-    //   res.status(404).json({
-    //     error: err,
-    //   });+-
-
-    // }
-  }
+   }
 };
 
 //GET ALL
 exports.get_All_Employee = async (req, res, next) => {
   try {
     const employee = await Employee.find({ companyId: req.user.id })
-      .populate('department')
+     .populate('department')
       .populate('allowance')
       .populate('payroll')
       .populate('deduction');
@@ -243,7 +230,9 @@ exports.get_All_Employee = async (req, res, next) => {
 
     });
   } catch (err) {
-    next(err);
+    res.status(404).json({
+      error:err
+    })
   }
 };
 //   fullname: employee,

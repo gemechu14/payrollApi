@@ -987,6 +987,13 @@ exports.searchCompanyByName
 
 exports.logout = async (req, res) => {
 
+
+  var token = req.headers.authorization;
+  console.log(token);
+  req.headers.authorization=null;
+  console.log(req.headers.authorization)
+
+
 //   try {
 //     req.user.tokens = req.user.tokens.filter((token) =>{
 //      return token.token !== req.token 

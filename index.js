@@ -72,7 +72,7 @@ app.use(morgan("dev"));
 app.use('/uploads1', express.static('./uploads'));
 
 
-const connect = async (req,res,next) => {
+const connect = async () => {
   try {
     mongoose.set('strictQuery', true);
     await mongoose.connect(
@@ -87,7 +87,7 @@ const connect = async (req,res,next) => {
       }
     );
   } catch (error) {
-    next(error)
+    throw error
   }
 };
 
