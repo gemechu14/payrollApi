@@ -60,7 +60,7 @@ exports.add_new_deduction = async (req, res) => {
       year:year,
       description:description,
       companyId:req.user.id
-    })
+     })
  
 
 

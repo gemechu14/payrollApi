@@ -9,11 +9,11 @@ const middleware=require('../middleware/auth.js')
 //UPDATE
 // router.put('/:id/payrollId',taxSlabController.updateTaxSlab),
   //DELETE
-  router.delete('/:id',
+  router.delete('/:id/:payrollId',
   middleware.protect,
 middleware.restrictTo('Companyadmin'),
   
-  taxSlabController.delete_TaxSlab);
+taxSlabController.delete_TaxSlab);
 
 //GET SINGLE Payroll
 router.get('/find/:id',

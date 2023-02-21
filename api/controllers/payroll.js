@@ -196,3 +196,18 @@ exports.get_taxslab_Payroll = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.get_delete_Payroll = async (req, res, next) => {
+ 
+
+
+  try {
+    const payrolls = await Payroll.find({companyId:req.user.id}).populate('taxSlab');
+    res.status(200).json({
+      count: payrolls.length,
+      payrolls,
+    });
+  } catch (err) {
+    next(err);
+  }
+};

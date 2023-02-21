@@ -27,13 +27,22 @@ exports.get_single_TaxSlab = async (req, res) => {
 //UPDATE
 
 //DELETE
-exports.delete_TaxSlab = async (req, res) => {
+exports.delete_TaxSlab = async (req, res,next) => {
+  const payrollId = req.params.payrollId;
+try {
+  await TaxSlab.findByIdAndDelete(req.params.id);
   try {
-    await TaxSlab.findByIdAndDelete(req.params.id);
-    res.status(200).json('TaxSlab has been deleted');
-  } catch (error) {
-    res.status(500).json(error);
+      console.log(req.params.id);
+    await Payroll.findByIdAndUpdate(payrollId, {
+      $pull: {taxSlab: req.params.id },
+    });
+  } catch (err) {
+    next(err);
   }
+  res.status(200).json("Taxslab has been deleted.");
+} catch (err) {
+  next(err);
+}
 };
 
 
