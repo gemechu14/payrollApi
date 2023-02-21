@@ -124,7 +124,16 @@ exports.add_employee = async (req, res, next) => {
   //   res.status(400).json({ message: "Please upload a file!" });
   // }
 
-  
+  if (req.files) {
+    console.log('hello')
+    
+  //  const filename = Date.now() + req.file;
+   // data.append("name", filename);
+    //data.append("file", file);
+   // images = filename;
+ // console.log(req.files[0].path);
+ // images:req.files[0].path;
+  }
 
     const newEmployee = await Employee.create({
       fullname: fullname,
@@ -133,7 +142,7 @@ exports.add_employee = async (req, res, next) => {
       id_number: id_number,
       email: email,
       department: department,
-      images:  images,
+      images: req.files? req.files[0]?.path:null,
       position: position,
       phoneNumber: phoneNumber,
       date_of_birth: date_of_birth,
@@ -392,3 +401,7 @@ exports.getbydept = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.updateEmploye=async(req,res,next)=>{
+  const employeeId=req.params.employeeId;
+}
