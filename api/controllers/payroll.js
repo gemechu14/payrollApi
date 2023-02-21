@@ -180,3 +180,19 @@ console.log(emp.department);
 
 //ADD PAYROLL TO DEPARATMENT
 
+//Get taxSlab
+
+exports.get_taxslab_Payroll = async (req, res, next) => {
+ 
+
+
+  try {
+    const payrolls = await Payroll.find({companyId:req.user.id,_id:req.params.payrollId}).populate('taxSlab');
+    res.status(200).json({
+      count: payrolls.length,
+      taxSlab:payrolls[0].taxSlab,
+    });
+  } catch (err) {
+    next(err);
+  }
+};

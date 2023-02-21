@@ -20,6 +20,12 @@ middleware.protect,
 middleware.restrictTo('Companyadmin'),
 payrollController.get_All_Payroll);
 
+router.get('/taxSlab/:payrollId',
+middleware.protect,
+middleware.restrictTo('Companyadmin'),
+payrollController.get_taxslab_Payroll);
+
+
 //ADD PAYROLL TO EMPLOYEE
 router.post('/:departmentId/',payrollController.add_payroll_to_Employee);
 
