@@ -15,8 +15,6 @@ var path = require('path');
 
 
 
-
-
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, './uploads/');
@@ -127,7 +125,7 @@ exports.add_employee = async (req, res, next) => {
 
  // console.log(req.file.path)
   if (req.file) {
-    console.log('hello')
+    console.log('Here it is')
     
   //  const filename = Date.now() + req.file;
    // data.append("name", filename);
