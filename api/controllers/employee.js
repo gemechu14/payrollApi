@@ -131,7 +131,7 @@ exports.add_employee = async (req, res, next) => {
    // data.append("name", filename);
     //data.append("file", file);
    // images = filename;
- // console.log(req.files[0].path);
+ //console.log(req.files[0]);
  // images:req.files[0].path;
   }
 
@@ -142,7 +142,7 @@ exports.add_employee = async (req, res, next) => {
       id_number: id_number,
       email: email,
       department: department,
-      images:  req.files[0].path,
+      images:  `https://api-payroll.onrender.com/`+req.files[0].path,
       position: position,
       phoneNumber: phoneNumber,
       date_of_birth: date_of_birth,
