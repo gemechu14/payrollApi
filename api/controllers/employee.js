@@ -142,7 +142,7 @@ exports.add_employee = async (req, res, next) => {
       id_number: id_number,
       email: email,
       department: department,
-      images: req.files? req.files[0]?.path:null,
+      images:  req.files[0].path,
       position: position,
       phoneNumber: phoneNumber,
       date_of_birth: date_of_birth,
