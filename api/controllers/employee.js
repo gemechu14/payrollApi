@@ -124,7 +124,9 @@ exports.add_employee = async (req, res, next) => {
   //   res.status(400).json({ message: "Please upload a file!" });
   // }
 
-  if (req.files) {
+
+ // console.log(req.file.path)
+  if (req.file) {
     console.log('hello')
     
   //  const filename = Date.now() + req.file;
@@ -142,7 +144,7 @@ exports.add_employee = async (req, res, next) => {
       id_number: id_number,
       email: email,
       department: department,
-      images:  `https://api-payroll.onrender.com/`+req.files[0].path,
+      images:  req.file?req.file?.path:null,
       position: position,
       phoneNumber: phoneNumber,
       date_of_birth: date_of_birth,
