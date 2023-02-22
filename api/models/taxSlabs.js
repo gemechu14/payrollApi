@@ -8,10 +8,12 @@ const taxSlabmodel = mongoose.Schema({
   from_Salary: {
     type: String,
     required: true,
+    unique:true
   },
   to_Salary: {
     type: String,
     required: true,
+    unique:true
   },
  
 
