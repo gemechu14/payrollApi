@@ -990,7 +990,7 @@ exports.logout = async (req, res) => {
 
   var token = req.headers.authorization;
   console.log(token);
-  req.headers.authorization=null;
+  
   console.log(req.headers.authorization)
 
 

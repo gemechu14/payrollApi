@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const deductionSchema = mongoose.Schema({
-  name: { type: String, required: true },
+  name: { type: String, required: true ,unique:true},
   amount: { type: String, required: true,default:'0' },
   month: { type: String,},
   year: { type: String, },
