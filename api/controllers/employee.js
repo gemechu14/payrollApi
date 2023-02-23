@@ -124,16 +124,16 @@ exports.add_employee = async (req, res, next) => {
 
 
  // console.log(req.file.path)
-  if (req.file) {
-    console.log('Here it is')
+//   if (req.file) {
+//     console.log('Here it is');
     
-  //  const filename = Date.now() + req.file;
-   // data.append("name", filename);
-    //data.append("file", file);
-   // images = filename;
- //console.log(req.files[0]);
- // images:req.files[0].path;
-  }
+//   //  const filename = Date.now() + req.file;
+//    // data.append("name", filename);
+//     //data.append("file", file);
+//    // images = filename;
+//  //console.log(req.files[0]);
+//  // images:req.files[0].path;
+//   }
 
     const newEmployee = await Employee.create({
       fullname: fullname,
@@ -142,7 +142,7 @@ exports.add_employee = async (req, res, next) => {
       id_number: id_number,
       email: email,
       department: department,
-      images:  req.file?req.file?.path:null,
+      images:  images,
       position: position,
       phoneNumber: phoneNumber,
       date_of_birth: date_of_birth,

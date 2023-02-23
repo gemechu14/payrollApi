@@ -186,11 +186,11 @@ cron.schedule('* * * * *', async function (req, res, next) {
 )
 
 
-app.use("/images", express.static(path.join(__dirname, "/images")));
+//app.use("/images", express.static(path.join(__dirname, "/images")));
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "images");
+    cb(null, "uploads");
   },
   filename: (req, file, cb) => {
     cb(null, req.body.name);
