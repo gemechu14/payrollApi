@@ -548,24 +548,31 @@ console.log(payroll.length);
 
 
 console.log(payroll.length);
-  if(payroll.length==0){
-   const newPayroll=await Payroll.create({
-    payrollID: "00001",
-    payrollName: "default",
-    payrollYear: moment(Date.now()).format("YYYY"),
-    type: "Amount",
-    employeer_Contribution: "0",
-    employee_Contribution: "0",
-    taxable_income_limit: "600",
-    exampt_age_limit: "65",
-    exampt_percentage: "0",
-    companyId:approveCompany._id
-   })
-   payrollId=newPayroll._id;
-   
-   console.log(newPayroll);
-  }   
 
+try {
+  if(payroll.length==0){
+    const newPayroll=await Payroll.create({
+     payrollID: "00001",
+     payrollName: "default",
+     payrollYear: moment(Date.now()).format("YYYY"),
+     type: "Amount",
+     employeer_Contribution: "0",
+     employee_Contribution: "0",
+     taxable_income_limit: "600",
+     exampt_age_limit: "65",
+     exampt_percentage: "0",
+     companyId:approveCompany._id
+    })
+    payrollId=newPayroll._id;
+    
+    console.log(newPayroll);
+   }   
+ 
+  
+} catch (error) {
+ res.status(404).json({error:error}) 
+}
+  
   console.log(`payrolllength is  `+payrollId.length);
 //console.log(mongoose.Types.ObjectId(payrollId));
   
@@ -653,11 +660,11 @@ const savedTaxSlab=await TaxSlab.create({
 
     console.log(tax)
   } catch (err) {
-    next(err);
+    res.status(404).json({error:err})
   }
   
 } catch (error) {
-  next(error);
+  res.status(404).json({error:err})
 }
  
 }
@@ -694,12 +701,12 @@ console.log(dept.length);
       });
     } catch (err) {
    
-      return res.status(500).json({
+      return res.status(404).json({
         message: 'There was an error sending the email. Try again later!',
       });
     }
   } catch (err) {
-    next(err);
+   next(err)
   }
 };
 //DEcline COMPANY
