@@ -53,6 +53,8 @@ const upload = multer({
 exports.add_employee = async (req, res, next) => {
   try {
 
+    let generalDepartment='';
+
     const {
       fullname,
       nationality,
@@ -135,13 +137,27 @@ exports.add_employee = async (req, res, next) => {
 //  // images:req.files[0].path;
 //   }
 
+
+
+const newDepartment=await Department.find({companyName:req.user.companyName, deptName:'General'});
+
+console.log(mongoose.Types.ObjectId(newDepartment[0]._id));
+console.log(newDepartment[0]._id);
+
+generalDepartment=mongoose.Types.ObjectId(newDepartment[0]._id);
+if(!department || department==undefined){
+console.log('no department')
+
+}
+console.log(department==undefined)
+
     const newEmployee = await Employee.create({
       fullname: fullname,
       nationality: nationality,
       sex: sex,
       id_number: id_number,
       email: email,
-      department: department,
+      department: department?department:generalDepartment,
       images:  images,
       position: position,
       phoneNumber: phoneNumber,

@@ -9,7 +9,7 @@ const departmentSchema = mongoose.Schema({
     default:'General',
     required: true,
    
-    unique: true,
+//    unique: true,
   },
 
   
