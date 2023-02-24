@@ -94,10 +94,8 @@ const employeeSchema = mongoose.Schema({
           {
             type:String,
           //  unique:true,
-            
-            
+                      
           },
-         
           netSalary:String,
           payroll:[
             {

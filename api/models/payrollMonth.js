@@ -12,7 +12,7 @@ const payrollMonthSchema = mongoose.Schema({
   companyId:{
     type:String  },
 
-    name:{type:String,unique:true,
+    name:{type:String,
       required:true}
 
 });
