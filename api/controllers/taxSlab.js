@@ -59,24 +59,38 @@ const payrollId=req.params.payrollId;
     }=req.body;
     // const savedTaxSlab = await newTaxSlab.save();
     // console.log(req.body);
-
-    const savedTaxSlab=await TaxSlab.create({
-      deductible_Fee:deductible_Fee,
-      income_tax_payable:income_tax_payable,
-      to_Salary:to_Salary,
-      from_Salary:from_Salary,
-      companyId:req.user.id
-    })
-
+    
+  
+    const taxslabs = await TaxSlab.find({
+      $and: [ { companyId:req.user.id },{ to_Salary:to_Salary},{from_Salary:from_Salary}],}
+    );
+    console.log(taxslabs.length)
+    console.log(!taxslabs)
+   if(!taxslabs  || taxslabs.length==0){
     try {
+      const savedTaxSlab=await TaxSlab.create({
+        deductible_Fee:deductible_Fee,
+        income_tax_payable:income_tax_payable,
+        to_Salary:to_Salary,
+        from_Salary:from_Salary,
+        companyId:req.user.id
+      })
+      
       await Payroll.findByIdAndUpdate(payrollId, {
         $push: { taxSlab: savedTaxSlab._id },
       });
     } catch (err) {
       next(err);
     }
-
     res.status(200).json({ savedTaxSlab });
+  
+
+   }else{
+    res.status(404).json('The Taxslab already exists')
+   }
+
+
+
   } catch (err) {
     res.status(404).json({
       error: err,

@@ -4,12 +4,12 @@ const payrollmodel = mongoose.Schema({
   payrollID: {
     type: String,
     required: true,
-    unique:true
+   // unique:true
   },
   payrollName: {
     type: String,
     required: true,
-    unique: true
+   // unique: true
   },
   taxSlab: [
     {
@@ -51,9 +51,11 @@ const payrollmodel = mongoose.Schema({
     type: String,
   },
 
+
+
 });
 
 
 
-payrollmodel.index({ payrollID: 1, payrollName: 1 }, { unique: true});
+//payrollmodel.index({ payrollID: 1, payrollName: 1 }, { unique: true});
 module.exports = mongoose.model('Payroll', payrollmodel);

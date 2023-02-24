@@ -19,28 +19,42 @@ exports.add_payroll = async (req, res,next) => {
       exampt_age_limit,
       exampt_percentage
     }=req.body;
-    const newpayroll = await Payroll.create({
-      payrollID:payrollID,
-      payrollName:payrollName,
-      taxSlab:taxSlab,
-      payrollYear:payrollYear,
-      companyId:req.user.id,
-      type:type,
-      employeer_Contribution:employeer_Contribution,
-      employee_Contribution:employee_Contribution,
-      taxable_income_limit:taxable_income_limit,
-      exampt_age_limit:exampt_age_limit,
-      exampt_percentage:exampt_percentage
-    })
- 
+    const payroll = await Payroll.find({
+      $and: [ { companyId:req.user.id },{ payrollID: payrollID},{payrollName: payrollName}],}
+    );
+    //const len=payroll.length;
+    console.log(payroll.length);
+
+    if(!payroll  || payroll.length==0){
+
+      const newpayroll = await Payroll.create({
+        payrollID:payrollID,
+        payrollName:payrollName,
+        taxSlab:taxSlab,
+        payrollYear:payrollYear,
+        companyId:req.user.id,
+        type:type,
+        employeer_Contribution:employeer_Contribution,
+        employee_Contribution:employee_Contribution,
+        taxable_income_limit:taxable_income_limit,
+        exampt_age_limit:exampt_age_limit,
+        exampt_percentage:exampt_percentage
+      })
+   
+  
+  
+      //const savedPayroll = await newPayroll.save();
+  
+      console.log(req.body);
+      res.status(200).json({
+        newpayroll,
+      });
+    }else{
+    
+      res.status(404).json('The payroll already exists')
+    }
 
 
-    //const savedPayroll = await newPayroll.save();
-
-    console.log(req.body);
-    res.status(200).json({
-      newpayroll,
-    });
   } catch (err) {
    next(createError.createError(404,err))
   }
@@ -106,6 +120,10 @@ exports.delete_Payroll = async (req, res,next) => {
 
 //ADD PAYROLL TO EMPLOYEE
 
+
+///
+
+
 exports.add_payroll_to_Employee= async (req,res,next) => {
   
   const departmentId = req.params.departmentId;
@@ -115,7 +133,8 @@ exports.add_payroll_to_Employee= async (req,res,next) => {
    const {
     month,
     year,
-    payrollId
+    payrollId,
+    netSalary
    }=req.body;
 
   //  year: [{
@@ -154,8 +173,9 @@ console.log(emp.department);
         month:[
           {
             name:month,
+            netSalary,
             payroll:payrollId           },
-               
+                 
     
         ]
            

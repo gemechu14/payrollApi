@@ -239,9 +239,7 @@ exports.get_All_Employee = async (req, res, next) => {
 
     });
   } catch (err) {
-    res.status(404).json({
-      error:err
-    })
+ next(  createError.createError(404,err))
   }
 };
 //   fullname: employee,

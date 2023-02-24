@@ -1,6 +1,6 @@
 const nodemailer=require('nodemailer');
 
-const sendEmail= async (options) => {
+const sendEmail= async (options,req,res,next) => {
 {
     try {
       // let testAccount = await nodemailer.createTestAccount();
@@ -29,18 +29,19 @@ const sendEmail= async (options) => {
         // subject: 'Thank You for Your Kindness!',
         // text: "Thank you so much for your patience. I'm sorry it took so long for me to get back to you I truly appreciate your understanding and willingness to wait It was a difficult situation, and I'm glad you were so understanding I want to thank you again for your patience It was much appreciated and it helped me a lot It's hard to ask for help but it's even harder to wait Thank you for making it easier Your kindness is much appreciated Thank you for being so understanding ",
       };
-      transporter.sendMail(mailOptions, function (error, info) {
+      transporter.sendMail(mailOptions, req,res,next,function (error, info) {
         if (error) {
           console.log(error.message);
-          next(err);
-         // res.status(404).json(error);
+          next(error);
+          //res.status(404).json(error);
         } else {
           console.log('Email sent: ' + info.response);
           res.status(250).json(info.response);
         }
       });
     } catch (error) {
-     next(error)
+  throw error
+  
     }
     }}
 module.exports = sendEmail;

@@ -90,6 +90,10 @@ const connect = async () => {
     );
   } catch (error) {
     throw error
+
+
+     // process.exit();
+    
   }
 };
 

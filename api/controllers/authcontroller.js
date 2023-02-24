@@ -11,6 +11,10 @@ const Package=require('../models/Package.js')
 const {calculateNextPayment} =require('../utils/Helper.js');
 const nodemailer=require('nodemailer');
 const Department = require('../models/department.js');
+const Payroll = require('../models/payroll.js');
+const mongoose=require('mongoose')
+
+const TaxSlab=require('../models/taxSlabs.js')
 
 
 const signToken = (id) => {
@@ -521,6 +525,9 @@ exports.searchActiveCompany = async (req, res, next) => {
 exports.approveCompany = async (req, res, next) => {
   const text='We are pleased to inform you that your status has been approved. Please enjoy'
   try {
+
+
+    let payrollId='';
     const email = req.body.email;
     console.log(email);
     const approveCompany = await User.findOneAndUpdate(
@@ -528,7 +535,138 @@ exports.approveCompany = async (req, res, next) => {
       { $set: { isApproved: 'true', status: 'active' } },
       { new: true }
     );
+    console.log(approveCompany._id);
 const dept=await Department.find({companyName:approveCompany.CompanyName});
+//const payroll=await Payroll.find({ companyId:approveCompany._id});
+
+
+const payroll = await Payroll.find({
+  $and: [ { companyId:approveCompany._id },{ payrollID: "00001"},{payrollName: "default"}],}
+);
+//const len=payroll.length;
+console.log(payroll.length);
+
+
+console.log(payroll.length);
+  if(payroll.length==0){
+   const newPayroll=await Payroll.create({
+    payrollID: "00001",
+    payrollName: "default",
+    payrollYear: moment(Date.now()).format("YYYY"),
+    type: "Amount",
+    employeer_Contribution: "0",
+    employee_Contribution: "0",
+    taxable_income_limit: "600",
+    exampt_age_limit: "65",
+    exampt_percentage: "0",
+    companyId:approveCompany._id
+   })
+   payrollId=newPayroll._id;
+   
+   console.log(newPayroll);
+  }   
+
+  console.log(`payrolllength is  `+payrollId.length);
+//console.log(mongoose.Types.ObjectId(payrollId));
+  
+console.log(payrollId.length ==undefined)
+if(payrollId.length == undefined) {
+ try {
+console.log(mongoose.Types.ObjectId(payrollId));
+
+
+const savedTaxSlab=await TaxSlab.create({
+  deductible_Fee:'0',
+  income_tax_payable:'0',
+  to_Salary:'600',
+  from_Salary:'0',
+  companyId:approveCompany._id
+})
+
+
+  const savedTaxSlab1=await TaxSlab.create({
+    deductible_Fee:'60',
+    income_tax_payable:'10',
+    to_Salary:'1650',
+    from_Salary:'601',
+    companyId:approveCompany._id
+  })
+  const savedTaxSlab2=await TaxSlab.create({
+    deductible_Fee:'142.50',
+    income_tax_payable:'15',
+    to_Salary:'3200',
+    from_Salary:'1651',
+    companyId:approveCompany._id
+  })
+
+  const savedTaxSlab3=await TaxSlab.create({
+    deductible_Fee:'302.50',
+    income_tax_payable:'20',
+    to_Salary:'5250',
+    from_Salary:'3201',
+    companyId:approveCompany._id
+  })
+
+
+  const savedTaxSlab4=await TaxSlab.create({
+    deductible_Fee:'565',
+    income_tax_payable:'25',
+    to_Salary:'7800',
+    from_Salary:'5251',
+    companyId:approveCompany._id
+  })
+
+  const savedTaxSlab5=await TaxSlab.create({
+    deductible_Fee:'955',
+    income_tax_payable:'30',
+    to_Salary:'10900',
+    from_Salary:'7801',
+    companyId:approveCompany._id
+  })
+
+  const savedTaxSlab6=await TaxSlab.create({
+    deductible_Fee:'1500',
+    income_tax_payable:'35',
+    to_Salary:'+',
+    from_Salary:'10901',
+    companyId:approveCompany._id
+  })
+
+
+  try {
+
+    // const taxs=await Payroll.insertMany({_id:mongoose.Types.ObjectId(payrollId)},[
+    //   { taxSlab: savedTaxSlab._id },
+    //    { taxSlab: savedTaxSlab1._id },
+    //    { taxSlab: savedTaxSlab2._id },
+    //   { taxSlab: savedTaxSlab3._id },
+    //    { taxSlab: savedTaxSlab4._id },
+    //    { taxSlab: savedTaxSlab5._id },
+    //    { taxSlab: savedTaxSlab6._id },
+
+    // ])
+
+    insertArray=[savedTaxSlab._id,savedTaxSlab1._id,savedTaxSlab2._id,savedTaxSlab3._id,savedTaxSlab4._id,savedTaxSlab5._id,savedTaxSlab6._id]
+  const tax=  await Payroll.findByIdAndUpdate(mongoose.Types.ObjectId(payrollId), 
+    {$push: { taxSlab: insertArray}},
+    );
+
+    console.log(tax)
+  } catch (err) {
+    next(err);
+  }
+  
+} catch (error) {
+  next(error);
+}
+ 
+}
+
+  
+
+
+
+
 
 console.log(dept.length);
   if(dept.length==0){

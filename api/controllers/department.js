@@ -1,6 +1,6 @@
 const Department = require('../models/department.js');
 const Employee = require('../models/employee.js');
-
+const moment=require('moment')
 exports.add_dept = async (req, res) => {
 
   try {
@@ -16,7 +16,7 @@ exports.add_dept = async (req, res) => {
     const departmentName = await Department.find({
       $and: [ { companyName:req.user.CompanyName },{ deptName: deptName },],}
     );
-const len=departmentName.length;
+    const len=departmentName.length;
     console.log(departmentName.length);
     if (!departmentName ||departmentName.length==0) {
           const newDept = await Department.create({
@@ -46,6 +46,8 @@ exports.get_All_Dept = async (req, res, next) => {
   // if(failed) return next(createError(401,"You are not authenticated"));
 
   try {
+
+    console.log(moment(Date.now()).format("YYYY"));
     const depts = await Department.find({companyName: req.user.CompanyName});
     res.status(200).json({
       count: depts.length,
