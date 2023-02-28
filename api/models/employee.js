@@ -101,6 +101,7 @@ const employeeSchema = mongoose.Schema({
           dayDeduction:String,
           EOTBDeduction:String,
           netSalary:String,
+          payrollStatus:String,
           payroll:[
             {
               type: mongoose.Schema.Types.ObjectId,    

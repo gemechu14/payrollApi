@@ -27,10 +27,10 @@ payrollController.get_taxslab_Payroll);
 
 
 //ADD PAYROLL TO EMPLOYEE
-router.put(
-  '/:departmentId/',
-  middleware.protect,
+router.post('/:departmentId/',
+middleware.protect,
 middleware.restrictTo('Companyadmin'),
+
 payrollController.add_payroll_to_Employee);
 
 //ADD PAYROLL ON SELECTED DEPARTMENT

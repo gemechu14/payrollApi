@@ -138,7 +138,8 @@ exports.add_payroll_to_Employee= async (req,res,next) => {
     arrears,
     lateSittingOverTime,
     dayDeduction,
-    EOTBDeduction
+    EOTBDeduction,
+    payrollStatus
    }=req.body;
 
   //  year: [{
@@ -167,22 +168,29 @@ exports.add_payroll_to_Employee= async (req,res,next) => {
 //console.log(emp);
 
 
-console.log(emp.department);
+// console.log(emp.department);
 
       console.log(departmentId);
+      
   const updated=await Employee.updateMany({department:departmentId},{
 
-    $push:{  year: [{
+    $set:{  year: [{
         name:year,
         month:[
           {
             name:month,
             netSalary,
-            payroll:payrollId  ,
-            arrears,
-            lateSittingOverTime,
-            dayDeduction,
-            EOTBDeduction         },
+            payroll:payrollId ,
+          
+            arrears:arrears,
+            lateSittingOverTime:lateSittingOverTime,
+            dayDeduction:dayDeduction,
+            EOTBDeduction:EOTBDeduction,
+            payrollStatus:payrollStatus
+          
+          
+          
+          },
                  
     
         ]
