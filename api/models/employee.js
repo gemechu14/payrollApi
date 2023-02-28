@@ -96,6 +96,10 @@ const employeeSchema = mongoose.Schema({
           //  unique:true,
                       
           },
+          arrears:String,
+          lateSittingOverTime:String,
+          dayDeduction:String,
+          EOTBDeduction:String,
           netSalary:String,
           payroll:[
             {

@@ -53,7 +53,7 @@ const upload = multer({
 exports.add_employee = async (req, res, next) => {
   try {
 
-    let generalDepartment='';
+    let generalDepartment = '';
 
     const {
       fullname,
@@ -108,48 +108,48 @@ exports.add_employee = async (req, res, next) => {
     // Use the formatter to format the date
     //console.log(hireDate.toLocaleDateString('en-US'));
 
-  //   let newPath = null;
-  //   if (req.files[0].path) {
-  //     console.log(req.files[0].path)
-  //     images=req.files[0].path;
-  //     // const { originalname, path } = req.file;
-  //     // const parts = originalname.split('.');
-  //     // const ext = parts[parts.length - 1];
-  //     // newPath = path + '.' + ext;
-  //     // fs.renameSync(path, newPath);
-  //   }
-  //  // console.log(req.files[0].path);
+    //   let newPath = null;
+    //   if (req.files[0].path) {
+    //     console.log(req.files[0].path)
+    //     images=req.files[0].path;
+    //     // const { originalname, path } = req.file;
+    //     // const parts = originalname.split('.');
+    //     // const ext = parts[parts.length - 1];
+    //     // newPath = path + '.' + ext;
+    //     // fs.renameSync(path, newPath);
+    //   }
+    //  // console.log(req.files[0].path);
 
-  //  if (req.files == undefined) {
-  //   res.status(400).json({ message: "Please upload a file!" });
-  // }
-
-
- // console.log(req.file.path)
-//   if (req.file) {
-//     console.log('Here it is');
-    
-//   //  const filename = Date.now() + req.file;
-//    // data.append("name", filename);
-//     //data.append("file", file);
-//    // images = filename;
-//  //console.log(req.files[0]);
-//  // images:req.files[0].path;
-//   }
+    //  if (req.files == undefined) {
+    //   res.status(400).json({ message: "Please upload a file!" });
+    // }
 
 
+    // console.log(req.file.path)
+    //   if (req.file) {
+    //     console.log('Here it is');
 
-const newDepartment=await Department.find({companyName:req.user.companyName, deptName:'General'});
+    //   //  const filename = Date.now() + req.file;
+    //    // data.append("name", filename);
+    //     //data.append("file", file);
+    //    // images = filename;
+    //  //console.log(req.files[0]);
+    //  // images:req.files[0].path;
+    //   }
 
-console.log(mongoose.Types.ObjectId(newDepartment[0]?._id));
-console.log(newDepartment[0]._id);
 
-generalDepartment=mongoose.Types.ObjectId(newDepartment[0]?._id);
-if(!department || department==undefined){
-console.log('no department')
 
-}
-console.log(department==undefined)
+    const newDepartment = await Department.find({ companyName: req.user.companyName, deptName: 'General' });
+
+    console.log(mongoose.Types.ObjectId(newDepartment[0]?._id));
+    console.log(newDepartment[0]._id);
+
+    generalDepartment = mongoose.Types.ObjectId(newDepartment[0]?._id);
+    if (!department || department == undefined) {
+      console.log('no department')
+
+    }
+    console.log(department == undefined)
 
     const newEmployee = await Employee.create({
       fullname: fullname,
@@ -157,10 +157,10 @@ console.log(department==undefined)
       sex: sex,
       id_number: id_number,
       email: email,
-      department: department?department:generalDepartment,
-      images:  images,
+      department: department ? department : generalDepartment,
+      images: images,
       position: position,
-      pension:pension,
+      pension: pension,
       phoneNumber: phoneNumber,
       date_of_birth: date_of_birth,
       optionalNumber: optionalNumber,
@@ -222,30 +222,30 @@ console.log(department==undefined)
       //   contentType: "image/png",
       // }
     });
-   // const y = await companyId1(req, res);
+    // const y = await companyId1(req, res);
     res.status(200).json({
       //companyId: req.user.id,
 
-      status:'success',
+      status: 'success',
       employee: newEmployee,
 
     });
 
-  
+
   } catch (err) {
 
     next(createError.createError(404, err));
     // res.status(404).json({
     //   error:err
     // })
-   }
+  }
 };
 
 //GET ALL
 exports.get_All_Employee = async (req, res, next) => {
   try {
     const employee = await Employee.find({ companyId: req.user.id })
-     .populate('department')
+      .populate('department')
       .populate('allowance')
       .populate('payroll')
       .populate('deduction');
@@ -256,7 +256,7 @@ exports.get_All_Employee = async (req, res, next) => {
 
     });
   } catch (err) {
- next(  createError.createError(404,err))
+    next(createError.createError(404, err))
   }
 };
 //   fullname: employee,
@@ -397,7 +397,7 @@ exports.get_By_Department = async (req, res, next) => {
 exports.getbydept = async (req, res, next) => {
   try {
     const query = req.query.department;
-   // console.log(query);
+    // console.log(query);
 
 
     const employee = await Employee.find({
@@ -406,10 +406,10 @@ exports.getbydept = async (req, res, next) => {
       },],
     }
 
-    ) .populate('department')
-    .populate('allowance')
-    .populate('payroll')
-    .populate('deduction');
+    ).populate('department')
+      .populate('allowance')
+      .populate('payroll')
+      .populate('deduction');
 
     console.log(employee);;
     res.status(200).json({
@@ -421,8 +421,8 @@ exports.getbydept = async (req, res, next) => {
   }
 };
 
-exports.updateEmploye=async(req,res,next)=>{
-  const employeeId=req.params.employeeId;
+exports.updateEmploye = async (req, res, next) => {
+  const employeeId = req.params.employeeId;
 }
 
 
@@ -433,7 +433,7 @@ exports.updateEmploye=async(req,res,next)=>{
 //set role
 
 
-exports.setApprovers=async(req,res,next)=>{
+exports.setApprovers = async (req, res, next) => {
   try {
 
     const approvers = await User.findOneAndUpdate(
@@ -445,8 +445,33 @@ exports.setApprovers=async(req,res,next)=>{
     res.status(404).json({
       approvers
     })
-    
+
   } catch (err) {
-    
+    createError.createError(404, err)
   }
+}
+
+//pension
+
+exports.updatePension = async (req, res, next) => {
+  try {
+    //const employee=await Employee.find({companyId:req.user.id});
+    const employee = await Employee.updateMany({ companyId: req.user.id }, { $set: { pension: req.body.pension } });
+
+  } catch (err) {
+    createError.createError(404, err)
+  }
+
+}
+
+exports.updatePensionByDepartment=async(req,res,next)=>{
+
+  try {
+    //const employee=await Employee.find({companyId:req.user.id});
+    const employee = await Employee.updateMany({ companyId: req.user.id ,department:req.params.departmentId}, { $set: { pension: req.body.pension } });
+
+  } catch (err) {
+    createError.createError(404, err);
+  }
+
 }

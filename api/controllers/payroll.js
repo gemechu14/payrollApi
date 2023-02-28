@@ -134,7 +134,11 @@ exports.add_payroll_to_Employee= async (req,res,next) => {
     month,
     year,
     payrollId,
-    netSalary
+    netSalary,
+    arrears,
+    lateSittingOverTime,
+    dayDeduction,
+    EOTBDeduction
    }=req.body;
 
   //  year: [{
@@ -174,7 +178,11 @@ console.log(emp.department);
           {
             name:month,
             netSalary,
-            payroll:payrollId           },
+            payroll:payrollId  ,
+            arrears,
+            lateSittingOverTime,
+            dayDeduction,
+            EOTBDeduction         },
                  
     
         ]
