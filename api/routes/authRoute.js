@@ -158,4 +158,8 @@ router
   .delete(middleware.protect, authcontroller.deleteMe);
 
   router.get('/logout',authcontroller.logout);
-module.exports = router;
+
+
+  
+
+  module.exports = router;

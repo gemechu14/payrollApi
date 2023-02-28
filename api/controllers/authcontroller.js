@@ -277,6 +277,7 @@ exports.login = async (req, res, next) => {
     const user = await User.findOne({ email }).select('+password');
 
     console.log(user.companyCode);
+    console.log(companyCode)
     if (
       !user ||
       user.companyCode != companyCode ||
@@ -1178,6 +1179,5 @@ exports.logout = async (req, res) => {
     message: 'logged out successfully',
   });
 };
-
 
 

@@ -272,6 +272,12 @@ router.post('/gammee', middleware.protect, middleware.restrictTo('Companyadmin')
 
 
 
+router.post(
+  '/setApprover',
+  middleware.protect,
+  middleware.restrictTo('Companyadmin'),
+  employeeController.setApprovers
+);
 
 
 

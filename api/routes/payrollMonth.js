@@ -31,6 +31,13 @@ payrollMonthController.get_single_monthPayroll);
 router.get('/',
 middleware.protect,
 middleware.restrictTo('Companyadmin'),
-payrollMonthController.get_All_monthPayroll);
+payrollMonthController.get_All);
+
+
+// router.get('/pm',
+// middleware.protect,
+// middleware.restrictTo('Companyadmin'),
+// payrollMonthController.get_All);
+
 
 module.exports = router;

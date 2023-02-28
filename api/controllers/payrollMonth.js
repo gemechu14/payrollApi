@@ -1,5 +1,5 @@
 const payrollMonth = require('../models/payrollMonth.js');
-
+const moment =require('moment')
 
 exports.add_payrollMonth = async (req, res) => {
  
@@ -92,3 +92,45 @@ exports.delete_monthPayroll = async (req, res) => {
 };
 
 
+
+
+exports.get_All = async (req, res, next) => {
+
+
+  try {
+
+   await payrollMonth.find({companyId:req.user.id}).exec().then(docs => {
+    //   const response = {
+        //count: docs.length,
+      const  monthPayroll= docs.map(doc => {
+          return {
+            name: doc.name,
+            startDate:moment(doc.startDate).format("YYYY-MM-DD"),
+            endDate:moment(doc.endDate).format("YYYY-MM-DD"),
+            name:doc.name,
+            companyId:doc.companyId
+          
+                   };
+        })
+   //   }
+      
+      
+        res.status(200).json({
+         count: monthPayroll.length,
+         monthPayroll
+          });
+      });
+   
+  } catch (err) {
+    next(err);
+  }
+};
+//GET One
+exports.get_single1_monthPayroll = async (req, res) => {
+  try {
+    const monthPayroll = await payrollMonth.find({companyId:req.user.id,_id:req.params.id});
+    res.status(200).json(monthPayroll);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};

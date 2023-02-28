@@ -141,10 +141,10 @@ exports.add_employee = async (req, res, next) => {
 
 const newDepartment=await Department.find({companyName:req.user.companyName, deptName:'General'});
 
-console.log(mongoose.Types.ObjectId(newDepartment[0]._id));
+console.log(mongoose.Types.ObjectId(newDepartment[0]?._id));
 console.log(newDepartment[0]._id);
 
-generalDepartment=mongoose.Types.ObjectId(newDepartment[0]._id);
+generalDepartment=mongoose.Types.ObjectId(newDepartment[0]?._id);
 if(!department || department==undefined){
 console.log('no department')
 
@@ -396,16 +396,19 @@ exports.get_By_Department = async (req, res, next) => {
 exports.getbydept = async (req, res, next) => {
   try {
     const query = req.query.department;
-    console.log(query);
+   // console.log(query);
 
-    console.log('helooo');
+
     const employee = await Employee.find({
       $and: [{ companyId: req.user.id }, {
         department: query
       },],
     }
 
-    );
+    ) .populate('department')
+    .populate('allowance')
+    .populate('payroll')
+    .populate('deduction');
 
     console.log(employee);;
     res.status(200).json({
@@ -419,4 +422,30 @@ exports.getbydept = async (req, res, next) => {
 
 exports.updateEmploye=async(req,res,next)=>{
   const employeeId=req.params.employeeId;
+}
+
+
+
+
+//Company admin
+
+//set role
+
+
+exports.setApprovers=async(req,res,next)=>{
+  try {
+
+    const approvers = await User.findOneAndUpdate(
+      { email },
+      { $set: { role: 'approvers' } },
+      { new: true }
+    );
+    console.log(approveCompany._id);
+    res.status(404).json({
+      approvers
+    })
+    
+  } catch (err) {
+    
+  }
 }
