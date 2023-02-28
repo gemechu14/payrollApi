@@ -137,6 +137,7 @@ const employeeSchema = mongoose.Schema({
   position: {
     type: String
   },
+  pension:{type:String},
   total_allowance:{type:Number},
   total_deduction:{type:Number},
   payroll_isApproved:{type:Boolean,default:'false'},

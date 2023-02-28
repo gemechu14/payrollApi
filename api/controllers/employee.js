@@ -75,7 +75,7 @@ exports.add_employee = async (req, res, next) => {
       accountNumber,
       paymentMethod,
       department,
-  
+      pension,
       separationDate,
       basicSalary,
       housingAllowance,
@@ -160,6 +160,7 @@ console.log(department==undefined)
       department: department?department:generalDepartment,
       images:  images,
       position: position,
+      pension:pension,
       phoneNumber: phoneNumber,
       date_of_birth: date_of_birth,
       optionalNumber: optionalNumber,
