@@ -654,7 +654,7 @@ const savedTaxSlab=await TaxSlab.create({
 
     // ])
 
-    insertArray=[savedTaxSlab._id,savedTaxSlab1._id,savedTaxSlab2._id,savedTaxSlab3._id,savedTaxSlab4._id,savedTaxSlab5._id,savedTaxSlab6._id]
+  insertArray=[savedTaxSlab._id,savedTaxSlab1._id,savedTaxSlab2._id,savedTaxSlab3._id,savedTaxSlab4._id,savedTaxSlab5._id,savedTaxSlab6._id]
   const tax=  await Payroll.findByIdAndUpdate(mongoose.Types.ObjectId(payrollId), 
     {$push: { taxSlab: insertArray}},
     );

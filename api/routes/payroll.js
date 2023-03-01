@@ -27,13 +27,33 @@ payrollController.get_taxslab_Payroll);
 
 
 //ADD PAYROLL TO EMPLOYEE
-router.post('/:departmentId/',
+router.put('/pay/:departmentId/',
 middleware.protect,
 middleware.restrictTo('Companyadmin'),
 
 payrollController.add_payroll_to_Employee);
 
+
+//ADD other allowance and deduction  TO EMPLOYEE
+router.put('/update/:employeeId/',
+middleware.protect,
+middleware.restrictTo('Companyadmin'),
+
+payrollController.add_allowance_and_deduction_to_Employee);
+
 //ADD PAYROLL ON SELECTED DEPARTMENT
+
+
+
+
+//ADD PAYROLL TO EMPLOYEE
+router.post('/pay/:departmentId/',
+middleware.protect,
+middleware.restrictTo('Companyadmin'),
+
+payrollController.get_All_pm);
+
+
 
 
 

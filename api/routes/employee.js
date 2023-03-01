@@ -280,5 +280,12 @@ router.post(
 );
 
 
+router.get('/gammee',
+middleware.protect,
+middleware.restrictTo('Companyadmin'),
+employeeController.get_emp_by_year_month
+
+)
+
 
 module.exports = router;

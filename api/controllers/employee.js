@@ -10,6 +10,7 @@ const multer = require('multer');
 const mongoose = require('mongoose')
 var fs = require('fs');
 var path = require('path');
+const department = require('../models/department.js');
 //const createError=required('../utils/error.js');
 //const IMAGE_BASE_URL = "http://localhost:5000/image?name=";
 
@@ -473,5 +474,41 @@ exports.updatePensionByDepartment=async(req,res,next)=>{
   } catch (err) {
     createError.createError(404, err);
   }
+
+}
+
+
+
+//Fetch employee using year month and department
+
+exports.get_emp_by_year_month=async(req,res,next)=>{
+
+
+  try {
+
+    departmentId=req.query.department;
+    year=req.query.year;
+    month=req.query.month
+    console.log(year)
+    console.log(month)
+    console.log(departmentId)
+
+    const employee = await Employee.find({ companyId: req.user.id, department:departmentId, "year.name":"2023" ,"year.month.name":"July"  })
+     .populate('allowance')
+    .populate('payroll')
+    .populate('deduction')
+    ;
+        
+        
+          res.status(200).json({
+          
+           employee:employee[0].year[0].month
+            });
+       
+      
+       } catch (err) {
+    createError.createError(404,err)
+  }
+
 
 }
