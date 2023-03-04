@@ -310,7 +310,7 @@ exports.get_All_pm = async (req, res, next) => {
         console.log("data", data);
       });
     try {
-      const { month, year, payrollId, netSalary } = req.body;
+      const { month, year, payrollId, netSalary ,payrollStatus} = req.body;
       //   console.log(req.body);
       //   // const check_month=await Employee.find({department:departmentId,})
       console.log("data length:", data.length);
@@ -361,6 +361,7 @@ exports.get_All_pm = async (req, res, next) => {
                     name: month,
                     netSalary: netSalary,
                     payroll: payrollId,
+                    payrollStatus:payrollStatus,
                     arrears: data[i].arrears,
                     lateSittingOverTime: data[i].lateSittingOverTime,
                     dayDeduction: data[i].dayDeduction,
@@ -384,6 +385,7 @@ exports.get_All_pm = async (req, res, next) => {
                     name: month,
                     netSalary: netSalary,
                     payroll: payrollId,
+                    payrollStatus:payrollStatus,
                     arrears: data[i].arrears,
                     lateSittingOverTime: data[i].lateSittingOverTime,
                     dayDeduction: data[i].dayDeduction,

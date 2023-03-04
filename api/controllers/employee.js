@@ -376,18 +376,41 @@ exports.searchAllEmployee = async (req, res, next) => {
 
 //SEARCH BY DEPARTMENT IDD
 exports.get_By_Department = async (req, res, next) => {
-  const departmentId = req.params.departmentId;
+ 
   try {
-    const list_of_employee = await Employee.find({
-      companyId: req.user.id,
-      departmentId: departmentId,
-    });
+    const departmentId = req.params.departmentId;
+    let data='';
+      console.log(departmentId)
 
+    await Employee.find({
+      companyId: req.user.id,
+      department: departmentId,
+    })
+      .exec()
+      .then((docs) => { 
+        const other = docs.map((doc) => {
+          return {
+            _id: doc._id,
+            name:doc.fullname,
+            department: doc.department,
+            companyId: doc.companyId,
+            year: doc.year,
+     
+          };
+        });
+        data = other;
+        console.log("data", data);
+         })
+
+       
+
+
+
+
+   
 
     res.status(200).json({
-      len: list_of_employee.length,
-
-      list_of_employee: list_of_employee
+     data
     });
   } catch (err) {
     next(err);
@@ -512,3 +535,4 @@ exports.get_emp_by_year_month=async(req,res,next)=>{
 
 
 }
+

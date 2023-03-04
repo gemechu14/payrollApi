@@ -288,4 +288,12 @@ employeeController.get_emp_by_year_month
 )
 
 
+router.get('/dept/:departmentId',
+middleware.protect,
+middleware.restrictTo('Companyadmin'),
+employeeController.get_By_Department
+
+)
+
+
 module.exports = router;
