@@ -242,6 +242,7 @@ exports.add_allowance_and_deduction_to_Employee = async (req, res, next) => {
       dayDeduction,
       EOTBDeduction,
       payrollStatus,
+    //  payStat
     } = req.body;
 
     const updated = await Employee.findOneAndUpdate(
@@ -258,6 +259,7 @@ exports.add_allowance_and_deduction_to_Employee = async (req, res, next) => {
                   name: month,
                   netSalary,
                   payroll: payrollId,
+                //  payStat:payStat,
 
                   arrears: arrears,
                   lateSittingOverTime: lateSittingOverTime,
@@ -282,6 +284,7 @@ exports.add_allowance_and_deduction_to_Employee = async (req, res, next) => {
 
 exports.get_All_pm = async (req, res, next) => {
   try {
+    const { month, year, payrollId, netSalary ,payrollStatus,payStat} = req.body;
     let data = "";
     const departmentId = req.params.departmentId;
     await Employee.find({
@@ -300,6 +303,7 @@ exports.get_All_pm = async (req, res, next) => {
             EOTBDeduction: doc.EOTBDeduction,
             department: doc.department,
             companyId: doc.companyId,
+            payrollStatus:doc.payrollStatus,
             year: doc.year,
             // month: monthArray?.map((item) => item[0]?.name),
           };
@@ -310,7 +314,7 @@ exports.get_All_pm = async (req, res, next) => {
         console.log("data", data);
       });
     try {
-      const { month, year, payrollId, netSalary ,payrollStatus} = req.body;
+     
       //   console.log(req.body);
       //   // const check_month=await Employee.find({department:departmentId,})
       console.log("data length:", data.length);
@@ -333,7 +337,7 @@ exports.get_All_pm = async (req, res, next) => {
               {
                 _id: mongoose.Types.ObjectId(data[i]._id),
                 year: { $elemMatch: { name: { $eq: year } } },
-                "year.$.month": { $elemMatch: { name: { $eq: "yared" } } },
+                "year.$.month": { $elemMatch: { name: { $eq: month } } },
               },
               {
                 $pull: {
@@ -350,6 +354,7 @@ exports.get_All_pm = async (req, res, next) => {
                 },
               }
             );
+           // console.log(payrollStatus);
             const emp1 = await Employee.updateOne(
               {
                 _id: mongoose.Types.ObjectId(data[i]._id),
@@ -361,17 +366,20 @@ exports.get_All_pm = async (req, res, next) => {
                     name: month,
                     netSalary: netSalary,
                     payroll: payrollId,
+                    // payStat:"true",
                     payrollStatus:payrollStatus,
                     arrears: data[i].arrears,
                     lateSittingOverTime: data[i].lateSittingOverTime,
-                    dayDeduction: data[i].dayDeduction,
+                    dayDeduction: "15",
                     EOTBDeduction: data[i].EOTBDeduction,
-                    payrollStatus: data[i].payrollStatus,
+                    // payrollStatus: data[i].payrollStatus,
                   },
+                 
+                  
                 },
               }
             );
-            console.log(emp);
+            //console.log(emp);
           } else {
             console.log("year but not month");
             const emp = await Employee.updateOne(
@@ -385,12 +393,14 @@ exports.get_All_pm = async (req, res, next) => {
                     name: month,
                     netSalary: netSalary,
                     payroll: payrollId,
+                    // payStat:'true',
+               
                     payrollStatus:payrollStatus,
                     arrears: data[i].arrears,
                     lateSittingOverTime: data[i].lateSittingOverTime,
                     dayDeduction: data[i].dayDeduction,
                     EOTBDeduction: data[i].EOTBDeduction,
-                    payrollStatus: data[i].payrollStatus,
+                    //payrollStatus: data[i].payrollStatus,
                   },
                 },
               }
@@ -413,11 +423,13 @@ exports.get_All_pm = async (req, res, next) => {
                         name: month,
                         netSalary: netSalary,
                         payroll: payrollId,
+                        // payStat:"true",
+                        payrollStatus:payrollStatus,
                         arrears: data[i].arrears,
                         lateSittingOverTime: data[i].lateSittingOverTime,
                         dayDeduction: data[i].dayDeduction,
                         EOTBDeduction: data[i].EOTBDeduction,
-                        payrollStatus: data[i].payrollStatus,
+                       // payrollStatus: data[i].payrollStatus,
                       },
                     ],
                   },

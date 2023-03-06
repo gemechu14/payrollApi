@@ -194,10 +194,12 @@ const employeeSchema = mongoose.Schema({
                     dayDeduction: String,
                     EOTBDeduction: String,
                     netSalary: String,
-                    payrollStatus: {
-                        type: Boolean,
-                        default: 'false'
-                    },
+                    // payrollStatus: {
+                    //     type: Boolean,
+                    //     default: false
+                    // },
+                    payrollStatus:{type:Boolean,
+                    default:false},
 
                     payroll: [
                         {

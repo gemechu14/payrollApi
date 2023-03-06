@@ -382,6 +382,22 @@ exports.get_By_Department = async (req, res, next) => {
     let data='';
       console.log(departmentId)
 
+const emp1=await Employee.find({companyId: req.user.id,
+  department: departmentId,},
+  {"year.month": 1 });
+
+
+
+//  const  collection= await Employee.find({companyId: req.user.id,
+//     department: departmentId,}, { "data.year.month.payrollStatus": 1 }).toArray(function(err, docs) {
+//     if (err) {
+//       console.log('Error querying the collection', err);
+//     } else {
+//       console.log('Documents found', docs);
+//     }
+
+//   });
+
     await Employee.find({
       companyId: req.user.id,
       department: departmentId,
@@ -399,21 +415,31 @@ exports.get_By_Department = async (req, res, next) => {
           };
         });
         data = other;
-        console.log("data", data);
-         })
+
+
+        
+
+
+
+})
+       
+       
+        // console.log("data", data);
+      
 
        
+      //    const conditions = data[i].year.filter((item) =>
+      //    item.name.includes(year)
+      //  );
 
-
-
+    
 
    
-
+     // year.$.month
     res.status(200).json({
-     data
+      data
     });
-  } catch (err) {
-    next(err);
+  } catch (err) {    next(err);
   }
 };
 
