@@ -3,6 +3,9 @@ const _ = require("underscore");
 const vm = require("v-response");
 const { createError } = require("../utils/error.js");
 const User = require("../models/userModel.js");
+const moment=require('moment')
+
+
 exports.createPlan = async (req, res, next) => {
   try {
     // if (!req.body.price || !req.body.name) {
@@ -83,7 +86,19 @@ exports.getleftDays=async(req,res,next)=>{
     const package = await User.findById(id);
     const next_payment_date=package.next_payment_date;
     console.log(next_payment_date)
-    res.status(200).json(package);
+
+
+    const nextPaymentDate = moment(next_payment_date, 'DD/MM/YYYY');
+    const currentDate = moment();
+    const daysLeft = nextPaymentDate.diff(currentDate, 'days');
+
+    //subscription.leftday = daysLeft;
+
+
+    res.status(200).json(daysLeft);
+
+
+
   } catch (err) {
     res.status(404).json("error");
   }
