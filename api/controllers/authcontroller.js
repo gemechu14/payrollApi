@@ -1245,7 +1245,7 @@ exports.superAdminLogin = async (req, res, next) => {
       return next(
         createError.createError(
           404,
-          'please provide email, password or company code!'
+          'please provide email, password !'
         )
       ); //res
       //   .status(404)
