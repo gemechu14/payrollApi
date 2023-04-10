@@ -2,6 +2,7 @@ const Package = require("../models/Package.js");
 const _ = require("underscore");
 const vm = require("v-response");
 const { createError } = require("../utils/error.js");
+const User = require("../models/userModel.js");
 exports.createPlan = async (req, res, next) => {
   try {
     // if (!req.body.price || !req.body.name) {
@@ -72,3 +73,20 @@ exports.deletePackage = async (req, res, next) => {
     res.status(404).json("error");
   }
 };
+
+
+exports.getleftDays=async(req,res,next)=>{
+
+  try {
+    const id = req.params.id;
+
+    const package = await User.findById(id);
+    const next_payment_date=package.next_payment_date;
+    console.log(next_payment_date)
+    res.status(200).json(package);
+  } catch (err) {
+    res.status(404).json("error");
+  }
+
+
+}

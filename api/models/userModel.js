@@ -87,7 +87,10 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: null,
   },
-
+  leftDays: {
+    type: String,
+ 
+  },
 
   status: {
     type: String,

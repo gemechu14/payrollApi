@@ -94,46 +94,52 @@ router.get(
 //GET PENDING COMPANY
 router.get(
   '/getAllPendingCompany',
-  authcontroller.protect,
-  authcontroller.restrictTo('superAdmin'),
+  middleware.protect,
+  middleware.restrictTo('superAdmin'),
+
   authcontroller.getAllPendingCompany
 );
 
 //SEARCH PENDING COMPANY
 router.get(
   '/getAllPendingCompany/:key',
-  authcontroller.protect,
-  authcontroller.restrictTo('superAdmin'),
+  middleware.protect,
+  middleware.restrictTo('superAdmin'),
+
   authcontroller.searchPendingCompany
 );
 
 //SEARCH Active  COMPANY
 router.get(
   '/getAllActiveCompany/:key',
-  authcontroller.protect,
-  authcontroller.restrictTo('superAdmin'),
+  middleware.protect,
+  middleware.restrictTo('superAdmin'),
+
   authcontroller.searchActiveCompany
 );
 
 router.get(
   '/getAllActiveCompany',
-  authcontroller.protect,
-  authcontroller.restrictTo('superAdmin'),
+  middleware.protect,
+  middleware.restrictTo('superAdmin'),
+
   authcontroller.getAllActiveCompany
 );
 //SEARCH COMPANY
 router.get(
   '/searchAllCompany/:key',
-  authcontroller.protect,
-  authcontroller.restrictTo('superAdmin'),
+  middleware.protect,
+  middleware.restrictTo('superAdmin'),
+
   authcontroller.searchAllCompany
 );
 
 //APPROVE COMPANY
 router.post(
   '/approveCompany',
-  authcontroller.protect,
-  authcontroller.restrictTo('superAdmin'),
+  middleware.protect,
+  middleware.restrictTo('superAdmin'),
+
   authcontroller.approveCompany
 );
 
@@ -142,16 +148,18 @@ router.post('/sendEmail',authcontroller.sendEmail);
 //UNAPPROVE COMPANY
 router.post(
   '/unapproveCompany',
-  authcontroller.protect,
-  authcontroller.restrictTo('superAdmin'),
+  middleware.protect,
+  middleware.restrictTo('superAdmin'),
+
   authcontroller.unApproveCompany
 );
 
 //APPROVE COMPANY PAYMENT
 router.post(
   '/approveCompanyPayment',
-  authcontroller.protect,
-  authcontroller.restrictTo('superAdmin'),
+  middleware.protect,
+  middleware.restrictTo('superAdmin'),
+
   authcontroller.approveCompanyPayment
 );
 router.get('/find/:id',
