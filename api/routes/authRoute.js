@@ -21,6 +21,16 @@ router.get(
 );
 
 
+router.post(
+  '/superAdmin',
+ // middleware.protect,
+ // middleware.restrictTo('superAdmin'),
+  // authcontroller.restrictTo('superAdmin'),
+  authcontroller.superAdminLogin
+);
+
+
+
 router.put(
   '/updateCompany/:email',
   middleware.protect,
@@ -144,7 +154,11 @@ router.post(
   authcontroller.restrictTo('superAdmin'),
   authcontroller.approveCompanyPayment
 );
+router.get('/find/:id',
+authcontroller.protect,
+//authcontroller.restrictTo('superAdmin'),
 
+authcontroller.getSingleCompany)
 
 
 router.post('/forgetPassword', authcontroller.forgotPassword);

@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const deptController = require('../controllers/department.js');
 const middleware=require('../middleware/auth.js')
-//CREATE
+//CREATEh
 router.post('/', 
 middleware.protect,
 middleware.restrictTo('Companyadmin'),

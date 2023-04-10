@@ -56,5 +56,11 @@ payrollController.get_All_pm);
 
 
 
+//PAYROLL Calculation
+router.post('/payrollCalc/:departmentId',
+  middleware.protect,
+  middleware.restrictTo('Companyadmin'),
+  payrollController.payrollCalculation);
+
 
 module.exports = router;

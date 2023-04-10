@@ -21,6 +21,10 @@ const payrollmodel = mongoose.Schema({
     type: String,
     required: true,
   },
+  payrollMonth: {
+    type: String,
+    required: true,
+  },
   companyId:{
     type:String
   },

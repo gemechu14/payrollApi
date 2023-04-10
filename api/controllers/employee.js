@@ -1,24 +1,22 @@
-const Employee = require('../models/employee.js');
-const Department = require('../models/department.js');
-const middleware = require('../middleware/auth.js');
+const Employee = require("../models/employee.js");
+const Department = require("../models/department.js");
+const middleware = require("../middleware/auth.js");
 
-const jwt = require('jsonwebtoken');
-const { promisify } = require('util');
-const User = require('../models/userModel.js');
-const createError = require('../utils/error.js');
-const multer = require('multer');
-const mongoose = require('mongoose')
-var fs = require('fs');
-var path = require('path');
-const department = require('../models/department.js');
+const jwt = require("jsonwebtoken");
+const { promisify } = require("util");
+const User = require("../models/userModel.js");
+const createError = require("../utils/error.js");
+const multer = require("multer");
+const mongoose = require("mongoose");
+var fs = require("fs");
+var path = require("path");
+const department = require("../models/department.js");
 //const createError=required('../utils/error.js');
 //const IMAGE_BASE_URL = "http://localhost:5000/image?name=";
 
-
-
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, './uploads/');
+    cb(null, "./uploads/");
   },
   filename: function (req, file, cb) {
     cb(null, file.originalname);
@@ -27,7 +25,7 @@ const storage = multer.diskStorage({
 
 const fileFilter = (req, file, cb) => {
   // reject a file
-  if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
+  if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
     cb(null, true);
   } else {
     cb(null, false);
@@ -37,24 +35,16 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({
   storage: storage,
   limits: {
-
     fileSize: 1024 * 1024 * 5,
   },
   fileFilter: fileFilter,
 });
 
-
-
-
-
 //Add
-
-
 
 exports.add_employee = async (req, res, next) => {
   try {
-
-    let generalDepartment = '';
+    let generalDepartment = "";
 
     const {
       fullname,
@@ -96,61 +86,33 @@ exports.add_employee = async (req, res, next) => {
       EOTBDeduction,
       TaxDeduction,
       netSalary,
-      position
+      position,
+      contact_name,
+      emergency_contact_Info,
+      contact_phoneNumber,
+      relationship
     } = req.body;
 
 
 
 
+    console.log(emergency_contact_Info.contact_name)
+    console.log(emergency_contact_Info.relationship)
+    console.log(emergency_contact_Info.contact_phoneNumber)
 
 
-    //const dateFormatter = Intl.DateTimeFormat('sv-SE');
-    // x= ISODate(hireDate)
-    // Use the formatter to format the date
-    //console.log(hireDate.toLocaleDateString('en-US'));
-
-    //   let newPath = null;
-    //   if (req.files[0].path) {
-    //     console.log(req.files[0].path)
-    //     images=req.files[0].path;
-    //     // const { originalname, path } = req.file;
-    //     // const parts = originalname.split('.');
-    //     // const ext = parts[parts.length - 1];
-    //     // newPath = path + '.' + ext;
-    //     // fs.renameSync(path, newPath);
-    //   }
-    //  // console.log(req.files[0].path);
-
-    //  if (req.files == undefined) {
-    //   res.status(400).json({ message: "Please upload a file!" });
-    // }
+    const newDepartment = await Department.find({
+      companyName: req.user.companyName,
+      deptName: "General",
+    });
 
 
-    // console.log(req.file.path)
-    //   if (req.file) {
-    //     console.log('Here it is');
-
-    //   //  const filename = Date.now() + req.file;
-    //    // data.append("name", filename);
-    //     //data.append("file", file);
-    //    // images = filename;
-    //  //console.log(req.files[0]);
-    //  // images:req.files[0].path;
-    //   }
-
-
-
-    const newDepartment = await Department.find({ companyName: req.user.companyName, deptName: 'General' });
-
-    console.log(mongoose.Types.ObjectId(newDepartment[0]?._id));
-    console.log(newDepartment[0]._id);
 
     generalDepartment = mongoose.Types.ObjectId(newDepartment[0]?._id);
     if (!department || department == undefined) {
-      console.log('no department')
-
+      console.log("no department");
     }
-    console.log(department == undefined)
+    console.log(department == undefined);
 
     const newEmployee = await Employee.create({
       fullname: fullname,
@@ -165,7 +127,12 @@ exports.add_employee = async (req, res, next) => {
       phoneNumber: phoneNumber,
       date_of_birth: date_of_birth,
       optionalNumber: optionalNumber,
-      emergency_contact: emergency_contact,
+
+      emergency_contact_Info: {
+        contact_name: emergency_contact_Info.contact_name,
+        relationship: emergency_contact_Info.relationship,
+        contact_phoneNumber: emergency_contact_Info.contact_phoneNumber
+      },
 
       hireDate: hireDate,
       joiningDate: joiningDate,
@@ -175,7 +142,6 @@ exports.add_employee = async (req, res, next) => {
       accountNumber: accountNumber,
       paymentMethod: paymentMethod,
       separationDate: separationDate,
-
 
       //Salary Information
 
@@ -199,46 +165,17 @@ exports.add_employee = async (req, res, next) => {
       netSalary: netSalary,
       companyId: req.user.id,
 
-      // year: [{
-      //   name: '2013',
-      //   month: [
-      //     {
-      //       name: 'Jan',
-      //       payroll: '63eb2c646e8057d17e62cde8'
-      //     },
-      //     {
-      //       name: 'FEB',
-      //       payroll: '63eb2c646e8057d17e62cde8'
-      //     },  ]
-      // }
-
-
-      // ]
-      // images: newPath ? newPath : null,
-
-
-
-      // img:{
-      //   data: fs.readFileSync("uploads/" + req.file.filename),
-      //   contentType: "image/png",
-      // }
     });
-    // const y = await companyId1(req, res);
+
     res.status(200).json({
-      //companyId: req.user.id,
 
-      status: 'success',
-      employee: newEmployee,
 
+      status: "success",
+     employee: newEmployee,
     });
-
-
   } catch (err) {
-
     next(createError.createError(404, err));
-    // res.status(404).json({
-    //   error:err
-    // })
+ 
   }
 };
 
@@ -246,59 +183,20 @@ exports.add_employee = async (req, res, next) => {
 exports.get_All_Employee = async (req, res, next) => {
   try {
     const employee = await Employee.find({ companyId: req.user.id })
-      .populate('department')
-      .populate('allowance')
-      .populate('payroll')
-      .populate('deduction');
+      .populate("department")
+      .populate("allowance")
+      .populate("payroll")
+      .populate("deduction")
+      .populate("gradeId");
     res.status(200).json({
       count: employee.length,
-      employee
-
-
+      employee,
     });
   } catch (err) {
-    next(createError.createError(404, err))
+    next(createError.createError(404, err));
   }
 };
-//   fullname: employee,
-// nationality: employee.nationality,
-// sex: employee.sex,
-// id_number: employee.id_number,
-// email: employee.email,
-// department: employee.department,
-// //images: req.file.path,
-// phoneNumber: employee.phoneNumber,//
-// date_of_birth:employee.date_of_birth,
-// optionalNumber: employee.optionalNumber,
-// emergency_contact: employee.emergency_contact,
-// hireDate: employee.hireDate,
-// joiningDate: employee.joiningDate,
-// employeeCode: employee.employeeCode,
-// employeeType: employee.employeeType,
-// accountTitle: employee.accountTitle, 
-// accountNumber: employee.accountNumber,
-// paymentMethod: employee.paymentMethod,
 
-// separationDate: employee.separationDate,
-// basicSalary: employee.basicSalary,
-// housingAllowance: employee.housingAllowance,
-// positionAllowance: employee.positionAllowance,
-// hardshipAllowance: employee.hardshipAllowance,
-// desertAllowance: employee.desertAllowance,
-// transportAllowance: employee.transportAllowance,
-// cashIndeminityAllowance: employee.cashIndeminityAllowance,
-// fieldAllowance: employee.fieldAllowance,
-// overtimeEarning: employee.overtimeEarning,
-// otherEarning: employee.otherEarning,
-// lateSittingOverTime: employee.lateSittingOverTime,
-// arrears: employee.arrears,
-// dayDeduction: employee.dayDeduction,
-// socialSecurity: employee.socialSecurity,
-// providentFund: employee.providentFund,
-// EOTBDeduction: employee.EOTBDeduction,
-// TaxDeduction: employee.TaxDeduction,
-// netSalary: employee.netSalary,
-// companyId: employee.companyId,
 //GET one
 exports.get_single_Employee = async (req, res) => {
   try {
@@ -306,10 +204,10 @@ exports.get_single_Employee = async (req, res) => {
       companyId: req.user.id,
       _id: req.params.id,
     })
-      .populate('department')
-      .populate('allowance')
-      .populate('payroll')
-      .populate('deduction');
+      .populate("department")
+      .populate("allowance")
+      .populate("payroll")
+      .populate("deduction");
     res.status(200).json({
       count: employee.length,
       employee: {
@@ -329,9 +227,9 @@ exports.updateEmployee = async (req, res) => {
       { $set: req.body },
       { new: true }
     );
-    console.log(req.body)
+    console.log(req.body);
     res.status(200).json(updatedEmployee);
-  } catch (error) { }
+  } catch (error) {}
 };
 
 //DELETE EMPLOYEE
@@ -359,13 +257,13 @@ exports.searchAllEmployee = async (req, res, next) => {
     const employee = await Employee.find({
       $and: [
         { companyId: req.user.id },
-        { fullname: { $regex: new RegExp(query, 'i') } },
+        { fullname: { $regex: new RegExp(query, "i") } },
       ],
     })
-      .populate('department')
-      .populate('allowance')
-      .populate('payroll')
-      .populate('deduction');
+      .populate("department")
+      .populate("allowance")
+      .populate("payroll")
+      .populate("deduction");
     res.status(200).json({
       user: employee,
     });
@@ -376,70 +274,40 @@ exports.searchAllEmployee = async (req, res, next) => {
 
 //SEARCH BY DEPARTMENT IDD
 exports.get_By_Department = async (req, res, next) => {
- 
   try {
     const departmentId = req.params.departmentId;
-    let data='';
-      console.log(departmentId)
+    let data = "";
+    console.log(departmentId);
 
-const emp1=await Employee.find({companyId: req.user.id,
-  department: departmentId,},
-  {"year.month": 1 });
-
-
-
-//  const  collection= await Employee.find({companyId: req.user.id,
-//     department: departmentId,}, { "data.year.month.payrollStatus": 1 }).toArray(function(err, docs) {
-//     if (err) {
-//       console.log('Error querying the collection', err);
-//     } else {
-//       console.log('Documents found', docs);
-//     }
-
-//   });
+    const emp1 = await Employee.find(
+      { companyId: req.user.id, department: departmentId },
+      { "year.month": 1 }
+    );
 
     await Employee.find({
       companyId: req.user.id,
       department: departmentId,
     })
       .exec()
-      .then((docs) => { 
+      .then((docs) => {
         const other = docs.map((doc) => {
           return {
             _id: doc._id,
-            name:doc.fullname,
+            name: doc.fullname,
             department: doc.department,
             companyId: doc.companyId,
             year: doc.year,
-     
           };
         });
         data = other;
+      });
 
-
-        
-
-
-
-})
-       
-       
-        // console.log("data", data);
-      
-
-       
-      //    const conditions = data[i].year.filter((item) =>
-      //    item.name.includes(year)
-      //  );
-
-    
-
-   
-     // year.$.month
+ 
     res.status(200).json({
-      data
+      data,
     });
-  } catch (err) {    next(err);
+  } catch (err) {
+    next(err);
   }
 };
 
@@ -449,19 +317,20 @@ exports.getbydept = async (req, res, next) => {
     const query = req.query.department;
     // console.log(query);
 
-
     const employee = await Employee.find({
-      $and: [{ companyId: req.user.id }, {
-        department: query
-      },],
-    }
+      $and: [
+        { companyId: req.user.id },
+        {
+          department: query,
+        },
+      ],
+    })
+      .populate("department")
+      .populate("allowance")
+      .populate("payroll")
+      .populate("deduction");
 
-    ).populate('department')
-      .populate('allowance')
-      .populate('payroll')
-      .populate('deduction');
-
-    console.log(employee);;
+    console.log(employee);
     res.status(200).json({
       count1: employee.length,
       employee: employee,
@@ -473,92 +342,147 @@ exports.getbydept = async (req, res, next) => {
 
 exports.updateEmploye = async (req, res, next) => {
   const employeeId = req.params.employeeId;
-}
-
-
-
+};
 
 //Company admin
 
 //set role
 
-
 exports.setApprovers = async (req, res, next) => {
   try {
-
     const approvers = await User.findOneAndUpdate(
       { email },
-      { $set: { role: 'approvers' } },
+      { $set: { role: "approvers" } },
       { new: true }
     );
     console.log(approveCompany._id);
     res.status(404).json({
-      approvers
-    })
-
+      approvers,
+    });
   } catch (err) {
-    createError.createError(404, err)
+    createError.createError(404, err);
   }
-}
+};
 
 //pension
 
 exports.updatePension = async (req, res, next) => {
   try {
     //const employee=await Employee.find({companyId:req.user.id});
-    const employee = await Employee.updateMany({ companyId: req.user.id }, { $set: { pension: req.body.pension } });
-
-  } catch (err) {
-    createError.createError(404, err)
-  }
-
-}
-
-exports.updatePensionByDepartment=async(req,res,next)=>{
-
-  try {
-    //const employee=await Employee.find({companyId:req.user.id});
-    const employee = await Employee.updateMany({ companyId: req.user.id ,department:req.params.departmentId}, { $set: { pension: req.body.pension } });
-
+    const employee = await Employee.updateMany(
+      { companyId: req.user.id },
+      { $set: { pension: req.body.pension } }
+    );
   } catch (err) {
     createError.createError(404, err);
   }
+};
 
-}
-
-
+exports.updatePensionByDepartment = async (req, res, next) => {
+  try {
+    //const employee=await Employee.find({companyId:req.user.id});
+    const employee = await Employee.updateMany(
+      { companyId: req.user.id, department: req.params.departmentId },
+      { $set: { pension: req.body.pension } }
+    );
+  } catch (err) {
+    createError.createError(404, err);
+  }
+};
 
 //Fetch employee using year month and department
 
-exports.get_emp_by_year_month=async(req,res,next)=>{
+exports.get_emp_by_year_month = async (req, res, next) => {
+  try {
+    departmentId = req.query.department;
+    year = req.query.year;
+    month = req.query.month;
+    console.log(year);
+    console.log(month);
+    console.log(departmentId);
 
+    const employee = await Employee.find({
+      companyId: req.user.id,
+      department: departmentId,
+      "year.name": "2023",
+      "year.month.name": "July",
+    })
+      .populate("allowance")
+      .populate("payroll")
+      .populate("deduction");
+    res.status(200).json({
+      employee: employee[0].year[0].month,
+    });
+  } catch (err) {
+    createError.createError(404, err);
+  }
+};
+
+
+
+
+
+//Get Approved Payroll
+
+
+exports.get_Pending_Payroll=async(req,res,next)=>{
 
   try {
 
-    departmentId=req.query.department;
-    year=req.query.year;
-    month=req.query.month
-    console.log(year)
-    console.log(month)
-    console.log(departmentId)
-
-    const employee = await Employee.find({ companyId: req.user.id, department:departmentId, "year.name":"2023" ,"year.month.name":"July"  })
-     .populate('allowance')
-    .populate('payroll')
-    .populate('deduction')
-    ;
-        
-        
-          res.status(200).json({
-          
-           employee:employee[0].year[0].month
-            });
-       
-      
-       } catch (err) {
-    createError.createError(404,err)
-  }
+    let data = "";
+    let data1='';
+    
+    const departmentId = req.params.departmentId;
 
 
+    await Employee.find({ companyId: req.user.id, department: departmentId }).exec().then((docs) => {
+        //console.log("docs:", docs);
+        const other = docs.map((doc) => {
+            return {
+                _id: doc._id,
+                arrears: doc.arrears,
+                lateSittingOverTime: doc.lateSittingOverTime,
+                dayDeduction: doc.dayDeduction,
+                EOTBDeduction: doc.EOTBDeduction,
+                department: doc.department,
+                companyId: doc.companyId,
+                payrollStatus: doc.payrollStatus,
+                year: doc.year,
+                // month: monthArray?.map((item) => item[0]?.name),
+            };
+        });
+        // }
+
+        data = other;
+
+
+
+       // console.log("data", data);
+    });
+    try {
+        // console.log(req.body);
+        // // const check_month=await Employee.find({department:departmentId,})
+        console.log("data length:", data.length);
+        for (var i = 0; i < data.length; i++) {
+            console.log("i", i);
+          //  console.log(data[i].year)
+         
+            // }
+        }
+        res.status(200).json("done");
+    } catch (err) {
+        createError.createError(404, err);
+    }
+} catch (err) {
+    next(err);
 }
+
+
+
+
+
+
+  
+}
+
 

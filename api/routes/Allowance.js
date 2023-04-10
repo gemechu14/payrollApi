@@ -1,20 +1,17 @@
 const express = require('express');
 const router = express.Router();
 const allowanceController = require('../controllers/Allowance.js');
-
 const middleware=require('../middleware/auth.js')
 //ADD ALLOWANCE
 router.post('/',
 middleware.protect,
 middleware.restrictTo('Companyadmin'),
+allowanceController.add_Allowance);
 
-allowanceController.add_Allowance)
 //CREATE
 router.post('/:employeeId',
-
 middleware.protect,
 middleware.restrictTo('Companyadmin'),
-
  allowanceController.Create_Allowances);
 //UPDATE
 router.put('/:id', 
@@ -47,9 +44,6 @@ router.delete('/',
 middleware.protect,
 middleware.restrictTo('Companyadmin'),
 allowanceController.deleteAllowance);
-
-
-
 
 
 module.exports = router;

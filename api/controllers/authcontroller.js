@@ -6,15 +6,15 @@ const sendEmail = require('../utils/email.js');
 const createError = require('../utils/error.js');
 const { signedCookies } = require('cookie-parser');
 const moment = require("moment");
-const Package=require('../models/Package.js')
+const Package = require('../models/Package.js')
 // const { create } = require('../models/userModel.js');
-const {calculateNextPayment} =require('../utils/Helper.js');
-const nodemailer=require('nodemailer');
+const { calculateNextPayment } = require('../utils/Helper.js');
+const nodemailer = require('nodemailer');
 const Department = require('../models/department.js');
 const Payroll = require('../models/payroll.js');
-const mongoose=require('mongoose')
+const mongoose = require('mongoose')
 
-const TaxSlab=require('../models/taxSlabs.js')
+const TaxSlab = require('../models/taxSlabs.js')
 
 
 const signToken = (id) => {
@@ -43,7 +43,7 @@ const createSendToken = (user, statusCode, res) => {
   // const patientID = patient._id;
   const cookieOptions = {
     expires: new Date(
-      Date.now() + process.env.JWT_COOKIE_EXPIRES_IN *24 * 60 * 60 * 1000),
+      Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000),
 
     secure: process.env.NODE_ENV === 'production' ? true : false,
     httpOnly: true,
@@ -63,28 +63,58 @@ const createSendToken = (user, statusCode, res) => {
   });
 };
 
+const createSendTokenAdmin = (user, statusCode, res) => {
+  const token = signToken(user._id);
+  console.log(user._id);
+  // const patientID = patient._id;
+  const cookieOptions = {
+    expires: new Date(
+      Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000),
 
-const addTrial= async(email,status,res)=>{
+    secure: process.env.NODE_ENV === 'production' ? true : false,
+    httpOnly: true,
+  };
+  //console.log(user);
 
-  
-   const userEmail=newUser.email;
-   console.log(email);
-     let nextpaymentDate;
-     let date = Date.now();
-    nextpaymentDate = await calculateNextPayment('Trial', date);
+  //remove password from the output
+  user.password = undefined;
+  res.cookie('jwt', token, cookieOptions);
+  res.status(statusCode).json({
+    message: 'successful',
+    token,
+    //patientID,
 
-     const updateUser = await User.findOneAndUpdate(
-     { email},
-     { $set: { isTrial: 'true',next_payment_date:nextpaymentDate} },
-     { new: true }
-   );
-  res.status(status).json({updateUser});
+      user:{
+        email:user.email,
+        role: user.role
+      },
+
+  });
+};
+
+
+
+const addTrial = async (email, status, res) => {
+
+
+  const userEmail = newUser.email;
+  console.log(email);
+  let nextpaymentDate;
+  let date = Date.now();
+  nextpaymentDate = await calculateNextPayment('Trial', date);
+
+  const updateUser = await User.findOneAndUpdate(
+    { email },
+    { $set: { isTrial: 'true', next_payment_date: nextpaymentDate } },
+    { new: true }
+  );
+  res.status(status).json({ updateUser });
 }
 
 //Trial registration
 
-exports.trialRegistration=async(req,res,next)=>{
-  
+exports.trialRegistration = async (req, res, next) => {
+
   try {
     const {
       email,
@@ -97,7 +127,7 @@ exports.trialRegistration=async(req,res,next)=>{
       jobTitle,
       companyCode,
       isApproved,
-      
+
     } = req.body;
     const user = await User.findOne({ email });
     // console.log(user.isTrial);
@@ -107,8 +137,8 @@ exports.trialRegistration=async(req,res,next)=>{
     let nextpaymentDate;
     let date = Date.now();
     nextpaymentDate = await calculateNextPayment('Trial', date);
-    startDate=moment(Date.now());
-      const newUser = await User.create({
+    startDate = moment(Date.now());
+    const newUser = await User.create({
       Name: Name,
       email: email,
       password: password,
@@ -118,23 +148,24 @@ exports.trialRegistration=async(req,res,next)=>{
       numberOfEmployee: numberOfEmployee,
       CompanyName: CompanyName,
       jobTitle: jobTitle,
-      isTrial:true,
-      next_payment_date:nextpaymentDate,
-      startDate:startDate
-     
+      isTrial: true,
+      next_payment_date: nextpaymentDate,
+      startDate: startDate
+
     });
-   
-   // console.log(newUser);
+
+    // console.log(newUser);
     res.status(200).json({
-          status: 'Success',
-          message:"Trial period is provided to you ",
-        
-          data: {
-            user: newUser,
-          }}
+      status: 'Success',
+      message: "Trial period is provided to you ",
+
+      data: {
+        user: newUser,
+      }
+    }
     );
- 
-   
+
+
   } catch (err) {
     next(createError.createError(404, 'fail'));
     // res.status(404).json({
@@ -146,7 +177,8 @@ exports.trialRegistration=async(req,res,next)=>{
 }
 
 
-exports.packageRegistration=async(req,res,next)=>{
+
+exports.packageRegistration = async (req, res, next) => {
   try {
     const {
       email,
@@ -159,7 +191,7 @@ exports.packageRegistration=async(req,res,next)=>{
       jobTitle,
       companyCode,
       isApproved,
-      
+
     } = req.body;
     const user = await User.findOne({ email });
     // console.log(user.isTrial);
@@ -167,15 +199,15 @@ exports.packageRegistration=async(req,res,next)=>{
       return next(createError.createError(404, 'Email is already provided!'));
     //  console.log(user);
 
-    const packageId=req.params.packageId;
+    const packageId = req.params.packageId;
     const packageInfo = await Package.findOne({ _id: packageId });
-    const packageType=packageInfo.name;
+    const packageType = packageInfo.name;
     console.log(packageType);
     let nextpaymentDate;
     let date = Date.now();
     nextpaymentDate = await calculateNextPayment(packageType, date);
-    startDate=moment(Date.now());
-      const newUser = await User.create({
+    startDate = moment(Date.now());
+    const newUser = await User.create({
       Name: Name,
       email: email,
       password: password,
@@ -185,27 +217,28 @@ exports.packageRegistration=async(req,res,next)=>{
       numberOfEmployee: numberOfEmployee,
       CompanyName: CompanyName,
       jobTitle: jobTitle,
-     
-      next_payment_date:nextpaymentDate,
-      startDate:startDate,
-      packageId:packageId
-     
+
+      next_payment_date: nextpaymentDate,
+      startDate: startDate,
+      packageId: packageId
+
     });
-   
-   // console.log(newUser);
+
+    // console.log(newUser);
     res.status(200).json({
-          status: 'Success',
-          message:"Thank you for your subscription ",
-        
-          data: {
-            user: newUser,
-          }}
+      status: 'Success',
+      message: "Thank you for your subscription ",
+
+      data: {
+        user: newUser,
+      }
+    }
     );
- 
-   
+
+
   } catch (err) {
     next(createError.createError(404, 'fail'));
-   
+
   }
 }
 exports.signup = async (req, res, next) => {
@@ -249,7 +282,7 @@ exports.signup = async (req, res, next) => {
       },
     });
   } catch (err) {
-   // next(createError.createError(404, 'fail'));
+    // next(createError.createError(404, 'fail'));
     res.status(404).json({
       status: 'fail',
       message: err,
@@ -308,6 +341,7 @@ exports.login = async (req, res, next) => {
   }
 };
 
+
 exports.protect = async (req, res, next) => {
   try {
     //getting token check if its there
@@ -354,22 +388,22 @@ exports.protect = async (req, res, next) => {
 
 //UPDATE COMPANY
 
-exports.updateCompany=async (req,res,next)=>{
+exports.updateCompany = async (req, res, next) => {
 
   try {
     console.log(req.params.email);
-    
 
-  console.log(req.body);
+
+    console.log(req.body);
 
 
     const updatedCompany = await User.findOneAndUpdate(
-      {email:req.params.email},
+      { email: req.params.email },
       { $set: req.body },
       { new: true }
     );
     res.status(200).json(updatedCompany);
-  } catch (error) {}
+  } catch (error) { }
 
 
 
@@ -387,6 +421,23 @@ exports.getAllCompany = async (req, res, next) => {
     next(err);
   }
 };
+
+
+//Get ALL COMPANY
+exports.getSingleCompany = async (req, res, next) => {
+  try {
+    console.log(req.params.id)
+    const user = await User.find({ _id: req.params.id, role: { $ne: 'superAdmin' } });
+
+    res.status(200).json({
+      count: user.length,
+      user: user,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 
 //GET PENDING COMPANY
 exports.getAllPendingCompany = async (req, res, next) => {
@@ -422,15 +473,15 @@ exports.getAllActiveCompany = async (req, res, next) => {
 exports.searchPendingCompany = async (req, res, next) => {
   try {
     const key = req.params.key;
-    
+
     const user = await User.find(
       {
-        $and: [{ status: 'pending' }, {CompanyName:{$regex: new RegExp(key,'i'), }}, { role: { $ne: 'superAdmin' } }],
-      
+        $and: [{ status: 'pending' }, { CompanyName: { $regex: new RegExp(key, 'i'), } }, { role: { $ne: 'superAdmin' } }],
+
       }
     );
     res.status(200).json({
-       count: user.length,
+      count: user.length,
       user: user,
     });
   } catch (err) {
@@ -442,15 +493,15 @@ exports.querySearch = async (req, res, next) => {
   try {
     const key = req.params.key;
     console.log(req.query.CompanyName);
-    const cm=req.query.CompanyName;
+    const cm = req.query.CompanyName;
     const user = await User.find(
       {
-        $and: [{ status: 'pending' }, {CompanyName:{$regex: new RegExp(cm,'i'), }}, { role: { $ne: 'superAdmin' } }],
-      
+        $and: [{ status: 'pending' }, { CompanyName: { $regex: new RegExp(cm, 'i'), } }, { role: { $ne: 'superAdmin' } }],
+
       }
     );
     res.status(200).json({
-       count: user.length,
+      count: user.length,
       user: user,
     });
   } catch (err) {
@@ -462,16 +513,16 @@ exports.querySearch = async (req, res, next) => {
 exports.searchActiveCompany = async (req, res, next) => {
   try {
     const key = req.params.key;
-    
+
 
     const user = await User.find(
       {
-        $and: [{ status: 'active' }, {CompanyName:{$regex: new RegExp(key,'i'), }}, { role: { $ne: 'superAdmin' } }],
-      
+        $and: [{ status: 'active' }, { CompanyName: { $regex: new RegExp(key, 'i'), } }, { role: { $ne: 'superAdmin' } }],
+
       }
     );
     res.status(200).json({
-       count: user.length,
+      count: user.length,
       user: user,
     });
   } catch (err) {
@@ -482,19 +533,19 @@ exports.searchActiveCompany = async (req, res, next) => {
 
 //SEARCH ALL COMPANY 
 
-exports.searchAllCompany= async (req, res, next) => {
+exports.searchAllCompany = async (req, res, next) => {
   try {
     const key = req.params.key;
-    
+
 
     const user = await User.find(
       {
-        $and: [ {CompanyName:{$regex: new RegExp(key,'i'), }}, { role: { $ne: 'superAdmin' } }],
-      
+        $and: [{ CompanyName: { $regex: new RegExp(key, 'i'), } }, { role: { $ne: 'superAdmin' } }],
+
       }
     );
     res.status(200).json({
-       count: user.length,
+      count: user.length,
       user: user,
     });
   } catch (err) {
@@ -506,16 +557,16 @@ exports.searchAllCompany= async (req, res, next) => {
 exports.searchActiveCompany = async (req, res, next) => {
   try {
     const key = req.params.key;
-    
+
 
     const user = await User.find(
       {
-        $and: [{ status: 'active' }, {CompanyName:{$regex: new RegExp(key,'i'), }}, { role: { $ne: 'superAdmin' } }],
-      
+        $and: [{ status: 'active' }, { CompanyName: { $regex: new RegExp(key, 'i'), } }, { role: { $ne: 'superAdmin' } }],
+
       }
     );
     res.status(200).json({
-       count: user.length,
+      count: user.length,
       user: user,
     });
   } catch (err) {
@@ -524,11 +575,11 @@ exports.searchActiveCompany = async (req, res, next) => {
 };
 //Approve COMPANY
 exports.approveCompany = async (req, res, next) => {
-  const text='We are pleased to inform you that your status has been approved. Please enjoy'
+  const text = 'We are pleased to inform you that your status has been approved. Please enjoy'
   try {
 
 
-    let payrollId='';
+    let payrollId = '';
     const email = req.body.email;
     console.log(email);
     const approveCompany = await User.findOneAndUpdate(
@@ -537,163 +588,158 @@ exports.approveCompany = async (req, res, next) => {
       { new: true }
     );
     console.log(approveCompany._id);
-const dept=await Department.find({companyName:approveCompany.CompanyName});
-//const payroll=await Payroll.find({ companyId:approveCompany._id});
+    const dept = await Department.find({ companyName: approveCompany.CompanyName });
+    //const payroll=await Payroll.find({ companyId:approveCompany._id});
 
 
-const payroll = await Payroll.find({
-  $and: [ { companyId:approveCompany._id },{ payrollID: "00001"},{payrollName: "default"}],}
-);
-//const len=payroll.length;
-console.log(payroll.length);
-
-
-console.log(payroll.length);
-
-try {
-  if(payroll.length==0){
-    const newPayroll=await Payroll.create({
-     payrollID: "00001",
-     payrollName: "default",
-     payrollYear: moment(Date.now()).format("YYYY"),
-     type: "Amount",
-     employeer_Contribution: "0",
-     employee_Contribution: "0",
-     taxable_income_limit: "600",
-     exampt_age_limit: "65",
-     exampt_percentage: "0",
-     companyId:approveCompany._id
-    })
-    payrollId=newPayroll._id;
-    
-    console.log(newPayroll);
-   }   
- 
-  
-} catch (error) {
- res.status(404).json({error:error}) 
-}
-  
-  console.log(`payrolllength is  `+payrollId.length);
-//console.log(mongoose.Types.ObjectId(payrollId));
-  
-console.log(payrollId.length ==undefined)
-if(payrollId.length == undefined) {
- try {
-console.log(mongoose.Types.ObjectId(payrollId));
-
-
-const savedTaxSlab=await TaxSlab.create({
-  deductible_Fee:'0',
-  income_tax_payable:'0',
-  to_Salary:'600',
-  from_Salary:'0',
-  companyId:approveCompany._id
-})
-
-
-  const savedTaxSlab1=await TaxSlab.create({
-    deductible_Fee:'60',
-    income_tax_payable:'10',
-    to_Salary:'1650',
-    from_Salary:'601',
-    companyId:approveCompany._id
-  })
-  const savedTaxSlab2=await TaxSlab.create({
-    deductible_Fee:'142.50',
-    income_tax_payable:'15',
-    to_Salary:'3200',
-    from_Salary:'1651',
-    companyId:approveCompany._id
-  })
-
-  const savedTaxSlab3=await TaxSlab.create({
-    deductible_Fee:'302.50',
-    income_tax_payable:'20',
-    to_Salary:'5250',
-    from_Salary:'3201',
-    companyId:approveCompany._id
-  })
-
-
-  const savedTaxSlab4=await TaxSlab.create({
-    deductible_Fee:'565',
-    income_tax_payable:'25',
-    to_Salary:'7800',
-    from_Salary:'5251',
-    companyId:approveCompany._id
-  })
-
-  const savedTaxSlab5=await TaxSlab.create({
-    deductible_Fee:'955',
-    income_tax_payable:'30',
-    to_Salary:'10900',
-    from_Salary:'7801',
-    companyId:approveCompany._id
-  })
-
-  const savedTaxSlab6=await TaxSlab.create({
-    deductible_Fee:'1500',
-    income_tax_payable:'35',
-    to_Salary:'+',
-    from_Salary:'10901',
-    companyId:approveCompany._id
-  })
-
-
-  try {
-
-    // const taxs=await Payroll.insertMany({_id:mongoose.Types.ObjectId(payrollId)},[
-    //   { taxSlab: savedTaxSlab._id },
-    //    { taxSlab: savedTaxSlab1._id },
-    //    { taxSlab: savedTaxSlab2._id },
-    //   { taxSlab: savedTaxSlab3._id },
-    //    { taxSlab: savedTaxSlab4._id },
-    //    { taxSlab: savedTaxSlab5._id },
-    //    { taxSlab: savedTaxSlab6._id },
-
-    // ])
-
-  insertArray=[savedTaxSlab._id,savedTaxSlab1._id,savedTaxSlab2._id,savedTaxSlab3._id,savedTaxSlab4._id,savedTaxSlab5._id,savedTaxSlab6._id]
-  const tax=  await Payroll.findByIdAndUpdate(mongoose.Types.ObjectId(payrollId), 
-    {$push: { taxSlab: insertArray}},
+    const payroll = await Payroll.find({
+      $and: [{ companyId: approveCompany._id }, { payrollID: "00001" }, { payrollName: "default" }],
+    }
     );
-
-    console.log(tax)
-  } catch (err) {
-    res.status(404).json({error:err})
-  }
-  
-} catch (error) {
-  res.status(404).json({error:err})
-}
- 
-}
-
-  
+    //const len=payroll.length;
+    console.log(payroll.length);
 
 
+    console.log(payroll.length);
+
+    try {
+      if (payroll.length == 0) {
+        const newPayroll = await Payroll.create({
+          payrollID: "00001",
+          payrollName: "default",
+          payrollYear: moment(Date.now()).format("YYYY"),
+          type: "Amount",
+          employeer_Contribution: "0",
+          employee_Contribution: "0",
+          taxable_income_limit: "600",
+          exampt_age_limit: "65",
+          exampt_percentage: "0",
+          companyId: approveCompany._id
+        })
+        payrollId = newPayroll._id;
+
+        console.log(newPayroll);
+      }
 
 
+    } catch (error) {
+      res.status(404).json({ error: error })
+    }
 
-console.log(dept.length);
-  if(dept.length==0){
-   const newDept=await Department.create({
-    companyName:approveCompany.CompanyName,
-    deptName:'General',
-    location:'unspecified',
-    companyId:approveCompany._id
-   })
-   console.log(newDept);
-  }    
+    console.log(`payrolllength is  ` + payrollId.length);
+    //console.log(mongoose.Types.ObjectId(payrollId));
+
+    console.log(payrollId.length == undefined)
+    if (payrollId.length == undefined) {
+      try {
+        console.log(mongoose.Types.ObjectId(payrollId));
 
 
-    const user = await User.find({"$and": [{status: "active"}, { role: { $ne: 'superAdmin' }}]});
+        const savedTaxSlab = await TaxSlab.create({
+          deductible_Fee: '0',
+          income_tax_payable: '0',
+          to_Salary: '600',
+          from_Salary: '0',
+          companyId: approveCompany._id
+        })
+
+
+        const savedTaxSlab1 = await TaxSlab.create({
+          deductible_Fee: '60',
+          income_tax_payable: '10',
+          to_Salary: '1650',
+          from_Salary: '601',
+          companyId: approveCompany._id
+        })
+        const savedTaxSlab2 = await TaxSlab.create({
+          deductible_Fee: '142.50',
+          income_tax_payable: '15',
+          to_Salary: '3200',
+          from_Salary: '1651',
+          companyId: approveCompany._id
+        })
+
+        const savedTaxSlab3 = await TaxSlab.create({
+          deductible_Fee: '302.50',
+          income_tax_payable: '20',
+          to_Salary: '5250',
+          from_Salary: '3201',
+          companyId: approveCompany._id
+        })
+
+
+        const savedTaxSlab4 = await TaxSlab.create({
+          deductible_Fee: '565',
+          income_tax_payable: '25',
+          to_Salary: '7800',
+          from_Salary: '5251',
+          companyId: approveCompany._id
+        })
+
+        const savedTaxSlab5 = await TaxSlab.create({
+          deductible_Fee: '955',
+          income_tax_payable: '30',
+          to_Salary: '10900',
+          from_Salary: '7801',
+          companyId: approveCompany._id
+        })
+
+        const savedTaxSlab6 = await TaxSlab.create({
+          deductible_Fee: '1500',
+          income_tax_payable: '35',
+          to_Salary: '+',
+          from_Salary: '10901',
+          companyId: approveCompany._id
+        })
+
+
+        try {
+
+          // const taxs=await Payroll.insertMany({_id:mongoose.Types.ObjectId(payrollId)},[
+          //   { taxSlab: savedTaxSlab._id },
+          //    { taxSlab: savedTaxSlab1._id },
+          //    { taxSlab: savedTaxSlab2._id },
+          //   { taxSlab: savedTaxSlab3._id },
+          //    { taxSlab: savedTaxSlab4._id },
+          //    { taxSlab: savedTaxSlab5._id },
+          //    { taxSlab: savedTaxSlab6._id },
+
+          // ])
+
+          insertArray = [savedTaxSlab._id, savedTaxSlab1._id, savedTaxSlab2._id, savedTaxSlab3._id, savedTaxSlab4._id, savedTaxSlab5._id, savedTaxSlab6._id]
+          const tax = await Payroll.findByIdAndUpdate(mongoose.Types.ObjectId(payrollId),
+            { $push: { taxSlab: insertArray } },
+          );
+
+          console.log(tax)
+        } catch (err) {
+          res.status(404).json({ error: err })
+        }
+
+      } catch (error) {
+        res.status(404).json({ error: err })
+      }
+
+    }
+
+    console.log(dept.length);
+    if (dept.length == 0) {
+      const newDept = await Department.create({
+        companyName: approveCompany.CompanyName,
+        deptName: 'General',
+        location: 'unspecified',
+        companyId: approveCompany._id
+      })
+      console.log(newDept);
+    }
+
+
+    const user = await User.find({ "$and": [{ status: "active" }, { role: { $ne: 'superAdmin' } }] });
 
     try {
       await sendEmail({
         email: email,
-        subject:"THANK YOU FOR GOING WITH US.",
+        subject: "THANK YOU FOR GOING WITH US.",
         text
       });
       res.status(200).json({
@@ -701,18 +747,18 @@ console.log(dept.length);
         message: 'Message  sent to email',
       });
     } catch (err) {
-   
+
       return res.status(404).json({
         message: 'There was an error sending the email. Try again later!',
       });
     }
   } catch (err) {
-   next(err)
+    next(err)
   }
 };
 //DEcline COMPANY
 exports.declineCompany = async (req, res, next) => {
-  const text='You have been blocked from accessing your account. Contact cooppayroll@gmail.com and resolve the issue';
+  const text = 'You have been blocked from accessing your account. Contact cooppayroll@gmail.com and resolve the issue';
   try {
     const email = req.body.email;
     console.log(email);
@@ -725,23 +771,25 @@ exports.declineCompany = async (req, res, next) => {
     try {
       await sendEmail({
         email: email,
-        subject:"Sorry Your account has been declined.",
+        subject: "Sorry Your account has been declined.",
         text
       });
       res.status(200).json({
-        declinedCompany:declinedCompany,
+        declinedCompany: declinedCompany,
         status: 'success',
         message: 'Message  sent to email',
       });
     } catch (err) {
-   
+
       return res.status(500).json({
         message: 'There was an error sending the email. Try again later!',
-      });}
-     } catch (err) {
+      });
+    }
+  } catch (err) {
     next(err);
   }
 };
+
 
 //Block COMPANY
 exports.blockCompany = async (req, res, next) => {
@@ -836,39 +884,39 @@ exports.approveCompanyPayment = async (req, res, next) => {
     );
 
 
-      try {
-        await sendEmail({
-          email: email,
-          subject: 'Your password reset token (valid for 10 min)',
+    try {
+      await sendEmail({
+        email: email,
+        subject: 'Your password reset token (valid for 10 min)',
         message,
-        });
-        res.status(200).json({
-          status: 'success',
-          message: 'Token sent to email',
-        });
+      });
+      res.status(200).json({
+        status: 'success',
+        message: 'Token sent to email',
+      });
     } catch (error) {
       res.status(404).json({
         err
       })
-      
+
     }
     // const user = await User.find({"$and": [{status: "active"}, { role: { $ne: 'superAdmin' }}]});
 
-   
+
   } catch (err) {
     next(createError(404, err));
   }
 };
 
-exports.sendEmail=async (req,res,next)=>{
-  
+exports.sendEmail = async (req, res, next) => {
+
   try {
     // let testAccount = await nodemailer.createTestAccount();
     var transporter = nodemailer.createTransport({
       //service: "hotmail",
       service: 'gmail',
       //port: 587,//Yahoo
-      port :465,//Gmail
+      port: 465,//Gmail
       secure: false,
       auth: {
         user: process.env.EMAIL,
@@ -893,23 +941,23 @@ exports.sendEmail=async (req,res,next)=>{
       if (error) {
         console.log(error.message);
         next(error);
-       // res.status(404).json(error);
+        // res.status(404).json(error);
       } else {
         console.log('Email sent: ' + info.response);
         res.status(250).json(info.response);
       }
     });
   } catch (error) {
-   next(error)
+    next(error)
   }
-  
+
 }
 
 
 
 //APPROVE COMPANY PAYMENT
 exports.approveCompanyPayment = async (req, res, next) => {
-  const text='Lorem, ipsum dolor sit amet consectetur adipisicing elit. Obcaecati voluptates accusantium eveniet voluptatum delectus, facere modi quis cupiditate maiores. Soluta, obcaecati enim consequuntur voluptatibus eos vitae fugit exercitationem officiis excepturi.'
+  const text = 'Lorem, ipsum dolor sit amet consectetur adipisicing elit. Obcaecati voluptates accusantium eveniet voluptatum delectus, facere modi quis cupiditate maiores. Soluta, obcaecati enim consequuntur voluptatibus eos vitae fugit exercitationem officiis excepturi.'
 
   try {
     const email = req.body.email;
@@ -930,14 +978,14 @@ exports.approveCompanyPayment = async (req, res, next) => {
         message: 'Message  sent to email',
       });
     } catch (err) {
-   
+
       return res.status(500).json({
         message: 'There was an error sending the email. Try again later!',
       });
     }
     // const user = await User.find({"$and": [{status: "active"}, { role: { $ne: 'superAdmin' }}]});
 
-   
+
   } catch (err) {
     next(err);
   }
@@ -951,10 +999,11 @@ exports.restrictTo = (...roles) => {
       return res.status(403).json({
         message: 'You do not have permission to perform this action',
       });
-    }
+    } ll
     next();
   };
 };
+
 /////////
 exports.forgotPassword = async (req, res, next) => {
   try {
@@ -976,7 +1025,6 @@ exports.forgotPassword = async (req, res, next) => {
     const message = `Forgot your password? Submit a PATCH request with your
      new password and confirmPassword to ${resetURL}
      If you didn't forgot your password, please ignore this email`;
-
     try {
       await sendEmail({
         email: user.email,
@@ -1002,6 +1050,8 @@ exports.forgotPassword = async (req, res, next) => {
     });
   }
 };
+
+
 ////
 exports.resetPassword = async (req, res, next) => {
   try {
@@ -1136,48 +1186,102 @@ exports.logout = async (req, res) => {
 
   var token = req.headers.authorization;
   console.log(token);
-  
+
   console.log(req.headers.authorization)
 
 
-//   try {
-//     req.user.tokens = req.user.tokens.filter((token) =>{
-//      return token.token !== req.token 
-//     })
-//     await req.user.save()
-//     res.send()
-// } catch (error) {
-//     res.status(500).send()
-// }
+  //   try {
+  //     req.user.tokens = req.user.tokens.filter((token) =>{
+  //      return token.token !== req.token 
+  //     })
+  //     await req.user.save()
+  //     res.send()
+  // } catch (error) {
+  //     res.status(500).send()
+  // }
 
 
 
-    // console.log('User Id', req.user.id);
-    // User.findByIdAndRemove(req.user.id, function (err) {
-    //   if (err) res.send(err);
-    //   res.json({ message: 'User Deleted!' });
-    // })
+  // console.log('User Id', req.user.id);
+  // User.findByIdAndRemove(req.user.id, function (err) {
+  //   if (err) res.send(err);
+  //   res.json({ message: 'User Deleted!' });
+  // })
 
-    
-  
-    // res.clearCookie()
-    // req.session.destroy();
-    // res.sendStatus(200);
 
-  
+
+  // res.clearCookie()
+  // req.session.destroy();
+  // res.sendStatus(200);
+
+
+
   const cookieOptions = {
     expires: new Date(Date.now() + 10 * 1000),
     secure: process.env.NODE_ENV === 'production' ? true : false,
     httpOnly: true,
   };
- //console.log(req.headers.authorization);
+  //console.log(req.headers.authorization);
   res.cookie('jwt', 'expiredtoken', cookieOptions);
-  req.headers.authorization='expiredtoken'  
+  req.headers.authorization = 'expiredtoken'
   console.log(req.headers.authorization);
   res.status(200).json({
     status: 'success',
     message: 'logged out successfully',
   });
+};
+
+
+///super admin login
+
+
+exports.superAdminLogin = async (req, res, next) => {
+  try {
+    const { email, password} = req.body;
+    console.log(email);
+    console.log(password);
+    //check if email and password exist company code
+    if (!email || !password ) {
+      return next(
+        createError.createError(
+          404,
+          'please provide email, password or company code!'
+        )
+      ); //res
+      //   .status(404)
+      //   .json({ message: 'please provide email, password or company code' });
+    }
+    //check if user exists and password is correct
+    const user = await User.findOne({ email }).select('+password');
+
+ 
+    if (
+      !user ||    
+      !(await user.correctPassword(password, user.password))
+    ) {
+      return res
+        .status(401)
+        .json({ message: 'Incorrect email, password' });
+      //next(createError.createError(401,'Incorrect email, password or company Code'))
+    }
+
+    // const token=signToken(user._id);
+    //if everything is ok send token to the client
+    createSendTokenAdmin(user, 200, res);
+    // res.status(200).json({
+    //   status: 'success',
+    // token,
+    //   data: {
+    //     user: user
+    //   },
+    // });
+  } catch (err) {
+    //next(createError.createError(404, 'failed'));
+    res.status(404).json({
+      status: 'error occour',
+      message: err,
+    });
+  }
 };
 
 

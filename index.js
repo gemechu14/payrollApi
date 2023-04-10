@@ -29,7 +29,9 @@ const moment = require("moment");
 
 const PackageRoute=require('./api/routes/Package.js')
 const TrialRoute=require('./api/routes/trial.js');
-const scheduler=require('./api/utils/jobs.js')
+const scheduler=require('./api/utils/jobs.js');
+const gradeDefinition=require('./api/routes/gradeDefinition.js');
+const gradeAllowance=require('./api/routes/gradeAllowance.js');
 //Security
 
 //DATA SANITIZATION AGAINST NO SQL QUERY ENJECTION
@@ -68,6 +70,9 @@ const cors = require('cors');
 mongoose.Promise = global.Promise;
 const morgan=require('morgan');
 app.use(morgan("dev"));
+
+
+
 
 
 //app.use("/uploads", express.static(path.join(__dirname, "/uploads")));
@@ -124,6 +129,8 @@ app.use('/payrollMonth', payrollMonthRoute);
 app.use('/package',PackageRoute);
 app.use('/trial',TrialRoute);
 app.use('/subscription',SubscriptionRoute);
+app.use('/gradeDefinition',gradeDefinition);
+app.use('/gradeAllowance', gradeAllowance);
 
 
 app.use(bodyParser.json());
@@ -208,6 +215,22 @@ app.post("/upload", upload.single("file"), (req, res) => {
 
 
 app.use('/scheduler',helper)
+
+
+const storage1 = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "Logo");
+  },
+  filename: (req, file, cb) => {
+    cb(null, req.body.name);
+  },
+});
+
+const upload1 = multer({ storage: storage1 });
+app.post("/companyLogo", upload1.single("file"), (req, res) => {
+  res.status(200).json("File has been uploaded");
+});
+
 
 
 async function run() {

@@ -1,4 +1,4 @@
-const ProvidentFund=require('../models/providentFund.js');
+const ProvidentFund = require('../models/providentFund.js');
 
 
 exports.add_ProvidentFund = async (req, res) => {
@@ -9,7 +9,7 @@ exports.add_ProvidentFund = async (req, res) => {
     res.status(200).json({
       savedProvidentFund,
     });
-   
+
   } catch (err) {
     res.status(404).json({
       error: err,
@@ -52,7 +52,7 @@ exports.updateProvidentFund = async (req, res) => {
       { new: true }
     );
     res.status(200).json(updatedProvidentFund);
-  } catch (error) {}
+  } catch (error) { }
 };
 //DELETE
 exports.delete_ProvidentFund = async (req, res) => {

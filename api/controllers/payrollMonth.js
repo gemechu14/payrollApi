@@ -1,43 +1,32 @@
-const payrollMonth = require('../models/payrollMonth.js');
-const moment =require('moment')
+const payrollMonth = require("../models/payrollMonth.js");
+
+const moment = require("moment");
+const mongoose = require('mongoose');
 
 exports.add_payrollMonth = async (req, res) => {
- 
   try {
-    const {
-      startDate,
-      endDate,
-      name
-    }=req.body;
-
-
+    const { startDate, endDate, name } = req.body;
 
     const payrollMonth1 = await payrollMonth.find({
-      $and: [ { companyId:req.user.id },{ name: name},],}
-    );
-    
+      $and: [{ companyId: req.user.id }, { name: name }],
+    });
+
     console.log(payrollMonth1);
 
-
-
-    if(!payrollMonth1 || payrollMonth1.length==0){
+    if (!payrollMonth1 || payrollMonth1.length == 0) {
       const newpayrollMonth = await payrollMonth.create({
-        startDate:startDate,
-        endDate:endDate,
-        companyId:req.user.id,
-        name:name
-      })
-   
+        startDate: startDate,
+        endDate: endDate,
+        companyId: req.user.id,
+        name: moment().format('MMMM'),
+      });
+
       res.status(200).json({
         newpayrollMonth,
       });
-
-    }else{
-      res.status(404).json('The payrollMonth already exists')
+    } else {
+      res.status(404).json("The payrollMonth already exists");
     }
-
-   
-   
   } catch (err) {
     res.status(404).json({
       error: err,
@@ -45,13 +34,10 @@ exports.add_payrollMonth = async (req, res) => {
   }
 };
 
-
 //GET ALL
 exports.get_All_monthPayroll = async (req, res, next) => {
-
-
   try {
-    const monthPayroll = await payrollMonth.find({companyId:req.user.id});
+    const monthPayroll = await payrollMonth.find({ companyId: req.user.id });
     res.status(200).json({
       count: monthPayroll.length,
       monthPayroll,
@@ -63,7 +49,10 @@ exports.get_All_monthPayroll = async (req, res, next) => {
 //GET One
 exports.get_single_monthPayroll = async (req, res) => {
   try {
-    const monthPayroll = await payrollMonth.find({companyId:req.user.id,_id:req.params.id});
+    const monthPayroll = await payrollMonth.find({
+      companyId: req.user.id,
+      _id: req.params.id,
+    });
     res.status(200).json(monthPayroll);
   } catch (error) {
     res.status(500).json(error);
@@ -79,48 +68,62 @@ exports.updatemonthPayroll = async (req, res) => {
       { new: true }
     );
     res.status(200).json(updatedDept);
-  } catch (error) {}
+  } catch (error) { }
 };
 //DELETE
 exports.delete_monthPayroll = async (req, res) => {
   try {
-    await payrollMonth.findByIdAndDelete(req.params.id);
-    res.status(200).json('monthPayroll has been deleted');
+
+    const payrollMonth = await payrollMonth.find(mongoose.Types.ObjectId(req.params.id));
+
+    if (payrollMonth.length != 0) {
+      await payrollMonth.findByIdAndDelete(req.params.id);
+      res.status(200).json("monthPayroll has been deleted");
+    } else {
+
+      res.status(200).json("there is non such month");
+    }
+
   } catch (error) {
     res.status(500).json(error);
   }
 };
 
-
-
-
 exports.get_All = async (req, res, next) => {
-
-
   try {
 
-   await payrollMonth.find({companyId:req.user.id}).exec().then(docs => {
-    //   const response = {
-        //count: docs.length,
-      const  monthPayroll= docs.map(doc => {
-          return {
-            name: doc.name,
-            startDate:moment(doc.startDate).format("YYYY-MM-DD"),
-            endDate:moment(doc.endDate).format("YYYY-MM-DD"),
-            name:doc.name,
-            companyId:doc.companyId
-          
-                   };
-        })
-   //   }
-      
-      
-        res.status(200).json({
-         count: monthPayroll.length,
-         monthPayroll
-          });
-      });
-   
+   // console.log(gammee)
+    // await payrollMonth
+    //   .find({ companyId: req.user.id })
+    //   .exec()
+    //   .then((docs) => {
+    //     //   const response = {
+    //     //count: docs.length,
+    //     const monthPayroll = docs.map((doc) => {
+    //       return {
+    //         name: doc.name,
+    //         startDate: moment(doc.startDate).format("YYYY-MM-DD"),
+    //         endDate: moment(doc.endDate).format("YYYY-MM-DD"),
+    //         name: doc.name,
+    //         companyId: doc.companyId,
+    //         id: doc._id
+    //       };
+    //     });
+    //     //   }
+
+    //     res.status(200).json({
+    //       count: monthPayroll.length,
+    //       monthPayroll,
+    //     });
+    //   });
+    let data = moment().format('MMMM')
+    console.log("month",moment().format('MMMM'))
+    let data1 = moment().format('YYYY')
+    console.log("year",data1)
+    console.log(typeof(data1))
+    
+    const all_month=await payrollMonth.find();
+    res.status(200).json(all_month)
   } catch (err) {
     next(err);
   }
@@ -128,7 +131,10 @@ exports.get_All = async (req, res, next) => {
 //GET One
 exports.get_single1_monthPayroll = async (req, res) => {
   try {
-    const monthPayroll = await payrollMonth.find({companyId:req.user.id,_id:req.params.id});
+    const monthPayroll = await payrollMonth.find({
+      companyId: req.user.id,
+      _id: req.params.id,
+    });
     res.status(200).json(monthPayroll);
   } catch (error) {
     res.status(500).json(error);

@@ -1,6 +1,8 @@
 const Allowance = require('../models/Allowance.js');
 const Employee = require('../models/employee.js');
 const mongoose = require('mongoose')
+
+
 exports.add_Allowance = async (req, res) => {
   try {
     const {
@@ -20,7 +22,7 @@ exports.add_Allowance = async (req, res) => {
     })
 
 
-    // const savedPayroll = await newPayroll.save();
+// const savedPayroll = await newPayroll.save();
 
     console.log(req.body);
     res.status(200).json({ newAllowance });
@@ -29,6 +31,7 @@ exports.add_Allowance = async (req, res) => {
     res.status(404).json({ error: err });
   }
 };
+
 
 
 // GET ALL

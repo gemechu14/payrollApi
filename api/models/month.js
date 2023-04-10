@@ -5,4 +5,4 @@ const monthSchema=mongoose.Schema({
     companyId:String,
 
 })
-module.exports=mongoose.model('month',monthSchema)
+module.exports=mongoose.model('month',monthSchema);

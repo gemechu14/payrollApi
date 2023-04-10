@@ -18,6 +18,10 @@ const userSchema = new mongoose.Schema({
     required:true,
     unique:true
   },
+  companyLogo:{
+    type:String,
+    
+  },
   phoneNumber: {
     type: String,
     required: true,

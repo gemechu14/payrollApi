@@ -296,4 +296,18 @@ employeeController.get_By_Department
 )
 
 
+
+router.get('/pending/:departmentId',
+middleware.protect,
+middleware.restrictTo('Companyadmin'),
+employeeController.get_Pending_Payroll
+
+);
+
+
+router.get('/userdata/:userId',
+middleware.protect,
+middleware.restrictTo('Companyadmin'),
+)
+
 module.exports = router;
