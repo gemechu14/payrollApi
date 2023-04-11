@@ -14,7 +14,7 @@ router.post('/:gradeId',
     middleware.restrictTo('Companyadmin'),
     allowanceController.Add_Allowance_to_Grade);
 
-    
+
 //UPDATE
 router.put('/:id',
     middleware.protect,
@@ -41,7 +41,8 @@ router.get('/',
     allowanceController.get_All_Allowance);
 
 //ADD EXISTING ALLOWANCE TO EMPLOYEE
-router.post('/:employeeId/:allowanceId', allowanceController.addExistingAllowances);
+router.post('/:allowanceId/:gradeId', middleware.protect,
+    middleware.restrictTo('Companyadmin'), allowanceController.addExistingAllowances);
 
 //DELETE Allowance
 router.delete('/',

@@ -15,8 +15,6 @@ const taxSlabmodel = mongoose.Schema({
     required: true,
     //   unique:true
   },
-
-
   income_tax_payable: {
     type: String,
     required: true

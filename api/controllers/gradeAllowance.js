@@ -169,13 +169,13 @@ exports.deleteAllowances = async (req, res) => {
 exports.addExistingAllowances = async (req, res, next) => {
     try {
         const allowanceId = req.params.allowanceId;
-        const employeeId = req.params.employeeId;
+        const gradeId = req.params.employeeId;
         console.log(allowanceId);
-        console.log(employeeId);
+ 
         const check = await Grade.find({ _id: employeeId });
 
         if (!check[0].allowance.includes(mongoose.Types.ObjectId(allowanceId))) {
-            const updated = await Grade.findByIdAndUpdate(employeeId, {
+            const updated = await Grade.findByIdAndUpdate(gradeId, {
                 $push: {
                     allowance: allowanceId
                 }

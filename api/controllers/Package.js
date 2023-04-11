@@ -66,6 +66,9 @@ exports.updatePackage = async (req, res, next) => {
   }
 };
 
+
+
+
 exports.deletePackage = async (req, res, next) => {
   try {
     const id = req.params.id;
@@ -93,15 +96,80 @@ exports.getleftDays=async(req,res,next)=>{
     const daysLeft = nextPaymentDate.diff(currentDate, 'days');
 
     //subscription.leftday = daysLeft;
-
+//    await User.updateOne({ _id: id }, { $set: { leftDays: daysLeft } });
 
     res.status(200).json(daysLeft);
-
-
-
   } catch (err) {
     res.status(404).json("error");
   }
 
-
 }
+
+
+exports.getSubscription = async (req, res, next) => {
+  try {
+    //  const sub=await Package.aggregate(
+    //         [
+    //            { $project: { no_of_Employee: { $concat: [ "$min_number_of_Emp", " - ", "$max_number_of_Emp" ] } } }
+    //         ]
+    //      )
+    const subscription = await User.find({_id:req.params.id});
+    // if (!subscription) {
+    //     return next('error occured')
+    // } else {
+
+    if (subscription[0].packageId){
+
+     
+      const packageInfo = await Package.find({_id: subscription[0]?.packageId})
+    res.status(200).json({
+      package: subscription[0]?.packageId? subscription[0]?.packageId:'undifined',
+     // trial:subscription[0]?.isTrial,
+      packageInfo
+      ,
+    });
+
+  }
+  else{
+
+      res.status(200).json({
+        package: subscription[0]?.packageId ? subscription[0]?.packageId : 'undifined',
+        trial: subscription[0]?.isTrial
+        ,
+      });
+
+  }
+  } catch (e) {
+    return res.status(500);
+  }
+};
+
+
+
+exports.updateEmployeePackageSubscription = async (req, res, next) => {
+ 
+  try {
+    console.log('hello')
+
+    const subscription = await User.findOneAndUpdate({ _id: req.params.id },
+      
+      {
+        $set: { packageId: req.params.packageId },
+      },
+      { new: true, useFindAndModify: false }
+      );
+  
+  
+
+      res.status(200).json({
+        subscription
+        
+      });
+ 
+  } catch (e) {
+   res.status(500).json("error");
+  }
+};
+
+
+

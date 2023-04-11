@@ -309,12 +309,8 @@ exports.login = async (req, res, next) => {
     //check if user exists and password is correct
     const user = await User.findOne({ email }).select('+password');
 
-    console.log(user.companyCode);
-    console.log(companyCode)
-    if (
-      !user ||
-      user.companyCode != companyCode ||
-      !(await user.correctPassword(password, user.password))
+  
+    if (!user ||user.companyCode != companyCode || !(await user.correctPassword(password, user.password))
     ) {
       return res
         .status(401)
@@ -1254,9 +1250,9 @@ exports.superAdminLogin = async (req, res, next) => {
     //check if user exists and password is correct
     const user = await User.findOne({ email }).select('+password');
 
- 
+
     if (
-      !user ||    
+      !user || user.role != 'superAdmin'||
       !(await user.correctPassword(password, user.password))
     ) {
       return res
