@@ -3,11 +3,7 @@ const Trial=require('../models/trial.js');
 
 exports.createPlan = async (req, res, next) => {
     try {
-        // if (!req.body.price || !req.body.name) {
-        //     return res.status(400)
-        //         .json(vm.ApiResponse(false, 400, 'all fields are required'))
-        // }
-       // const _expected_body = _.pick(req.body, ['price', 'name']);
+   
         const create_plan = new Trial(req.body);
         const save_plan =  await create_plan.save();
         if (save_plan) {

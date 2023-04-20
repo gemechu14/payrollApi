@@ -57,6 +57,14 @@ const userSchema = new mongoose.Schema({
     required: [true, 'user must have a password to login'],
     minlength: 6,
     select: false,
+    validate: {
+      validator: function (v) {
+        return v.length>6;
+      },
+      message: 'Password length must be greater than 6 characters'
+    }
+  
+  
   },
   isActive: {
     type: Boolean,
@@ -136,6 +144,7 @@ userSchema.methods.correctPassword = async function (
   return await bcrypt.compare(candidatePassword, userPassword);
 };
 
+
 userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
   if (this.passwordChangedAt) {
     const changedTimestamp = parseInt(
@@ -147,6 +156,8 @@ userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
   //false if password was not changed
   return false;
 };
+
+
 
 userSchema.methods.createPasswordResetToken = function () {
   const resetToken = crypto.randomBytes(32).toString('hex');
@@ -163,10 +174,13 @@ userSchema.pre('save', function (next) {
   this.passwordChangedAt = Date.now() - 1000;
   next();
 });
+
+
 userSchema.pre(/^find/, function (next) {
   this.find({ active: { $ne: false } });
   next();
 });
+
 
 const User = mongoose.model('User', userSchema);
 module.exports = User;

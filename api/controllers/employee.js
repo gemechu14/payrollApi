@@ -87,7 +87,7 @@ exports.add_employee = async(req, res, next) => {
             TaxDeduction,
             netSalary,
             position,
-            contact_name,
+           // contact_name,
             emergency_contact_Info,
             contact_phoneNumber,
             relationship
@@ -103,11 +103,11 @@ exports.add_employee = async(req, res, next) => {
 
 
         generalDepartment = mongoose.Types.ObjectId(newDepartment[0]?._id);
-        //generalDepartment = mongoose.Types.ObjectId(newDepartment[0] ? ._id);
+  
         if (!department || department == undefined) {
             console.log("no department");
         }
-        console.log(department == undefined);
+     
 
         const newEmployee = await Employee.create({
             fullname: fullname,
@@ -123,11 +123,11 @@ exports.add_employee = async(req, res, next) => {
             date_of_birth: date_of_birth,
             optionalNumber: optionalNumber,
             password: '00001111',
-            emergency_contact_Info: {
-                contact_name: emergency_contact_Info.contact_name,
-                relationship: emergency_contact_Info.relationship,
-                contact_phoneNumber: emergency_contact_Info.contact_phoneNumber
-            },
+            // emergency_contact_Info: {
+            //     contact_name: emergency_contact_Info.contact_name,
+            //     relationship: emergency_contact_Info.relationship,
+            //     contact_phoneNumber: emergency_contact_Info.contact_phoneNumber
+            // },
 
             hireDate: hireDate,
             joiningDate: joiningDate,
@@ -303,9 +303,7 @@ exports.get_By_Department = async(req, res, next) => {
 exports.getbydept = async(req, res, next) => {
     try {
         const query = req.query.department;
-        // console.log(query);
-
-        const employee = await Employee.find({
+             const employee = await Employee.find({
                 $and: [
                     { companyId: req.user.id },
                     {
@@ -332,14 +330,10 @@ exports.updateEmploye = async(req, res, next) => {
     const employeeId = req.params.employeeId;
 };
 
-//Company admin
-
 //set role
-
 exports.setApprovers = async(req, res, next) => {
     try {
 
-        console.log(req.params.id)
         const approvers = await  Employee.findOneAndUpdate({ _id:req.params.id }, { $set: { role: "approver" } }, { new: true });
        
         res.status(200).json({
@@ -363,7 +357,7 @@ exports.updatePension = async(req, res, next) => {
 
 exports.updatePensionByDepartment = async(req, res, next) => {
     try {
-        //const employee=await Employee.find({companyId:req.user.id});
+   
         const employee = await Employee.updateMany({ companyId: req.user.id, department: req.params.departmentId }, { $set: { pension: req.body.pension } });
     } catch (err) {
         createError.createError(404, err);
@@ -440,14 +434,11 @@ exports.get_Pending_Payroll = async(req, res, next) => {
             // console.log("data", data);
         });
         try {
-            // console.log(req.body);
-            // // const check_month=await Employee.find({department:departmentId,})
+        
             console.log("data length:", data.length);
             for (var i = 0; i < data.length; i++) {
                 console.log("i", i);
-                //  console.log(data[i].year)
-
-                // }
+                
             }
             res.status(200).json("done");
         } catch (err) {
@@ -533,15 +524,9 @@ exports.login = async(req, res, next) => {
         // const token=signToken(user._id);
         //if everything is ok send token to the client
         createSendToken(user, 200, res);
-        // res.status(200).json({
-        //   status: 'success',
-        // token,
-        //   data: {
-        //     user: user
-        //   },
-        // });
+     
     } catch (err) {
-        //next(createError.createError(404, 'failed'));
+     
         res.status(404).json({
             status: 'fail123',
             message: err,

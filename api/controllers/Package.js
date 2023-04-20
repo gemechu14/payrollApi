@@ -8,11 +8,7 @@ const moment=require('moment')
 
 exports.createPlan = async (req, res, next) => {
   try {
-    // if (!req.body.price || !req.body.name) {
-    //     return res.status(400)
-    //         .json(vm.ApiResponse(false, 400, 'all fields are required'))
-    // }
-    // const _expected_body = _.pick(req.body, ['price', 'name']);
+
     const create_plan = await Package(req.body);
     const save_plan = await create_plan.save();
     if (save_plan) {
@@ -35,15 +31,10 @@ exports.createPlan = async (req, res, next) => {
 
 exports.listPlan = async (req, res, next) => {
   try {
-    //  const sub=await Package.aggregate(
-    //         [
-    //            { $project: { no_of_Employee: { $concat: [ "$min_number_of_Emp", " - ", "$max_number_of_Emp" ] } } }
-    //         ]
-    //      )
+
+
     const subscription = await Package.find();
-    // if (!subscription) {
-    //     return next('error occured')
-    // } else {
+   
     res.status(200).json({
       count: subscription.length,
       subscription,
@@ -95,10 +86,7 @@ exports.getleftDays=async(req,res,next)=>{
     const currentDate = moment();
     const daysLeft = nextPaymentDate.diff(currentDate, 'days');
 
-    //subscription.leftday = daysLeft;
-//    await User.updateOne({ _id: id }, { $set: { leftDays: daysLeft } });
-
-    res.status(200).json(daysLeft);
+     res.status(200).json(daysLeft);
   } catch (err) {
     res.status(404).json("error");
   }
@@ -108,15 +96,9 @@ exports.getleftDays=async(req,res,next)=>{
 
 exports.getSubscription = async (req, res, next) => {
   try {
-    //  const sub=await Package.aggregate(
-    //         [
-    //            { $project: { no_of_Employee: { $concat: [ "$min_number_of_Emp", " - ", "$max_number_of_Emp" ] } } }
-    //         ]
-    //      )
+
     const subscription = await User.find({_id:req.params.id});
-    // if (!subscription) {
-    //     return next('error occured')
-    // } else {
+  
 
     if (subscription[0].packageId){
 
@@ -124,7 +106,7 @@ exports.getSubscription = async (req, res, next) => {
       const packageInfo = await Package.find({_id: subscription[0]?.packageId})
     res.status(200).json({
       package: subscription[0]?.packageId? subscription[0]?.packageId:'undifined',
-     // trial:subscription[0]?.isTrial,
+     
       packageInfo
       ,
     });

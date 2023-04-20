@@ -564,27 +564,11 @@ exports.payrollCalculation = async (req, res, next) => {
             const month = data[i].payslip?.filter((item) => item?.month?.includes("April"));
             const year = data[i].payslip?.filter((item) => item?.year?.includes("2023"));
             //CHECK  SELECTED MONTH AND YEAR 
-
             if (month.length && year.length) {
-                              // console.log('update')
-
-
-               // console.log(data[i].gradeId)
+                     
                 const empdata = await gradeDefinition.find({ _id: data[i].gradeId })            
                 let allowanceLength = empdata[0]?.allowance.length
-               // console.log(empdata[0]?.allowance[0]);
-
-                // if(allowanceLength){
-                //     for (var i=0; i<allowanceLength; i++){
-                //         console.log(empdata[0]?.allowance[i]);
-                //     }
-                // }
-      
-                
-                // await Employee.updateOne(
-                //     { _id: mongoose.Types.ObjectId(data[i]._id), 'payslip.year': '2023', 'payslip.month': "April" },
-                //     { $set: { 'payslip.$.approval.isApproved': true, 'payslip.$.basicSalary': empdata[0]?.basicSalary ? empdata[0].basicSalary :0}, $inc: { 'payslip.$.approval.counter': 1 } },
-                // );
+           
 
 
 
@@ -621,11 +605,7 @@ exports.payrollCalculation = async (req, res, next) => {
             }
 
 
-            // await Employee.updateOne(
-            //     { _id: mongoose.Types.ObjectId(data[i]._id), 'payslip.year': '2015', 'payslip.month': "January" },
-            //     { $set: { 'payslip.$.approval.isApproved': true }, $inc: { 'payslip.$.approval.counter': 1 } },
-            // );
-        }
+                 }
 
 
 
@@ -676,18 +656,15 @@ exports.get_calculation = async (req, res, next) => {
             console.log("data", data);
         });
         try {
-            // console.log(req.body);
-            // // const check_month=await Employee.find({department:departmentId,})
+        
             console.log("data length:", data.length);
             for (var i = 0; i < data.length; i++) {
                 console.log("i", i);
-                //     // const d1=  await Employee.find({  _id: mongoose.Types.ObjectId(data[i]._id) });
-                //     // console.log(d1[i].year[0].month[0].name);
-                // for (let j = 0; j < data[i].year.length; j++) {
+             
                 const conditions = data[i].year.filter((item) => item.name.includes(year));
                 if (conditions.length) {
                     const filteredMonth = conditions[0].month.filter((item) => item.name.includes(month));
-                    // console.log("filteredMonth:", filteredMonth);
+                 
                     if (filteredMonth.length) {
                         console.log("year and month");
                         const emp = await Employee.updateOne({
@@ -710,13 +687,7 @@ exports.get_calculation = async (req, res, next) => {
                             $pull: {
                                 "year.$.month": {
                                     name: month,
-                                    // // netSalary: netSalary,
-                                    // payroll: payrollId,
-                                    // arrears: data[i].arrears,
-                                    // lateSittingOverTime: data[i].lateSittingOverTime,
-                                    // dayDeduction: data[i].dayDeduction,
-                                    // EOTBDeduction: data[i].EOTBDeduction,
-                                    // payrollStatus: data[i].payrollStatus,
+                                 
                                 }
                             }
                         });
@@ -732,10 +703,7 @@ exports.get_calculation = async (req, res, next) => {
                             }
                         }, {
                             $set: {
-                                // lateSittingOverTime: 10,
-                                // "arrears": 10,
-                                // "dayDeduction": 10,
-                                // "EOTBDeduction": 10,
+                           
 
                                 "year.$.month": {
                                     name: month,
@@ -759,25 +727,6 @@ exports.get_calculation = async (req, res, next) => {
                             }
                         });
 
-                        // const emp4 = await Employee.updateOne(
-                        // {
-                        //     _id: mongoose.Types.ObjectId(data[i]._id),
-                        //     year: { $elemMatch: { name: { $eq: year } } },
-                        // },
-                        // {
-                        //     $set: {
-                        //       lateSittingOverTime: 910,
-                        //       // "arrears": 10,
-                        //       // "dayDeduction": 10,
-                        //       // "EOTBDeduction": 10,
-
-                        //       //EOTBDeduction:'6'
-
-                        //     },
-                        // }
-                        // );
-
-                        // console.log(emp);
                     } else {
                         console.log("year but not month");
                         const emp = await Employee.updateOne({

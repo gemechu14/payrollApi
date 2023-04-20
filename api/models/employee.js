@@ -17,6 +17,7 @@ const employeeSchema = mongoose.Schema({
     type: String,
     required: true,
   },
+  
   date_of_birth: {
     type: Date,
     required: true,

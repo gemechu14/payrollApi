@@ -35,10 +35,12 @@ const payrollmodel = mongoose.Schema({
     enum:['Percentage','Amount']
     
   },
+
   employeer_Contribution: {
     type: String,
    
   },
+
   employee_Contribution: {
     type: String,
     
@@ -48,14 +50,14 @@ const payrollmodel = mongoose.Schema({
   taxable_income_limit: {
     type: String,
   },
+
   exampt_age_limit: {
     type: String,
   },
+
   exampt_percentage: {
     type: String,
   },
-
-
 
 });
 

@@ -7,13 +7,11 @@ const createError = require('../utils/error.js');
 const { signedCookies } = require('cookie-parser');
 const moment = require("moment");
 const Package = require('../models/Package.js')
-// const { create } = require('../models/userModel.js');
 const { calculateNextPayment } = require('../utils/Helper.js');
 const nodemailer = require('nodemailer');
 const Department = require('../models/department.js');
 const Payroll = require('../models/payroll.js');
-const mongoose = require('mongoose')
-
+const mongoose = require('mongoose');
 const TaxSlab = require('../models/taxSlabs.js');
 const employee = require('../models/employee.js');
 
@@ -41,23 +39,19 @@ const filterObj = (obj, ...allowedFields) => {
 const createSendToken = (user, statusCode, res) => {
   const token = signToken(user._id);
   console.log(user._id);
-  // const patientID = patient._id;
-  const cookieOptions = {
+   const cookieOptions = {
     expires: new Date(
       Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000),
 
     secure: process.env.NODE_ENV === 'production' ? true : false,
     httpOnly: true,
   };
-  //console.log(user);
-
-  //remove password from the output
   user.password = undefined;
   res.cookie('jwt', token, cookieOptions);
   res.status(statusCode).json({
     message: 'successful',
     token,
-    //patientID,
+ 
     data: {
       user,
     },
@@ -67,7 +61,7 @@ const createSendToken = (user, statusCode, res) => {
 const createSendTokenAdmin = (user, statusCode, res) => {
   const token = signToken(user._id);
   console.log(user._id);
-  // const patientID = patient._id;
+
   const cookieOptions = {
     expires: new Date(
       Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000),
@@ -75,15 +69,11 @@ const createSendTokenAdmin = (user, statusCode, res) => {
     secure: process.env.NODE_ENV === 'production' ? true : false,
     httpOnly: true,
   };
-  //console.log(user);
-
-  //remove password from the output
   user.password = undefined;
   res.cookie('jwt', token, cookieOptions);
   res.status(statusCode).json({
     message: 'successful',
     token,
-    //patientID,
 
       user:{
         email:user.email,
@@ -131,10 +121,10 @@ exports.trialRegistration = async (req, res, next) => {
 
     } = req.body;
     const user = await User.findOne({ email });
-    // console.log(user.isTrial);
+  
     if (user)
       return next(createError.createError(404, 'Email is already provided!'));
-    //  console.log(user);
+ 
     let nextpaymentDate;
     let date = Date.now();
     nextpaymentDate = await calculateNextPayment('Trial', date);
@@ -155,7 +145,6 @@ exports.trialRegistration = async (req, res, next) => {
 
     });
 
-    // console.log(newUser);
     res.status(200).json({
       status: 'Success',
       message: "Trial period is provided to you ",
@@ -169,11 +158,7 @@ exports.trialRegistration = async (req, res, next) => {
 
   } catch (err) {
     next(createError.createError(404, 'fail'));
-    // res.status(404).json({
-    //   status: 'fail',
-    //   message: err,
-    // });
-  }
+   }
 
 }
 
@@ -195,10 +180,9 @@ exports.packageRegistration = async (req, res, next) => {
 
     } = req.body;
     const user = await User.findOne({ email });
-    // console.log(user.isTrial);
-    if (user)
+       if (user)
       return next(createError.createError(404, 'Email is already provided!'));
-    //  console.log(user);
+
 
     const packageId = req.params.packageId;
     const packageInfo = await Package.findOne({ _id: packageId });
@@ -225,7 +209,6 @@ exports.packageRegistration = async (req, res, next) => {
 
     });
 
-    // console.log(newUser);
     res.status(200).json({
       status: 'Success',
       message: "Thank you for your subscription ",
@@ -271,19 +254,16 @@ exports.signup = async (req, res, next) => {
       jobTitle: jobTitle,
     });
     console.log(newUser);
-    //createSendToken(newUser,201,res)
-    // const token=jwt.sign({id:newUser._id},'secret',{
-    //   expiresIn: '90d'
-    // });
+  
     res.status(201).json({
       status: 'success',
-      // token,
+      
       data: {
         user: newUser,
       },
     });
   } catch (err) {
-    // next(createError.createError(404, 'fail'));
+  
     res.status(404).json({
       status: 'fail',
       message: err,
@@ -319,16 +299,8 @@ exports.login = async (req, res, next) => {
       //next(createError.createError(401,'Incorrect email, password or company Code'))
     }
 
-    // const token=signToken(user._id);
-    //if everything is ok send token to the client
     createSendToken(user, 200, res);
-    // res.status(200).json({
-    //   status: 'success',
-    // token,
-    //   data: {
-    //     user: user
-    //   },
-    // });
+   
   } catch (err) {
     //next(createError.createError(404, 'failed'));
     res.status(404).json({
@@ -529,12 +501,9 @@ exports.searchActiveCompany = async (req, res, next) => {
 
 
 //SEARCH ALL COMPANY 
-
 exports.searchAllCompany = async (req, res, next) => {
   try {
     const key = req.params.key;
-
-
     const user = await User.find(
       {
         $and: [{ CompanyName: { $regex: new RegExp(key, 'i'), } }, { role: { $ne: 'superAdmin' } }],
@@ -586,18 +555,10 @@ exports.approveCompany = async (req, res, next) => {
     );
     console.log(approveCompany._id);
     const dept = await Department.find({ companyName: approveCompany.CompanyName });
-    //const payroll=await Payroll.find({ companyId:approveCompany._id});
-
-
     const payroll = await Payroll.find({
       $and: [{ companyId: approveCompany._id }, { payrollID: "00001" }, { payrollName: "default" }],
     }
     );
-    //const len=payroll.length;
-    console.log(payroll.length);
-
-
-    console.log(payroll.length);
 
     try {
       if (payroll.length == 0) {
@@ -623,14 +584,9 @@ exports.approveCompany = async (req, res, next) => {
       res.status(404).json({ error: error })
     }
 
-    console.log(`payrolllength is  ` + payrollId.length);
-    //console.log(mongoose.Types.ObjectId(payrollId));
-
-    console.log(payrollId.length == undefined)
+   
     if (payrollId.length == undefined) {
       try {
-        console.log(mongoose.Types.ObjectId(payrollId));
-
 
         const savedTaxSlab = await TaxSlab.create({
           deductible_Fee: '0',
@@ -692,16 +648,6 @@ exports.approveCompany = async (req, res, next) => {
 
         try {
 
-          // const taxs=await Payroll.insertMany({_id:mongoose.Types.ObjectId(payrollId)},[
-          //   { taxSlab: savedTaxSlab._id },
-          //    { taxSlab: savedTaxSlab1._id },
-          //    { taxSlab: savedTaxSlab2._id },
-          //   { taxSlab: savedTaxSlab3._id },
-          //    { taxSlab: savedTaxSlab4._id },
-          //    { taxSlab: savedTaxSlab5._id },
-          //    { taxSlab: savedTaxSlab6._id },
-
-          // ])
 
           insertArray = [savedTaxSlab._id, savedTaxSlab1._id, savedTaxSlab2._id, savedTaxSlab3._id, savedTaxSlab4._id, savedTaxSlab5._id, savedTaxSlab6._id]
           const tax = await Payroll.findByIdAndUpdate(mongoose.Types.ObjectId(payrollId),
@@ -753,7 +699,7 @@ exports.approveCompany = async (req, res, next) => {
     next(err)
   }
 };
-//DEcline COMPANY
+//Decline COMPANY
 exports.declineCompany = async (req, res, next) => {
   const text = 'You have been blocked from accessing your account. Contact cooppayroll@gmail.com and resolve the issue';
   try {
@@ -764,7 +710,7 @@ exports.declineCompany = async (req, res, next) => {
       { $set: { status: 'denied' } },
       { new: true }
     );
-    // const user = await User.find({"$and": [{status: "active"}, { role: { $ne: 'superAdmin' }}]});
+  
     try {
       await sendEmail({
         email: email,
@@ -790,7 +736,7 @@ exports.declineCompany = async (req, res, next) => {
 
 //Block COMPANY
 exports.blockCompany = async (req, res, next) => {
-  //const text='You have been blocked from accessing your account. Contact cooppayroll@gmail.com and resolve the issue';
+
   try {
     const email = req.body.email;
     console.log(email);
@@ -799,7 +745,7 @@ exports.blockCompany = async (req, res, next) => {
       { $set: { status: 'blocked' } },
       { new: true }
     );
-    // const user = await User.find({"$and": [{status: "active"}, { role: { $ne: 'superAdmin' }}]});
+    
 
     res.status(200).json({
       blockedCompany: blockedCompany,
@@ -859,7 +805,6 @@ exports.unApproveCompany = async (req, res, next) => {
       { $set: { isApproved: 'false' } },
       { new: true }
     );
-    // const user = await User.find({"$and": [{status: "active"}, { role: { $ne: 'superAdmin' }}]});
 
     res.status(200).json({
       approveCompany: approveCompany.isApproved,
@@ -897,7 +842,6 @@ exports.approveCompanyPayment = async (req, res, next) => {
       })
 
     }
-    // const user = await User.find({"$and": [{status: "active"}, { role: { $ne: 'superAdmin' }}]});
 
 
   } catch (err) {
@@ -954,8 +898,7 @@ exports.sendEmail = async (req, res, next) => {
 
 //APPROVE COMPANY PAYMENT
 exports.approveCompanyPayment = async (req, res, next) => {
-  const text = 'Lorem, ipsum dolor sit amet consectetur adipisicing elit. Obcaecati voluptates accusantium eveniet voluptatum delectus, facere modi quis cupiditate maiores. Soluta, obcaecati enim consequuntur voluptatibus eos vitae fugit exercitationem officiis excepturi.'
-
+  const text = 'payment approved'
   try {
     const email = req.body.email;
     console.log(email);
@@ -980,8 +923,6 @@ exports.approveCompanyPayment = async (req, res, next) => {
         message: 'There was an error sending the email. Try again later!',
       });
     }
-    // const user = await User.find({"$and": [{status: "active"}, { role: { $ne: 'superAdmin' }}]});
-
 
   } catch (err) {
     next(err);
@@ -1096,30 +1037,26 @@ exports.resetPassword = async (req, res, next) => {
 
 exports.updatePassword = async (req, res, next) => {
   try {
-    console.log(hello);
-
-    //   //get user from collection
-    //   const user = await User.findById('req.user.id').select('+password');
-    //   console.log(req.user.id);
-    //   //check if posted password is correct
-    //   if (!user.correctPassword(req.body.currentPassword, user.password)) {
-    //     return res
-    //       .status(401)
-    //       .json({ message: 'Your current password is not correct' });
-    //   }
-    //   //id so, update the password
-    //   user.password = req.body.password;
-    //   console.log(req.body.password)
-    //   // user.confirmPassword = req.body.confirmPassword;
-    //   await user.save();
-    //   //log the user in, send JWT
-    //  // createSendToken(user, 200, res);
-
-    // const token=signToken(user._id);
-    // res.status(200).json({
-    //  status:'success',
-    //  token
-    // })
+ 
+      //get user from collection
+      const user = await User.findById('req.user.id').select('+password');
+      console.log(req.user.id);
+      //check if posted password is correct
+      if (!user.correctPassword(req.body.currentPassword, user.password)) {
+        return res
+          .status(401)
+          .json({ message: 'Your current password is not correct' });
+      }
+      //id so, update the password
+      user.password = req.body.password;
+      console.log(req.body.password)
+      // user.confirmPassword = req.body.confirmPassword;
+      await user.save();
+        const token=signToken(user._id);
+    res.status(200).json({
+     status:'success',
+     token
+    })
   } catch (err) {
     res.status(404).json({
       status: 'fail',
@@ -1182,47 +1119,15 @@ exports.logout = async (req, res) => {
 
 
   var token = req.headers.authorization;
-  console.log(token);
-
-  console.log(req.headers.authorization)
-
-
-  //   try {
-  //     req.user.tokens = req.user.tokens.filter((token) =>{
-  //      return token.token !== req.token 
-  //     })
-  //     await req.user.save()
-  //     res.send()
-  // } catch (error) {
-  //     res.status(500).send()
-  // }
-
-
-
-  // console.log('User Id', req.user.id);
-  // User.findByIdAndRemove(req.user.id, function (err) {
-  //   if (err) res.send(err);
-  //   res.json({ message: 'User Deleted!' });
-  // })
-
-
-
-  // res.clearCookie()
-  // req.session.destroy();
-  // res.sendStatus(200);
-
-
-
   const cookieOptions = {
     expires: new Date(Date.now() + 10 * 1000),
     secure: process.env.NODE_ENV === 'production' ? true : false,
     httpOnly: true,
   };
-  //console.log(req.headers.authorization);
+ 
   res.cookie('jwt', 'expiredtoken', cookieOptions);
   req.headers.authorization = 'expiredtoken'
-  console.log(req.headers.authorization);
-  res.status(200).json({
+ res.status(200).json({
     status: 'success',
     message: 'logged out successfully',
   });
@@ -1230,8 +1135,6 @@ exports.logout = async (req, res) => {
 
 
 ///super admin login
-
-
 exports.superAdminLogin = async (req, res, next) => {
   try {
     const { email, password} = req.body;
@@ -1244,9 +1147,7 @@ exports.superAdminLogin = async (req, res, next) => {
           404,
           'please provide email, password !'
         )
-      ); //res
-      //   .status(404)
-      //   .json({ message: 'please provide email, password or company code' });
+      ); 
     }
     //check if user exists and password is correct
     const user = await User.findOne({ email }).select('+password');
@@ -1262,18 +1163,12 @@ exports.superAdminLogin = async (req, res, next) => {
       //next(createError.createError(401,'Incorrect email, password or company Code'))
     }
 
-    // const token=signToken(user._id);
+ 
     //if everything is ok send token to the client
     createSendTokenAdmin(user, 200, res);
-    // res.status(200).json({
-    //   status: 'success',
-    // token,
-    //   data: {
-    //     user: user
-    //   },
-    // });
+ 
   } catch (err) {
-    //next(createError.createError(404, 'failed'));
+
     res.status(404).json({
       status: 'error occour',
       message: err,

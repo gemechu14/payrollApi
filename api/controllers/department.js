@@ -6,9 +6,6 @@ exports.add_dept = async (req, res) => {
     try {
         const employeeId = req.params.employeeId;
         const { deptName, location } = req.body;
-        // companyName,
-        // const departmentName = await Department.find({deptName:deptName,companyName: req.user.CompanyName});
-
         const departmentName = await Department.find({
             $and: [
                 {
@@ -22,7 +19,7 @@ exports.add_dept = async (req, res) => {
         console.log(departmentName.length);
         if (!departmentName || departmentName.length == 0) {
             const newDept = await Department.create({ companyName: req.user.CompanyName, deptName: deptName, location: location });
-            // const savedDept = await newDept.save();
+         
             console.log(req.body);
 
             res.status(200).json({ newDept });
@@ -38,7 +35,6 @@ exports.add_dept = async (req, res) => {
 // GET ALL
 exports.get_All_Dept = async (req, res, next) => {
     const failed = true;
-    // if(failed) return next(createError(401,"You are not authenticated"));
 
     try {
 

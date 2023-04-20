@@ -92,30 +92,6 @@ exports.delete_monthPayroll = async (req, res) => {
 exports.get_All = async (req, res, next) => {
   try {
 
-   // console.log(gammee)
-    // await payrollMonth
-    //   .find({ companyId: req.user.id })
-    //   .exec()
-    //   .then((docs) => {
-    //     //   const response = {
-    //     //count: docs.length,
-    //     const monthPayroll = docs.map((doc) => {
-    //       return {
-    //         name: doc.name,
-    //         startDate: moment(doc.startDate).format("YYYY-MM-DD"),
-    //         endDate: moment(doc.endDate).format("YYYY-MM-DD"),
-    //         name: doc.name,
-    //         companyId: doc.companyId,
-    //         id: doc._id
-    //       };
-    //     });
-    //     //   }
-
-    //     res.status(200).json({
-    //       count: monthPayroll.length,
-    //       monthPayroll,
-    //     });
-    //   });
     let data = moment().format('MMMM')
     console.log("month",moment().format('MMMM'))
     let data1 = moment().format('YYYY')

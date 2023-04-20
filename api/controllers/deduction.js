@@ -6,10 +6,8 @@ const createError = require("../utils/error.js");
 
 
 //GET ALL
-
 exports.get_All_Deduction = async (req, res, next) => {
   const failed = true;
-  // if(failed) return next(createError(401,"You are not authenticated"))
 
   try {
     const deduction = await Deduction.find({ companyId: req.user.id });
@@ -171,10 +169,6 @@ exports.addExistingDeduction = async (req, res, next) => {
     console.log(deductionId);
 
     const check = await Employee.find({ _id: employeeId });
-
-    //console.log(mongoose.Types.ObjectId(deductionId));
-    //console.log(!Zcheck[0].deduction.includes(mongoose.Types.ObjectId(deductionId)))
-    //console.log( check.deduction.includes(mongoose.Types.ObjectId(deductionId)));
 
     if (!check[0].deduction.includes(mongoose.Types.ObjectId(deductionId))) {
       const updated = await Employee.findByIdAndUpdate(
