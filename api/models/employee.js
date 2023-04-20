@@ -1,7 +1,10 @@
 const mongoose = require("mongoose");
-
+const validator = require('validator');
+const bcrypt = require('bcrypt');
+const crypto = require('crypto');
 const employeeSchema = mongoose.Schema({
   // BASIC INFO
+
 
   fullname: {
     type: String,
@@ -17,6 +20,11 @@ const employeeSchema = mongoose.Schema({
   date_of_birth: {
     type: Date,
     required: true,
+  },
+  role: {
+    type: String,
+    enum: ['employee', 'approver'],
+    default: 'employee',
   },
 
   nationality: {
@@ -73,9 +81,9 @@ const employeeSchema = mongoose.Schema({
   accountNumber: {
     type: String,
   },
-  // accountTitle: {
-  //   type: String,
-  // },
+  password: {
+    type: String,
+  },
 
   // paymentMethod: {
   //   type: String,
@@ -88,34 +96,34 @@ const employeeSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  housingAllowance: {
-    amount: { type: Number, default: 0 },
-    isTaxable: { type: Boolean, default: false }
-  },
-  positionAllowance: {
-    amount: { type: Number, default: 0 },
-    isTaxable: { type: Boolean, default: false }
-  },
-  hardshipAllowance: {
-    amount: { type: Number, default: 0 },
-    isTaxable: { type: Boolean, default: false }
-  },
-  desertAllowance: {
-    amount: { type: Number, default: 0 },
-    isTaxable: { type: Boolean, default: false }
-  },
-  transportAllowance: {
-    amount: { type: Number, default: 0 },
-    isTaxable: { type: Boolean, default: false }
-  },
-  cashIndeminityAllowance: {
-    amount: { type: Number, default: 0 },
-    isTaxable: { type: Boolean, default: false }
-  },
-  fieldAllowance: {
-    amount: { type: Number, default: 0 },
-    isTaxable: { type: Boolean, default: false }
-  },
+  // housingAllowance: {
+  //   amount: { type: Number, default: 0 },
+  //   isTaxable: { type: Boolean, default: false }
+  // },
+  // positionAllowance: {
+  //   amount: { type: Number, default: 0 },
+  //   isTaxable: { type: Boolean, default: false }
+  // },
+  // hardshipAllowance: {
+  //   amount: { type: Number, default: 0 },
+  //   isTaxable: { type: Boolean, default: false }
+  // },
+  // desertAllowance: {
+  //   amount: { type: Number, default: 0 },
+  //   isTaxable: { type: Boolean, default: false }
+  // },
+  // transportAllowance: {
+  //   amount: { type: Number, default: 0 },
+  //   isTaxable: { type: Boolean, default: false }
+  // },
+  // cashIndeminityAllowance: {
+  //   amount: { type: Number, default: 0 },
+  //   isTaxable: { type: Boolean, default: false }
+  // },
+  // fieldAllowance: {
+  //   amount: { type: Number, default: 0 },
+  //   isTaxable: { type: Boolean, default: false }
+  // },
   overtimeEarning: {type: Number, default: 0 },
   
   otherEarning: {  type: Number, default: 0 },
@@ -194,15 +202,12 @@ const employeeSchema = mongoose.Schema({
       netSalary: { type: Number ,default:0},
       payrollId: [{  type: mongoose.Schema.Types.ObjectId, ref: "Payroll",} ],
       approval: { 
-        counter: { type: Number, default: 0 }, 
-        finance:{type:Boolean, default:false},
-        HR:{type:Boolean, default:false},
-        manager:{type:Boolean, default:false},        
+        counter: { type: Number, default: 0 },            
         isApproved:{type:Boolean, default:false}
 
        }
     },
-     
+    
    
   ]
 
@@ -294,6 +299,12 @@ const employeeSchema = mongoose.Schema({
       ref: "Payroll",
     },
   ],
+
+
+
+  passwordChangedAt: Date,
+  passwordResetToken: String,
+  passwordResetExpires: Date,
   // year1:[ {
   //     type: mongoose.Schema.Types.ObjectId,
 
@@ -318,4 +329,57 @@ const employeeSchema = mongoose.Schema({
   // }
 });
 // employeeSchema.index({ "year.name": 1, "year.month.name": 1 }, { unique: true })
+
+
+
+employeeSchema.pre('save', async function (next) {
+  //only run this function if password was actually modified
+  if (!this.isModified('password')) return next();
+  //hash password
+  this.password = await bcrypt.hash(this.password, 12);
+  // //delete confirmPassword from database
+  // this.confirmPassword = undefined;
+  next();
+});
+
+employeeSchema.methods.correctPassword = async function (
+  candidatePassword,
+  userPassword
+) {
+  return await bcrypt.compare(candidatePassword, userPassword);
+};
+
+employeeSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
+  if (this.passwordChangedAt) {
+    const changedTimestamp = parseInt(
+      this.passwordChangedAt.getTime() / 1000,
+      10
+    );
+    return JWTTimestamp < changedTimestamp;
+  }
+  //false if password was not changed
+  return false;
+};
+
+employeeSchema.methods.createPasswordResetToken = function () {
+  const resetToken = crypto.randomBytes(32).toString('hex');
+  this.passwordResetToken = crypto
+    .createHash('sha256')
+    .update(resetToken)
+    .digest('hex');
+  console.log(resetToken, this.passwordResetToken);
+  this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+  return resetToken;
+};
+employeeSchema.pre('save', function (next) {
+  if (!this.isModified('password') || this.isNew) return next();
+  this.passwordChangedAt = Date.now() - 1000;
+  next();
+});
+employeeSchema.pre(/^find/, function (next) {
+  this.find({ active: { $ne: false } });
+  next();
+});
+
+
 module.exports = mongoose.model("Employee", employeeSchema);

@@ -14,7 +14,8 @@ const Department = require('../models/department.js');
 const Payroll = require('../models/payroll.js');
 const mongoose = require('mongoose')
 
-const TaxSlab = require('../models/taxSlabs.js')
+const TaxSlab = require('../models/taxSlabs.js');
+const employee = require('../models/employee.js');
 
 
 const signToken = (id) => {
@@ -1279,5 +1280,6 @@ exports.superAdminLogin = async (req, res, next) => {
     });
   }
 };
+
 
 

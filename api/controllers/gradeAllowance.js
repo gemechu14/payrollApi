@@ -150,13 +150,14 @@ exports.delete_Allowances = async (req, res) => {
 
 
 // DELETE Allowances
-exports.deleteAllowances = async (req, res) => {
-    const employeeId = req.params.employeeId;
+exports.delete_from_allowancecollection_Allowances = async (req, res) => {
+   
     try {
-        await Allowance.findByIdAndDelete(req.params.id);
+        console.log('delete')
+       // await Allowance.findByIdAndDelete(req.params.id);
 
 
-        res.status(200).json("Allowance has been deleted.");
+      //  res.status(200).json("Allowance has been deleted.");
     } catch (err) {
         next(err);
     }

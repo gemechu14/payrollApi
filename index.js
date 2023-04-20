@@ -106,7 +106,7 @@ const connect = async () => {
 
 app.use(
   cors({
-    origin: ['http://localhost:3000','http://localhost:3001','http://localhost:3002','http://localhost:*','*'],
+    origin: ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002', 'http://localhost:*','http://10.2.125.124:4000'],
     credentials: true,
   })
 );

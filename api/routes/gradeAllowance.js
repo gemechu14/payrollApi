@@ -45,10 +45,10 @@ router.post('/:allowanceId/:gradeId', middleware.protect,
     middleware.restrictTo('Companyadmin'), allowanceController.addExistingAllowances);
 
 //DELETE Allowance
-router.delete('/',
+  router.delete('/:id',
     middleware.protect,
     middleware.restrictTo('Companyadmin'),
-    allowanceController.deleteAllowance);
+    allowanceController.delete_from_allowancecollection_Allowances);
 
 
 module.exports = router;
