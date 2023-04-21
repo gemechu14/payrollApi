@@ -302,7 +302,8 @@ const upload3 = multer({ dest: 'uploads/' });
 
 
 
-router.post('/file-upload',employeeController.createEmployeeFile )
+router.post('/file-upload', middleware.protect,
+    middleware.restrictTo("Companyadmin"), employeeController.createEmployeeFile )
 
 
 module.exports = router;

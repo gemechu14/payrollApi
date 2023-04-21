@@ -702,6 +702,7 @@ exports.createEmployeeFile = async (req, res, next) => {
                     department: row['department'],
                     id_number: row['id_number'],
                     basicSalary: row['basicSalary'],
+                    companyId:req.user.id
                 })
                 
                 )
