@@ -39,6 +39,7 @@ exports.get_All_Dept = async (req, res, next) => {
     try {
 
         console.log(moment(Date.now()).format("YYYY"));
+        
         const depts = await Department.find({ companyName: req.user.CompanyName });
         res.status(200).json({ count: depts.length, depts });
     } catch (err) {

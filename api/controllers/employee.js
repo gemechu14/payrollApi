@@ -1,7 +1,6 @@
 const Employee = require("../models/employee.js");
 const Department = require("../models/department.js");
 const middleware = require("../middleware/auth.js");
-
 const jwt = require("jsonwebtoken");
 const { promisify } = require("util");
 const User = require("../models/userModel.js");
@@ -11,6 +10,11 @@ const mongoose = require("mongoose");
 var fs = require("fs");
 var path = require("path");
 const department = require("../models/department.js");
+
+
+
+
+
 //const createError=required('../utils/error.js');
 //const IMAGE_BASE_URL = "http://localhost:5000/image?name=";
 
@@ -570,3 +574,152 @@ exports.getEmployeeInformation = async(req, res, next) => {
 
 
 }
+
+
+//Import from Excel
+
+exports.excelImport=async (req,res,next)=>{
+
+try {
+    const multer = require('multer');
+    // configure storage engine for multer 
+    const storage = multer.memoryStorage();
+    // create instance of multer and specify storage engine 
+    const upload = multer({ storage: storage });
+    // middleware for file upload 
+    const fileUploadMiddleware = upload.single('file');
+
+    module.exports = { fileUploadMiddleware };//asset
+
+    const xlsx = require('xlsx');     
+
+
+
+
+    let generalDepartment = "";
+
+    const {
+        fullname,
+        nationality,
+        sex,
+        id_number,
+        email,
+        year,
+        date_of_birth,
+        images,
+        phoneNumber,
+        optionalNumber,
+        emergency_contact,
+        hireDate,
+        joiningDate,
+        employeeCode,
+        employeeType,
+        accountTitle,
+        accountNumber,
+        paymentMethod,
+        department,
+        pension,
+        separationDate,
+        basicSalary,
+        housingAllowance,
+        positionAllowance,
+        hardshipAllowance,
+        desertAllowance,
+        transportAllowance,
+        cashIndeminityAllowance,
+        fieldAllowance,
+        overtimeEarning,
+        otherEarning,
+        lateSittingOverTime,
+        arrears,
+        dayDeduction,
+        socialSecurity,
+        providentFund,
+        EOTBDeduction,
+        TaxDeduction,
+        netSalary,
+        position,
+        // contact_name,
+        emergency_contact_Info,
+        contact_phoneNumber,
+        relationship
+    } = req.body;
+
+
+
+
+
+
+
+} catch (err) {
+    
+}
+}
+
+
+
+
+
+
+
+
+
+
+
+const xlsx = require('xlsx');
+// const EmployeeModel = require("../models/employeeModel")
+// const AccountModel = require("../models/AccountModel")
+
+
+///storage 
+
+// configure storage engine for multer 
+const storage4 = multer.memoryStorage();
+
+// create instance of multer and specify storage engine 
+const upload4 = multer({ storage: storage4 }).single('file');
+
+exports.createEmployeeFile = async (req, res, next) => {
+    upload4 (req, res, async(err) => {
+        if (err) {
+            console.log(err)
+        } 
+        else{
+            try  {
+                const workbook = xlsx.read(req.file.buffer);
+                const sheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[sheetName];
+                const data = xlsx.utils.sheet_to_json(worksheet);
+                const numRecords = data.length;
+                const employeData = data.map((row) => ({
+                    fullname: row['fullname'],
+                    nationality: row['nationality'],
+                    phoneNumber: row['phoneNumber'],
+                    email: row['email'],
+                    accountNumber: row['Account Number'],
+                    date_of_birth: row['date_of_birth'],
+                    sex: row['sex'],
+                    department: row['department'],
+                    id_number: row['id_number'],
+                    basicSalary: row['basicSalary'],
+                })
+                
+                )
+
+
+          await   Employee.insertMany(employeData, function (err) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        console.log('Data imported successfully!');
+                    }
+                });
+                
+                res.status(200).json(employeData)
+            } catch (error) {
+                next(error);
+            }
+        }
+    });
+};
+

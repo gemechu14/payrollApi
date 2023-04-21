@@ -6,6 +6,8 @@ const middleware = require("../middleware/auth.js");
 const fs = require("fs");
 const Employee = require("../models/employee.js");
 
+
+const xlsx = require('xlsx');
 //
 const storage2 = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -296,5 +298,11 @@ router.get(
 );
 
 router.post("/login", employeeController.login);
+const upload3 = multer({ dest: 'uploads/' });
+
+
+
+router.post('/file-upload',employeeController.createEmployeeFile )
+
 
 module.exports = router;
