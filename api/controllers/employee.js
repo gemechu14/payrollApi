@@ -12,9 +12,6 @@ var path = require("path");
 const department = require("../models/department.js");
 
 
-
-
-
 //const createError=required('../utils/error.js');
 //const IMAGE_BASE_URL = "http://localhost:5000/image?name=";
 
@@ -702,6 +699,7 @@ exports.createEmployeeFile = async (req, res, next) => {
                     department: row['department'],
                     id_number: row['id_number'],
                     basicSalary: row['basicSalary'],
+                    
                     companyId:req.user.id
                 })
                 
