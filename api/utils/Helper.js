@@ -57,7 +57,7 @@ const  calculateNextPayment  =async (chargeType, normalDate)=> {
         return currentDate;
     }else if (chargeType==='Unlimited'){
         currentDate = moment(normalDate);
-        currentDate.add(10,00000, 'days').format('YYYY-MM-DD hh:mm');
+        currentDate.add(1000000, 'days').format('YYYY-MM-DD hh:mm');
         return currentDate;
     } 
 }

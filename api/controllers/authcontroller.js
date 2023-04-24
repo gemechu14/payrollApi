@@ -120,6 +120,9 @@ exports.trialRegistration = async (req, res, next) => {
       isApproved,
 
     } = req.body;
+
+
+    console.log(req.body)
     const user = await User.findOne({ email });
   
     if (user)
@@ -129,6 +132,7 @@ exports.trialRegistration = async (req, res, next) => {
     let date = Date.now();
     nextpaymentDate = await calculateNextPayment('Trial', date);
     startDate = moment(Date.now());
+    
     const newUser = await User.create({
       Name: Name,
       email: email,
@@ -157,7 +161,7 @@ exports.trialRegistration = async (req, res, next) => {
 
 
   } catch (err) {
-    next(createError.createError(404, 'fail'));
+  res.status(404).json(err);
    }
 
 }
