@@ -127,3 +127,39 @@ exports.add_taxslab_on_payroll = async (req, res) => {
 };
 
 //exports.updatePayroll=async(req,res)
+
+
+
+exports.generalTaxslab = async (req, res, next) => {
+  try {
+    const { deductible_Fee, income_tax_payable, to_Salary, from_Salary } =
+      req.body;
+    // const savedTaxSlab = await newTaxSlab.save();
+    // console.log(req.body);
+
+    const taxslabs = await TaxSlab.find({
+      $and: [
+        { to_Salary: to_Salary },
+        { from_Salary: from_Salary },
+      ],
+    });
+    if (!taxslabs || taxslabs.length == 0) {
+
+      const savedTaxSlab = await TaxSlab.create({
+        deductible_Fee: deductible_Fee,
+        income_tax_payable: income_tax_payable,
+        to_Salary: to_Salary,
+        from_Salary: from_Salary,
+
+      });
+
+
+      res.status(200).json({ savedTaxSlab });
+
+    }
+
+  } catch (err) {
+    res.status(404).json(err);
+
+  }
+}

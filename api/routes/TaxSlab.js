@@ -30,7 +30,15 @@ taxSlabController.get_All_TaxSlab);
 router.post('/:payrollId',
 middleware.protect,
 middleware.restrictTo('Companyadmin'),
-taxSlabController.add_taxslab)
+taxSlabController.add_taxslab);
+
+
+//ADD GENERAL TAXSLAB
+router.post('/general',
+  middleware.protect,
+  middleware.restrictTo('superAdmin'),
+  taxSlabController.generalTaxslab)
+
 
 router.post('/', 
 middleware.protect,

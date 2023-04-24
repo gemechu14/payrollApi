@@ -83,7 +83,7 @@ const connect = async () => {
   try {
     mongoose.set('strictQuery', true);
     await mongoose.connect(
-      process.env.MONGO,
+      process.env.MONGO_DB_NEW,
       console.log('connected to MongoDB'),
       {
         useNewUrlParser: true,
@@ -101,7 +101,6 @@ const connect = async () => {
     
   }
 };
-
 
 
 app.use(

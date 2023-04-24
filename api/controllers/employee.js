@@ -10,7 +10,8 @@ const mongoose = require("mongoose");
 var fs = require("fs");
 var path = require("path");
 const department = require("../models/department.js");
-
+const nodemailer=require('nodemailer')
+const sendEmail = require('../utils/email.js');
 
 //const createError=required('../utils/error.js');
 //const IMAGE_BASE_URL = "http://localhost:5000/image?name=";
@@ -44,6 +45,7 @@ const upload = multer({
 //Add
 
 exports.add_employee = async(req, res, next) => {
+
     try {
         let generalDepartment = "";
 
@@ -123,7 +125,7 @@ exports.add_employee = async(req, res, next) => {
             phoneNumber: phoneNumber,
             date_of_birth: date_of_birth,
             optionalNumber: optionalNumber,
-            password: '00001111',
+            password: req.user.CompanyName.substring(0, 4) + '0000',
             // emergency_contact_Info: {
             //     contact_name: emergency_contact_Info.contact_name,
             //     relationship: emergency_contact_Info.relationship,
@@ -163,12 +165,21 @@ exports.add_employee = async(req, res, next) => {
 
         });
 
-        res.status(200).json({
-
-
-            status: "success",
-            employee: newEmployee,
-        });
+    
+        const text = 'Your password is   '+ req.user.CompanyName + '0000'   +'    please change your password ';
+     
+            await sendEmail({
+                email: email,
+                subject: 'You are successfully registed on CoopPayroll SAAS ',
+                text
+            });
+            res.status(200).json({
+                status: "success",
+                message: 'Employee Registered successfully',
+                
+            });
+            
+       
     } catch (err) {
         next(createError.createError(404, err));
 
@@ -574,121 +585,26 @@ exports.getEmployeeInformation = async(req, res, next) => {
 
 
 //Import from Excel
-
-exports.excelImport=async (req,res,next)=>{
-
-try {
-    const multer = require('multer');
-    // configure storage engine for multer 
-    const storage = multer.memoryStorage();
-    // create instance of multer and specify storage engine 
-    const upload = multer({ storage: storage });
-    // middleware for file upload 
-    const fileUploadMiddleware = upload.single('file');
-
-    module.exports = { fileUploadMiddleware };//asset
-
-    const xlsx = require('xlsx');     
-
-
-
-
-    let generalDepartment = "";
-
-    const {
-        fullname,
-        nationality,
-        sex,
-        id_number,
-        email,
-        year,
-        date_of_birth,
-        images,
-        phoneNumber,
-        optionalNumber,
-        emergency_contact,
-        hireDate,
-        joiningDate,
-        employeeCode,
-        employeeType,
-        accountTitle,
-        accountNumber,
-        paymentMethod,
-        department,
-        pension,
-        separationDate,
-        basicSalary,
-        housingAllowance,
-        positionAllowance,
-        hardshipAllowance,
-        desertAllowance,
-        transportAllowance,
-        cashIndeminityAllowance,
-        fieldAllowance,
-        overtimeEarning,
-        otherEarning,
-        lateSittingOverTime,
-        arrears,
-        dayDeduction,
-        socialSecurity,
-        providentFund,
-        EOTBDeduction,
-        TaxDeduction,
-        netSalary,
-        position,
-        // contact_name,
-        emergency_contact_Info,
-        contact_phoneNumber,
-        relationship
-    } = req.body;
-
-
-
-
-
-
-
-} catch (err) {
-    
-}
-}
-
-
-
-
-
-
-
-
-
-
-
 const xlsx = require('xlsx');
-// const EmployeeModel = require("../models/employeeModel")
-// const AccountModel = require("../models/AccountModel")
-
-
-///storage 
-
-// configure storage engine for multer 
 const storage4 = multer.memoryStorage();
-
 // create instance of multer and specify storage engine 
 const upload4 = multer({ storage: storage4 }).single('file');
-
 exports.createEmployeeFile = async (req, res, next) => {
     upload4 (req, res, async(err) => {
         if (err) {
             console.log(err)
+            next(err)
         } 
         else{
             try  {
-                const workbook = xlsx.read(req.file.buffer);
+                const workbook = xlsx.read(req?.file?.buffer);
                 const sheetName = workbook.SheetNames[0];
                 const worksheet = workbook.Sheets[sheetName];
                 const data = xlsx.utils.sheet_to_json(worksheet);
                 const numRecords = data.length;
+                const emails = []
                 const employeData = data.map((row) => ({
+                  
                     fullname: row['fullname'],
                     nationality: row['nationality'],
                     phoneNumber: row['phoneNumber'],
@@ -698,9 +614,10 @@ exports.createEmployeeFile = async (req, res, next) => {
                     sex: row['sex'],
                     department: row['department'],
                     id_number: row['id_number'],
-                    basicSalary: row['basicSalary'],
-                    
-                    companyId:req.user.id
+                    basicSalary: row['basicSalary'],                    
+                    companyId:req.user.id,
+                    password: req.user.CompanyName.substring(0, 4) + '0000',
+                    emails:emails.push(row['email'])
                 })
                 
                 )
@@ -710,11 +627,32 @@ exports.createEmployeeFile = async (req, res, next) => {
                     if (err) {
                         console.log(err);
                     } else {
+                        console.log(employeData);
                         console.log('Data imported successfully!');
                     }
                 });
                 
-                res.status(200).json(employeData)
+             const text = 'Your password is   ' + req.user.CompanyName + '0000' + '    please change your password ';
+
+
+             for (i=0;i<employeData.length; i++){
+                await sendEmail({
+                    email: emails[i],
+                    subject: 'You are successfully registed on CoopPayroll SAAS ',
+                    text
+                });
+               }
+
+                res.status(200).json({
+                    status: "success",
+                    message: 'Employee Registered successfully',
+                    
+
+                });
+               
+
+
+
             } catch (error) {
                 next(error);
             }
@@ -722,3 +660,49 @@ exports.createEmployeeFile = async (req, res, next) => {
     });
 };
 
+
+
+exports.sendEmail = async (req, res, next) => {
+
+    try {
+        // let testAccount = await nodemailer.createTestAccount();
+        var transporter = nodemailer.createTransport({
+            //service: "hotmail",
+            service: 'gmail',
+            //port: 587,//Yahoo
+            port: 465,//Gmail
+            secure: false,
+            auth: {
+                user: process.env.EMAIL,
+                pass: 'mfzyfdiaxqnwmzqi',
+                // user: "gemechubulti@outlook.com",
+                // pass: 'gemechu@outlook@11',
+            },
+        });
+
+        var mailOptions = {
+            from: process.env.EMAIL,
+            // to:'milkessagabai@gmail.com',
+            // to:'etanaalemunew@gmail.com',
+            to: req.body.to,
+            subject: req.body.subject,
+            text: req.body.text,
+            // to: 'geme11.bulti@gmail.com',
+            // subject: 'Thank You for Your Kindness!',
+            // text: "Thank you so much for your patience. I'm sorry it took so long for me to get back to you I truly appreciate your understanding and willingness to wait It was a difficult situation, and I'm glad you were so understanding I want to thank you again for your patience It was much appreciated and it helped me a lot It's hard to ask for help but it's even harder to wait Thank you for making it easier Your kindness is much appreciated Thank you for being so understanding ",
+        };
+        transporter.sendMail(mailOptions, function (error, info) {
+            if (error) {
+                console.log(error.message);
+                next(error);
+                // res.status(404).json(error);
+            } else {
+                console.log('Email sent: ' + info.response);
+                res.status(250).json(info.response);
+            }
+        });
+    } catch (error) {
+        next(error)
+    }
+
+}
