@@ -151,7 +151,7 @@ exports.trialRegistration = async (req, res, next) => {
 
     res.status(200).json({
       status: 'Success',
-      message: "Trial period is provided to you ",
+      message: "   Thank you for choosing us; your request is being handled. ",
 
       data: {
         user: newUser,
@@ -215,7 +215,7 @@ exports.packageRegistration = async (req, res, next) => {
 
     res.status(200).json({
       status: 'Success',
-      message: "Thank you for your subscription ",
+      message: "Thank you for subscribing; your request is being processed.",
 
       data: {
         user: newUser,

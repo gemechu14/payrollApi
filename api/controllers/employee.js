@@ -100,12 +100,13 @@ exports.add_employee = async(req, res, next) => {
 
 
         const newDepartment = await Department.find({
-            companyName: req.user.companyName,
+            companyName: req.user.CompanyName,
             deptName: "General",
         });
-
+   
 
         generalDepartment = mongoose.Types.ObjectId(newDepartment[0]?._id);
+      
   
         if (!department || department == undefined) {
             console.log("no department");
@@ -168,14 +169,15 @@ exports.add_employee = async(req, res, next) => {
     
         const text = 'Your password is   '+ req.user.CompanyName + '0000'   +'    please change your password ';
      
-            await sendEmail({
-                email: email,
-                subject: 'You are successfully registed on CoopPayroll SAAS ',
-                text
-            });
+            // await sendEmail({
+            //     email: email,
+            //     subject: 'You are successfully registed on CoopPayroll SAAS ',
+            //     text
+            // });
             res.status(200).json({
                 status: "success",
                 message: 'Employee Registered successfully',
+          
                 
             });
             
@@ -590,6 +592,24 @@ const storage4 = multer.memoryStorage();
 // create instance of multer and specify storage engine 
 const upload4 = multer({ storage: storage4 }).single('file');
 exports.createEmployeeFile = async (req, res, next) => {
+
+
+
+let generalDepartment='';
+
+    const newDepartment = await Department.find({
+        companyName: req.user.CompanyName,
+        deptName: "General",
+    });
+
+
+    generalDepartment = mongoose.Types.ObjectId(newDepartment[0]?._id);
+
+
+    if (!department || department == undefined) {
+        console.log("no department");
+    }
+
     upload4 (req, res, async(err) => {
         if (err) {
             console.log(err)
@@ -604,7 +624,8 @@ exports.createEmployeeFile = async (req, res, next) => {
                 const numRecords = data.length;
                 const emails = []
                 const employeData = data.map((row) => ({
-                  
+
+                                  
                     fullname: row['fullname'],
                     nationality: row['nationality'],
                     phoneNumber: row['phoneNumber'],
@@ -612,7 +633,7 @@ exports.createEmployeeFile = async (req, res, next) => {
                     accountNumber: row['Account Number'],
                     date_of_birth: row['date_of_birth'],
                     sex: row['sex'],
-                    department: row['department'],
+                    department: row['department'] ? row['department'] :generalDepartment,
                     id_number: row['id_number'],
                     basicSalary: row['basicSalary'],                    
                     companyId:req.user.id,
@@ -646,6 +667,7 @@ exports.createEmployeeFile = async (req, res, next) => {
                 res.status(200).json({
                     status: "success",
                     message: 'Employee Registered successfully',
+                    employeData
                     
 
                 });
