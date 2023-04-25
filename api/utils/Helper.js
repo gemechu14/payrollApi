@@ -42,7 +42,7 @@ const  calculateNextPayment  =async (chargeType, normalDate)=> {
         const trialDate=await Trial.findOne();
         console.log(trialDate.for);
         currentDate = moment(normalDate);
-        currentDate.add(1, 'days').format('YYYY-MM-DD hh:mm');
+        currentDate.add(trialDate.for, 'days').format('YYYY-MM-DD hh:mm');
         // console.log(currentDate.toDate());
         // console.log()
         return currentDate;

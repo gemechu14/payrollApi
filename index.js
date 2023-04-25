@@ -72,6 +72,43 @@ const morgan=require('morgan');
 app.use(morgan("dev"));
 
 
+//app.use("/images", express.static(path.join(__dirname, "/images")));
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads");
+  },
+  filename: (req, file, cb) => {
+    cb(null, req.body.name);
+  },
+});
+
+const upload = multer({ storage: storage });
+
+app.get("/upload", upload.single("file"),(req, res) => {
+  res.status(200).json("File has been uploaded");
+});
+
+
+app.use('/scheduler', helper)
+
+
+const storage1 = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "Logo");
+  },
+  filename: (req, file, cb) => {
+    cb(null, req.body.name);
+  },
+});
+
+const upload1 = multer({ storage: storage1 });
+app.post("/companyLogo", upload1.single("file"), (req, res) => {
+  res.status(200).json("File has been uploaded");
+});
+
+
+
 
 
 
@@ -195,40 +232,6 @@ cron.schedule('* * * * *', async function (req, res, next) {
 
 )
 
-
-//app.use("/images", express.static(path.join(__dirname, "/images")));
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads");
-  },
-  filename: (req, file, cb) => {
-    cb(null, req.body.name);
-  },
-});
-
-const upload = multer({ storage: storage });
-app.post("/upload", upload.single("file"), (req, res) => {
-  res.status(200).json("File has been uploaded");
-});
-
-
-app.use('/scheduler',helper)
-
-
-const storage1 = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "Logo");
-  },
-  filename: (req, file, cb) => {
-    cb(null, req.body.name);
-  },
-});
-
-const upload1 = multer({ storage: storage1 });
-app.post("/companyLogo", upload1.single("file"), (req, res) => {
-  res.status(200).json("File has been uploaded");
-});
 
 
 

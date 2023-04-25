@@ -222,7 +222,7 @@ exports.get_single_Employee = async(req, res) => {
             employee: {
                 name: employee.fullname,
             },
-        });
+     });
     } catch (err) {
         next(err);
     }
@@ -644,7 +644,7 @@ let generalDepartment='';
                 )
 
 
-          await   Employee.insertMany(employeData, function (err) {
+    const newEmp=      await   Employee.insertMany(employeData, function (err) {
                     if (err) {
                         console.log(err);
                     } else {
@@ -667,13 +667,10 @@ let generalDepartment='';
                 res.status(200).json({
                     status: "success",
                     message: 'Employee Registered successfully',
-                    employeData
-                    
+                 
 
                 });
                
-
-
 
             } catch (error) {
                 next(error);
