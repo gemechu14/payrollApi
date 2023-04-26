@@ -107,7 +107,7 @@ router.get(
 //SEARCH EMPLOYEE
 
 router.get(
-    "/employee/",
+    "/search/",
 
     middleware.protect,
     middleware.restrictTo("Companyadmin"),
