@@ -188,6 +188,8 @@ const employeeSchema = mongoose.Schema({
   sumOfAllowance: { type: Number, default: 0 },
   sumOfDeduction: { type: Number, default: 0 },
 
+
+  
   payslip:
     [
       {

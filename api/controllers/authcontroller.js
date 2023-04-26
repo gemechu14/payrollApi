@@ -294,14 +294,26 @@ exports.login = async (req, res, next) => {
     //check if user exists and password is correct
     const user = await User.findOne({ email }).select('+password');
 
-  
+  console.log(user.isApproved)
     if (!user ||user.companyCode != companyCode || !(await user.correctPassword(password, user.password))
     ) {
       return res
         .status(401)
         .json({ message: 'Incorrect email, password or company Code' });
       //next(createError.createError(401,'Incorrect email, password or company Code'))
+    }else if(!user.isApproved){
+
+      return res
+        .status(401)
+        .json({ message: 'your request is being processed please stay tune' });
     }
+    else if (!user.isTrial ||!user.packageId ==null) {
+   
+      return res
+        .status(401)
+        .json({ message: 'Please buy package ' });
+    }
+
 
     createSendToken(user, 200, res);
    
@@ -1183,3 +1195,15 @@ exports.superAdminLogin = async (req, res, next) => {
 
 
 
+
+exports.setLevelofApprover=async(req,res,next)=>{
+  try {
+   const {level}=req.body;
+
+   
+    
+    
+  } catch (err) {
+    res.status(404).json(err);
+  }
+}

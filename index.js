@@ -13,6 +13,7 @@ const mongosanitize=require('express-mongo-sanitize');
 const hpp=require('hpp')
 const xss=require('xss-clean');
 const path=require('path');
+const uuid = require('uuid');
 const multer=require('multer');
 // helmet({
 //   crossOriginResourcePolicy: false,
@@ -85,8 +86,14 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-app.get("/upload", upload.single("file"),(req, res) => {
-  res.status(200).json("File has been uploaded");
+app.post("/upload", upload.single("file"),(req, res) => {
+
+  try {
+    res.status(200).json("File has been uploaded");
+  } catch (err) {
+    res.status(404).json("File has not been uploaded");
+  }
+
 });
 
 
@@ -112,8 +119,13 @@ app.post("/companyLogo", upload1.single("file"), (req, res) => {
 
 
 
-//app.use("/uploads", express.static(path.join(__dirname, "/uploads")));
-app.use('/uploads', express.static('./uploads/'));
+app.use("/uploads", express.static(path.join(__dirname, "./uploads")));
+///app.use('/uploads', express.static('./uploads/'));
+
+
+
+
+
 
 
 const connect = async () => {
@@ -138,6 +150,50 @@ const connect = async () => {
     
   }
 };
+
+
+const storageFile = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "./uploads/");
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + uuid.v4();
+    const ext = path.extname(file.originalname);
+    cb(null, Date.now() + file.originalname );
+  },
+});
+
+const fileFilter = (req, file, cb) => {
+  // reject a file
+  if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
+    cb(null, true);
+  } else {
+    cb(null, false);
+  }
+};
+
+const uploadFile = multer({
+  storage: storageFile,
+  limits: {
+    fileSize: 1024 * 1024 * 5,
+  },
+  fileFilter: fileFilter,
+});
+
+console.log(fileFilter)
+
+console.log(uploadFile);
+app.post("/api/upload", uploadFile.single("file"), (req, res) => {
+
+  try {
+    res.status(200).json("File has been uploaded");
+    
+  } catch (err) {
+    res.status(404).json("File has not been uploaded");
+  }
+ 
+});
+
 
 
 app.use(
@@ -296,6 +352,14 @@ async function run() {
 }
 
 //run();
+
+
+
+
+
+
+
+
 
 
 

@@ -9,6 +9,7 @@ const multer = require("multer");
 const mongoose = require("mongoose");
 var fs = require("fs");
 var path = require("path");
+const uuid = require('uuid');
 const department = require("../models/department.js");
 const nodemailer=require('nodemailer')
 const sendEmail = require('../utils/email.js');
@@ -21,7 +22,10 @@ const storage = multer.diskStorage({
         cb(null, "./uploads/");
     },
     filename: function(req, file, cb) {
-        cb(null, file.originalname);
+
+        const uniqueSuffix = Date.now() + '-' + uuid.v4();
+        const ext = path.extname(file.originalname);
+        cb(null, file.fieldname + '-' + uniqueSuffix + ext);
     },
 });
 
@@ -724,4 +728,17 @@ exports.sendEmail = async (req, res, next) => {
         next(error)
     }
 
+}
+
+
+
+exports.addApprovers=async(req,res,next)=>{
+    try {
+        
+
+
+        
+    } catch (err) {
+        
+    }
 }

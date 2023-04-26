@@ -100,6 +100,10 @@ const userSchema = new mongoose.Schema({
  
   },
 
+  approver:{
+
+  },
+
   status: {
     type: String,
     enum: ['pending', 'active', 'blocked', 'denied'],
