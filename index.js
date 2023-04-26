@@ -186,7 +186,7 @@ console.log(uploadFile);
 app.post("/api/upload", uploadFile.single("file"), (req, res) => {
 
   try {
-    res.status(200).json("File has been uploaded");
+    res.status(200).json("Image has been uploaded");
     
   } catch (err) {
     res.status(404).json("File has not been uploaded");

@@ -259,7 +259,7 @@ exports.delete_Employee = async(req, res, next) => {
 //SEARCH ALL EMPLOYEE
 exports.searchAllEmployee = async(req, res, next) => {
     try {
-        const query = req.query.search_query;
+        const query = req.params.id;
         console.log(query);
         const key = req.params.key;
         console.log(req.user.id);

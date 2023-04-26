@@ -126,7 +126,7 @@ exports.trialRegistration = async (req, res, next) => {
     const user = await User.findOne({ email });
   
     if (user)
-      return next(createError.createError(404, 'Email is already provided!'));
+      return next(createError.createError(404, 'Email is already taken!'));
  
     let nextpaymentDate;
     let date = Date.now();
@@ -153,9 +153,9 @@ exports.trialRegistration = async (req, res, next) => {
       status: 'Success',
       message: "   Thank you for choosing us; your request is being handled. ",
 
-      data: {
-        user: newUser,
-      }
+      // data: {
+      //   user: newUser,
+      // }
     }
     );
 
@@ -307,12 +307,12 @@ exports.login = async (req, res, next) => {
         .status(401)
         .json({ message: 'your request is being processed please stay tune' });
     }
-    else if (!user.isTrial ||!user.packageId ==null) {
+    // else if (!user.isTrial ||!user.packageId ==null) {
    
-      return res
-        .status(401)
-        .json({ message: 'Please buy package ' });
-    }
+    //   return res
+    //     .status(401)
+    //     .json({ message: 'Please buy package ' });
+    // }
 
 
     createSendToken(user, 200, res);
