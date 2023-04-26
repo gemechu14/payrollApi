@@ -274,7 +274,8 @@ exports.searchAllEmployee = async(req, res, next) => {
             .populate("payroll")
             .populate("deduction");
         res.status(200).json({
-            user: employee,
+            count: employee.length,
+            employee,
         });
     } catch (err) {
         next(err);
