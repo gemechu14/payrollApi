@@ -122,9 +122,7 @@ app.post("/companyLogo", upload1.single("file"), (req, res) => {
 app.use("/uploads", express.static(path.join(__dirname, "./uploads")));
 app.use('/uploads', express.static('./uploads/'));
 
-
-
-
+app.use("/images", express.static(path.join(__dirname, "/images")));
 
 
 
@@ -150,6 +148,32 @@ const connect = async () => {
     
   }
 };
+
+const storager = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "images");
+  },
+  filename: (req, file, cb) => {
+    cb(null,Date.now()+file.originalname);
+    console.log(Date.now() + file.originalname)
+  },
+});
+
+const uploadr = multer({ storage: storager });
+app.post("/api/upload1", uploadr.single("file"), (req, res) => {
+
+  try {
+    res.status(200).json("File has been uploaded");
+    
+  } catch (err) {
+    res.status(404).json("File has not been uploaded");
+  }
+
+});
+
+
+
+
 
 
 const storageFile = multer.diskStorage({
