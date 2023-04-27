@@ -652,38 +652,45 @@ exports.createEmployeeFile = async (req, res, next) => {
                 )
 
 
-                const newEmp = await Employee.insertMany(employeData, function (err) {
+                const newEmp = await Employee.insertMany(employeData, async function (err) {
                     if (err) {
                         console.log('error');
+                        res.status(404).json({ message: 'please check every employee has unique email address', });  
+
                     } else {
 
-                        console.log(employeData);
+                       // console.log(employeData);
                        console.log('Data imported successfully!');
+                        const text = 'Your password is   ' + req.user.CompanyName + '0000' + '    please change your password ';
+
+                        for (i = 0; i < employeData.length; i++) {
+                            await sendEmail({
+                                email: emails[i],
+                                subject: 'You are successfully registed on CoopPayroll SAAS ',
+                                text
+                            });
+                        }
+
+                        res.status(200).json({
+                            status: "success",
+                            message: 'Employee Registered successfully',
+
+
+                        });
+                    
                         
                     }
                 });
 
-                const text = 'Your password is   ' + req.user.CompanyName + '0000' + '    please change your password ';
+              //  const text = 'Your password is   ' + req.user.CompanyName + '0000' + '    please change your password ';
    
 
 
-    if(newEmp!=undefined){
-        for (i = 0; i < employeData.length; i++) {
-            await sendEmail({
-                email: emails[i],
-                subject: 'You are successfully registed on CoopPayroll SAAS ',
-                text
-            });
-        }
+  
+        
 
-        res.status(200).json({
-            status: "success",
-            message: 'Employee Registered successfully',
-
-
-        });
-        }
-                res.status(404).json({ message: 'please check every employee has unique email address', });      
+       
+        
                                   
 
 
@@ -727,7 +734,7 @@ exports.sendEmail = async (req, res, next) => {
         };
         transporter.sendMail(mailOptions, function (error, info) {
             if (error) {
-                console.log(error.message);
+               
                 next(error);
                 // res.status(404).json(error);
             } else {

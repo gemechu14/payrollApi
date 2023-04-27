@@ -25,12 +25,12 @@ exports.protect = async (req, res, next) => {
       //console.log(process.env.JWT_CODE);
       //verification token
       const decoded = await promisify(jwt.verify)(token, process.env.JWT_CODE);
-     // console.log(decoded.id);
+
       //check if user still exists
       const currentUser = await User.findById(decoded.id);
 
 
-         console.log(currentUser);
+      
       if (!currentUser) {
         return res.status(401).json({ message: 'user does not longer exists' });
       }
@@ -42,7 +42,7 @@ exports.protect = async (req, res, next) => {
       }
       //grant access to protected route
       req.user = currentUser;
-      // console.log(currentUser);
+   
       next();
     } catch (err) {
       res.status(404).json({
@@ -69,7 +69,7 @@ exports.restrictToA = (...roles) => {
   return (req, res, next) => {
 
     if (!roles.includes(req.user?.role)) {
-      console.log(roles)
+      
       return res.status(403).json({
         message: 'You do not have permission to perform this action',
       });
@@ -103,7 +103,7 @@ exports.protectE = async (req, res, next) => {
     // console.log(decoded.id);
     //check if user still exists
     const currentUser = await Employee.findById(decoded.id);
-    console.log(currentUser._id);
+  
 
     
     if (!currentUser) {

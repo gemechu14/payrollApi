@@ -120,7 +120,7 @@ app.post("/companyLogo", upload1.single("file"), (req, res) => {
 
 
 app.use("/uploads", express.static(path.join(__dirname, "./uploads")));
-///app.use('/uploads', express.static('./uploads/'));
+app.use('/uploads', express.static('./uploads/'));
 
 
 
@@ -180,9 +180,7 @@ const uploadFile = multer({
   fileFilter: fileFilter,
 });
 
-console.log(fileFilter)
 
-console.log(uploadFile);
 app.post("/api/upload", uploadFile.single("file"), (req, res) => {
 
   try {
