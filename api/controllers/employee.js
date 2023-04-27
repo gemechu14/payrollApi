@@ -11,17 +11,17 @@ var fs = require("fs");
 var path = require("path");
 const uuid = require('uuid');
 const department = require("../models/department.js");
-const nodemailer=require('nodemailer')
+const nodemailer = require('nodemailer')
 const sendEmail = require('../utils/email.js');
 
 //const createError=required('../utils/error.js');
 //const IMAGE_BASE_URL = "http://localhost:5000/image?name=";
 
 const storage = multer.diskStorage({
-    destination: function(req, file, cb) {
+    destination: function (req, file, cb) {
         cb(null, "./uploads/");
     },
-    filename: function(req, file, cb) {
+    filename: function (req, file, cb) {
 
         const uniqueSuffix = Date.now() + '-' + uuid.v4();
         const ext = path.extname(file.originalname);
@@ -48,7 +48,7 @@ const upload = multer({
 
 //Add
 
-exports.add_employee = async(req, res, next) => {
+exports.add_employee = async (req, res, next) => {
 
     try {
         let generalDepartment = "";
@@ -94,7 +94,7 @@ exports.add_employee = async(req, res, next) => {
             TaxDeduction,
             netSalary,
             position,
-           // contact_name,
+            // contact_name,
             emergency_contact_Info,
             contact_phoneNumber,
             relationship
@@ -107,15 +107,15 @@ exports.add_employee = async(req, res, next) => {
             companyName: req.user.CompanyName,
             deptName: "General",
         });
-   
+
 
         generalDepartment = mongoose.Types.ObjectId(newDepartment[0]?._id);
-      
-  
+
+
         if (!department || department == undefined) {
             console.log("no department");
         }
-     
+
 
         const newEmployee = await Employee.create({
             fullname: fullname,
@@ -170,22 +170,22 @@ exports.add_employee = async(req, res, next) => {
 
         });
 
-    
-        const text = 'Your password is   '+ req.user.CompanyName + '0000'   +'    please change your password ';
-     
-            // await sendEmail({
-            //     email: email,
-            //     subject: 'You are successfully registed on CoopPayroll SAAS ',
-            //     text
-            // });
-            res.status(200).json({
-                status: "success",
-                message: 'Employee Registered successfully',
-          
-                
-            });
-            
-       
+
+        const text = 'Your password is   ' + req.user.CompanyName + '0000' + '    please change your password ';
+
+        // await sendEmail({
+        //     email: email,
+        //     subject: 'You are successfully registed on CoopPayroll SAAS ',
+        //     text
+        // });
+        res.status(200).json({
+            status: "success",
+            message: 'Employee Registered successfully',
+
+
+        });
+
+
     } catch (err) {
         next(createError.createError(404, err));
 
@@ -193,7 +193,7 @@ exports.add_employee = async(req, res, next) => {
 };
 
 //GET ALL
-exports.get_All_Employee = async(req, res, next) => {
+exports.get_All_Employee = async (req, res, next) => {
     try {
         const employee = await Employee.find({ companyId: req.user.id })
             .populate("department")
@@ -211,12 +211,12 @@ exports.get_All_Employee = async(req, res, next) => {
 };
 
 //GET one
-exports.get_single_Employee = async(req, res) => {
+exports.get_single_Employee = async (req, res) => {
     try {
         const employee = await Employee.find({
-                companyId: req.user.id,
-                _id: req.params.id,
-            })
+            companyId: req.user.id,
+            _id: req.params.id,
+        })
             .populate("department")
             .populate("allowance")
             .populate("payroll")
@@ -226,25 +226,25 @@ exports.get_single_Employee = async(req, res) => {
             employee: {
                 name: employee.fullname,
             },
-     });
+        });
     } catch (err) {
         next(err);
     }
 };
 //UPDATE
 
-exports.updateEmployee = async(req, res) => {
+exports.updateEmployee = async (req, res) => {
     try {
         const updatedEmployee = await Employee.findByIdAndUpdate(
             req.params.employeeId, { $set: req.body }, { new: true }
         );
         console.log(req.body);
         res.status(200).json(updatedEmployee);
-    } catch (error) {}
+    } catch (error) { }
 };
 
 //DELETE EMPLOYEE
-exports.delete_Employee = async(req, res, next) => {
+exports.delete_Employee = async (req, res, next) => {
     try {
         console.log(req.params.key);
         const response = await Employee.findByIdAndDelete(req.params.key);
@@ -257,18 +257,26 @@ exports.delete_Employee = async(req, res, next) => {
 
 
 //SEARCH ALL EMPLOYEE
-exports.searchAllEmployee = async(req, res, next) => {
+exports.searchAllEmployee = async (req, res, next) => {
     try {
         const query = req.params.id;
         console.log(query);
         const key = req.params.key;
         console.log(req.user.id);
         const employee = await Employee.find({
-                $and: [
-                    { companyId: req.user.id },
+            companyId: req.user.id,
+            $or:
+                [
+                    { email: { $regex: new RegExp(query, "i") } },
                     { fullname: { $regex: new RegExp(query, "i") } },
-                ],
-            })
+                    { phoneNumber: { $regex: new RegExp(query, "i") } }
+
+                  
+                ]
+
+
+
+        })
             .populate("department")
             .populate("allowance")
             .populate("payroll")
@@ -283,7 +291,7 @@ exports.searchAllEmployee = async(req, res, next) => {
 };
 
 //SEARCH BY DEPARTMENT IDD
-exports.get_By_Department = async(req, res, next) => {
+exports.get_By_Department = async (req, res, next) => {
     try {
         const departmentId = req.params.departmentId;
         let data = "";
@@ -292,9 +300,9 @@ exports.get_By_Department = async(req, res, next) => {
         const emp1 = await Employee.find({ companyId: req.user.id, department: departmentId }, { "year.month": 1 });
 
         await Employee.find({
-                companyId: req.user.id,
-                department: departmentId,
-            })
+            companyId: req.user.id,
+            department: departmentId,
+        })
             .exec()
             .then((docs) => {
                 const other = docs.map((doc) => {
@@ -319,17 +327,17 @@ exports.get_By_Department = async(req, res, next) => {
 };
 
 
-exports.getbydept = async(req, res, next) => {
+exports.getbydept = async (req, res, next) => {
     try {
         const query = req.query.department;
-             const employee = await Employee.find({
-                $and: [
-                    { companyId: req.user.id },
-                    {
-                        department: query,
-                    },
-                ],
-            })
+        const employee = await Employee.find({
+            $and: [
+                { companyId: req.user.id },
+                {
+                    department: query,
+                },
+            ],
+        })
             .populate("department")
             .populate("allowance")
             .populate("payroll")
@@ -345,16 +353,16 @@ exports.getbydept = async(req, res, next) => {
     }
 };
 
-exports.updateEmploye = async(req, res, next) => {
+exports.updateEmploye = async (req, res, next) => {
     const employeeId = req.params.employeeId;
 };
 
 //set role
-exports.setApprovers = async(req, res, next) => {
+exports.setApprovers = async (req, res, next) => {
     try {
 
-        const approvers = await  Employee.findOneAndUpdate({ _id:req.params.id }, { $set: { role: "approver" } }, { new: true });
-       
+        const approvers = await Employee.findOneAndUpdate({ _id: req.params.id }, { $set: { role: "approver" } }, { new: true });
+
         res.status(200).json({
             approvers
         });
@@ -365,7 +373,7 @@ exports.setApprovers = async(req, res, next) => {
 
 //pension
 
-exports.updatePension = async(req, res, next) => {
+exports.updatePension = async (req, res, next) => {
     try {
         //const employee=await Employee.find({companyId:req.user.id});
         const employee = await Employee.updateMany({ companyId: req.user.id }, { $set: { pension: req.body.pension } });
@@ -374,9 +382,9 @@ exports.updatePension = async(req, res, next) => {
     }
 };
 
-exports.updatePensionByDepartment = async(req, res, next) => {
+exports.updatePensionByDepartment = async (req, res, next) => {
     try {
-   
+
         const employee = await Employee.updateMany({ companyId: req.user.id, department: req.params.departmentId }, { $set: { pension: req.body.pension } });
     } catch (err) {
         createError.createError(404, err);
@@ -385,7 +393,7 @@ exports.updatePensionByDepartment = async(req, res, next) => {
 
 //Fetch employee using year month and department
 
-exports.get_emp_by_year_month = async(req, res, next) => {
+exports.get_emp_by_year_month = async (req, res, next) => {
     try {
         departmentId = req.query.department;
         year = req.query.year;
@@ -395,11 +403,11 @@ exports.get_emp_by_year_month = async(req, res, next) => {
         console.log(departmentId);
 
         const employee = await Employee.find({
-                companyId: req.user.id,
-                department: departmentId,
-                "year.name": "2023",
-                "year.month.name": "July",
-            })
+            companyId: req.user.id,
+            department: departmentId,
+            "year.name": "2023",
+            "year.month.name": "July",
+        })
             .populate("allowance")
             .populate("payroll")
             .populate("deduction");
@@ -418,7 +426,7 @@ exports.get_emp_by_year_month = async(req, res, next) => {
 //Get Approved Payroll
 
 
-exports.get_Pending_Payroll = async(req, res, next) => {
+exports.get_Pending_Payroll = async (req, res, next) => {
 
     try {
 
@@ -453,11 +461,11 @@ exports.get_Pending_Payroll = async(req, res, next) => {
             // console.log("data", data);
         });
         try {
-        
+
             console.log("data length:", data.length);
             for (var i = 0; i < data.length; i++) {
                 console.log("i", i);
-                
+
             }
             res.status(200).json("done");
         } catch (err) {
@@ -513,7 +521,7 @@ const createSendToken = (user, statusCode, res) => {
 
 
 
-exports.login = async(req, res, next) => {
+exports.login = async (req, res, next) => {
     try {
         const { email, password, } = req.body;
         console.log(email);
@@ -543,9 +551,9 @@ exports.login = async(req, res, next) => {
         // const token=signToken(user._id);
         //if everything is ok send token to the client
         createSendToken(user, 200, res);
-     
+
     } catch (err) {
-     
+
         res.status(404).json({
             status: 'fail123',
             message: err,
@@ -556,7 +564,7 @@ exports.login = async(req, res, next) => {
 
 
 //APPROVE PAYROLL
-exports.approvePayroll = async(req, res, next) => {
+exports.approvePayroll = async (req, res, next) => {
 
     try {
 
@@ -571,16 +579,16 @@ exports.approvePayroll = async(req, res, next) => {
 
 
 //Get Employee Information 
-exports.getEmployeeInformation = async(req, res, next) => {
+exports.getEmployeeInformation = async (req, res, next) => {
 
     try {
-        const employee = await Employee.find({ _id: req.user.id, companyId: req.user.companyId }, )
+        const employee = await Employee.find({ _id: req.user.id, companyId: req.user.companyId },)
 
         res.status(200).json({
-                id: employee[0]._id,
-                name: employee[0].fullname,
-                payslip: employee[0].payslip
-            }
+            id: employee[0]._id,
+            name: employee[0].fullname,
+            payslip: employee[0].payslip
+        }
 
         )
     } catch (err) {
@@ -600,7 +608,7 @@ exports.createEmployeeFile = async (req, res, next) => {
 
 
 
-let generalDepartment='';
+    let generalDepartment = '';
 
     const newDepartment = await Department.find({
         companyName: req.user.CompanyName,
@@ -615,13 +623,13 @@ let generalDepartment='';
         console.log("no department");
     }
 
-    upload4 (req, res, async(err) => {
+    upload4(req, res, async (err) => {
         if (err) {
             console.log(err)
             next(err)
-        } 
-        else{
-            try  {
+        }
+        else {
+            try {
                 const workbook = xlsx.read(req?.file?.buffer);
                 const sheetName = workbook.SheetNames[0];
                 const worksheet = workbook.Sheets[sheetName];
@@ -630,7 +638,7 @@ let generalDepartment='';
                 const emails = []
                 const employeData = data.map((row) => ({
 
-                                  
+
                     fullname: row['fullname'],
                     nationality: row['nationality'],
                     phoneNumber: row['phoneNumber'],
@@ -638,18 +646,18 @@ let generalDepartment='';
                     accountNumber: row['Account Number'],
                     date_of_birth: row['date_of_birth'],
                     sex: row['sex'],
-                    department: row['department'] ? row['department'] :generalDepartment,
+                    department: row['department'] ? row['department'] : generalDepartment,
                     id_number: row['id_number'],
-                    basicSalary: row['basicSalary'],                    
-                    companyId:req.user.id,
+                    basicSalary: row['basicSalary'],
+                    companyId: req.user.id,
                     password: req.user.CompanyName.substring(0, 4) + '0000',
-                    emails:emails.push(row['email'])
+                    emails: emails.push(row['email'])
                 })
-                
+
                 )
 
 
-    const newEmp=      await   Employee.insertMany(employeData, function (err) {
+                const newEmp = await Employee.insertMany(employeData, function (err) {
                     if (err) {
                         console.log(err);
                     } else {
@@ -657,25 +665,25 @@ let generalDepartment='';
                         console.log('Data imported successfully!');
                     }
                 });
-                
-             const text = 'Your password is   ' + req.user.CompanyName + '0000' + '    please change your password ';
+
+                const text = 'Your password is   ' + req.user.CompanyName + '0000' + '    please change your password ';
 
 
-             for (i=0;i<employeData.length; i++){
-                await sendEmail({
-                    email: emails[i],
-                    subject: 'You are successfully registed on CoopPayroll SAAS ',
-                    text
-                });
-               }
+                for (i = 0; i < employeData.length; i++) {
+                    await sendEmail({
+                        email: emails[i],
+                        subject: 'You are successfully registed on CoopPayroll SAAS ',
+                        text
+                    });
+                }
 
                 res.status(200).json({
                     status: "success",
                     message: 'Employee Registered successfully',
-                 
+
 
                 });
-               
+
 
             } catch (error) {
                 next(error);
@@ -733,13 +741,13 @@ exports.sendEmail = async (req, res, next) => {
 
 
 
-exports.addApprovers=async(req,res,next)=>{
+exports.addApprovers = async (req, res, next) => {
     try {
-        
 
 
-        
+
+
     } catch (err) {
-        
+
     }
 }
