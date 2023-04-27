@@ -238,7 +238,7 @@ exports.updateEmployee = async (req, res) => {
         const updatedEmployee = await Employee.findByIdAndUpdate(
             req.params.employeeId, { $set: req.body }, { new: true }
         );
-        console.log(req.body);
+       
         res.status(200).json(updatedEmployee);
     } catch (error) { }
 };
@@ -246,7 +246,7 @@ exports.updateEmployee = async (req, res) => {
 //DELETE EMPLOYEE
 exports.delete_Employee = async (req, res, next) => {
     try {
-        console.log(req.params.key);
+ 
         const response = await Employee.findByIdAndDelete(req.params.key);
 
         res.status(200).json({ response });
@@ -260,9 +260,9 @@ exports.delete_Employee = async (req, res, next) => {
 exports.searchAllEmployee = async (req, res, next) => {
     try {
         const query = req.params.id;
-        console.log(query);
+      
         const key = req.params.key;
-        console.log(req.user.id);
+    
         const employee = await Employee.find({
             companyId: req.user.id,
             $or:
@@ -295,7 +295,7 @@ exports.get_By_Department = async (req, res, next) => {
     try {
         const departmentId = req.params.departmentId;
         let data = "";
-        console.log(departmentId);
+      
 
         const emp1 = await Employee.find({ companyId: req.user.id, department: departmentId }, { "year.month": 1 });
 
@@ -343,7 +343,6 @@ exports.getbydept = async (req, res, next) => {
             .populate("payroll")
             .populate("deduction");
 
-        console.log(employee);
         res.status(200).json({
             count1: employee.length,
             employee: employee,
@@ -398,10 +397,7 @@ exports.get_emp_by_year_month = async (req, res, next) => {
         departmentId = req.query.department;
         year = req.query.year;
         month = req.query.month;
-        console.log(year);
-        console.log(month);
-        console.log(departmentId);
-
+   
         const employee = await Employee.find({
             companyId: req.user.id,
             department: departmentId,
@@ -437,7 +433,7 @@ exports.get_Pending_Payroll = async (req, res, next) => {
 
 
         await Employee.find({ companyId: req.user.id, department: departmentId }).exec().then((docs) => {
-            //console.log("docs:", docs);
+          
             const other = docs.map((doc) => {
                 return {
                     _id: doc._id,
@@ -458,13 +454,13 @@ exports.get_Pending_Payroll = async (req, res, next) => {
 
 
 
-            // console.log("data", data);
+          
         });
         try {
 
             console.log("data length:", data.length);
             for (var i = 0; i < data.length; i++) {
-                console.log("i", i);
+              
 
             }
             res.status(200).json("done");
@@ -495,7 +491,7 @@ const signToken = (id) => {
 
 const createSendToken = (user, statusCode, res) => {
     const token = signToken(user._id);
-    console.log(user._id);
+
     // const patientID = patient._id;
     const cookieOptions = {
         expires: new Date(
@@ -504,7 +500,7 @@ const createSendToken = (user, statusCode, res) => {
         secure: process.env.NODE_ENV === 'production' ? true : false,
         httpOnly: true,
     };
-    //console.log(user);
+ 
 
     //remove password from the output
     user.password = undefined;
@@ -524,8 +520,7 @@ const createSendToken = (user, statusCode, res) => {
 exports.login = async (req, res, next) => {
     try {
         const { email, password, } = req.body;
-        console.log(email);
-        console.log(password);
+       
         //check if email and password exist company code
         if (!email || !password) {
             return next(
@@ -620,12 +615,12 @@ exports.createEmployeeFile = async (req, res, next) => {
 
 
     if (!department || department == undefined) {
-        console.log("no department");
+     
     }
 
     upload4(req, res, async (err) => {
         if (err) {
-            console.log(err)
+           
             next(err)
         }
         else {
@@ -659,34 +654,41 @@ exports.createEmployeeFile = async (req, res, next) => {
 
                 const newEmp = await Employee.insertMany(employeData, function (err) {
                     if (err) {
-                        console.log(err);
+                        console.log('error');
                     } else {
+
                         console.log(employeData);
-                        console.log('Data imported successfully!');
+                       console.log('Data imported successfully!');
+                        
                     }
                 });
 
                 const text = 'Your password is   ' + req.user.CompanyName + '0000' + '    please change your password ';
+   
 
 
-                for (i = 0; i < employeData.length; i++) {
-                    await sendEmail({
-                        email: emails[i],
-                        subject: 'You are successfully registed on CoopPayroll SAAS ',
-                        text
-                    });
-                }
+    if(newEmp!=undefined){
+        for (i = 0; i < employeData.length; i++) {
+            await sendEmail({
+                email: emails[i],
+                subject: 'You are successfully registed on CoopPayroll SAAS ',
+                text
+            });
+        }
 
-                res.status(200).json({
-                    status: "success",
-                    message: 'Employee Registered successfully',
+        res.status(200).json({
+            status: "success",
+            message: 'Employee Registered successfully',
 
 
-                });
+        });
+        }
+                res.status(404).json({ message: 'please check every employee has unique email address', });      
+                                  
 
 
             } catch (error) {
-                next(error);
+                res.status(404).json({ message: '1please check every employee has unique email address', });   
             }
         }
     });

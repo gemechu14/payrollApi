@@ -77,6 +77,7 @@ exports.getleftDays=async(req,res,next)=>{
   try {
     const id = req.params.id;
 
+
     const package = await User.findById(id);
     const next_payment_date=package.next_payment_date;
     console.log(next_payment_date)

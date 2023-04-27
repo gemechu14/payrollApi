@@ -34,7 +34,7 @@ router.post(
 router.put(
   '/updateCompany/:email',
   middleware.protect,
-  middleware.restrictTo('superAdmin'),
+  middleware.restrictTo('superAdmin','Companyadmin'),
   // authcontroller.restrictTo('superAdmin'),
   authcontroller.updateCompany
 );
