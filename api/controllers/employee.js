@@ -664,11 +664,11 @@ exports.createEmployeeFile = async (req, res, next) => {
                         const text = 'Your password is   ' + req.user.CompanyName + '0000' + '    please change your password ';
 
                         for (i = 0; i < employeData.length; i++) {
-                            await sendEmail({
-                                email: emails[i],
-                                subject: 'You are successfully registed on CoopPayroll SAAS ',
-                                text
-                            });
+                            // await sendEmail({
+                            //     email: emails[i],
+                            //     subject: 'You are successfully registed on CoopPayroll SAAS ',
+                            //     text
+                            // });
                         }
 
                         res.status(200).json({
