@@ -67,6 +67,9 @@ const deductionRoute = require('./api/routes/deduction.js');
 const payrollMonthRoute = require('./api/routes/payrollMonth.js');
 const SubscriptionRoute=require('./api/routes/subscription.js')
 
+const IDFormatRoute = require('./api/routes/id_format.js');
+
+
 const cors = require('cors');
 mongoose.Promise = global.Promise;
 const morgan=require('morgan');
@@ -121,6 +124,8 @@ app.post("/companyLogo", upload1.single("file"), (req, res) => {
 
 app.use("/uploads", express.static(path.join(__dirname, "./uploads")));
 app.use('/uploads', express.static('./uploads/'));
+
+
 
 app.use("/images", express.static(path.join(__dirname, "/images")));
 
@@ -245,7 +250,7 @@ app.use('/trial',TrialRoute);
 app.use('/subscription',SubscriptionRoute);
 app.use('/gradeDefinition',gradeDefinition);
 app.use('/gradeAllowance', gradeAllowance);
-
+app.use('/idformat', IDFormatRoute);
 
 app.use(bodyParser.json());
 app.use('/api',authenticationRoute);

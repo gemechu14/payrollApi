@@ -2,6 +2,8 @@ const mongoose = require("mongoose");
 const validator = require('validator');
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
+
+const idformat=require('./defineIDFormat.js');
 const employeeSchema = mongoose.Schema({
   // BASIC INFO
 
@@ -382,6 +384,29 @@ employeeSchema.pre('save', function (next) {
 employeeSchema.pre(/^find/, function (next) {
   this.find({ active: { $ne: false } });
   next();
+});
+
+
+employeeSchema.pre('save',async function (next) {
+
+//   console.log("let check what is happering")
+
+
+  let employee = this;
+
+const idformat1=await idformat.find({companyId:employee?.companyId});
+console.log("let check what is happering",idformat1[0].prefix)
+  if (!employee.id_number) {
+    mongoose
+      .model('Employee', employeeSchema)
+      .countDocuments({}, function (err, count) {
+        if (err) return next(err);
+        employee.id_number = idformat1[0]?.prefix + ('0000' + (count + 1)).slice(-4);
+        next();
+      });
+  } else {
+    next();
+  }
 });
 
 

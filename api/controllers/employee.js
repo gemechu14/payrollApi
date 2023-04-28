@@ -14,6 +14,8 @@ const department = require("../models/department.js");
 const nodemailer = require('nodemailer')
 const sendEmail = require('../utils/email.js');
 
+const IDFormat = require("../models/defineIDFormat.js");
+
 //const createError=required('../utils/error.js');
 //const IMAGE_BASE_URL = "http://localhost:5000/image?name=";
 
@@ -102,6 +104,14 @@ exports.add_employee = async (req, res, next) => {
 
 
 
+        //Get prefix
+
+        const idformat = await IDFormat.find({
+            companyName: req.user.id,
+         
+        });
+
+
 
         const newDepartment = await Department.find({
             companyName: req.user.CompanyName,
@@ -117,7 +127,7 @@ exports.add_employee = async (req, res, next) => {
         }
 
 
-        const newEmployee = await Employee.create({
+        const newEmployee = await Employee({
             fullname: fullname,
             nationality: nationality,
             sex: sex,
@@ -169,7 +179,15 @@ exports.add_employee = async (req, res, next) => {
             companyId: req.user.id,
 
         });
-
+   
+        newEmployee.save(function (err) {
+            if (err) return next(err);
+            res.status(201).json({
+                success: true,
+                message: 'Employee saved successfully',
+                employee: newEmployee,
+            });
+        });
 
         const text = 'Your password is   ' + req.user.CompanyName + '0000' + '    please change your password ';
 
@@ -178,12 +196,12 @@ exports.add_employee = async (req, res, next) => {
         //     subject: 'You are successfully registed on CoopPayroll SAAS ',
         //     text
         // });
-        res.status(200).json({
-            status: "success",
-            message: 'Employee Registered successfully',
+        // res.status(200).json({
+        //     status: "success",
+        //     message: 'Employee Registered successfully',
 
 
-        });
+        // });
 
 
     } catch (err) {
@@ -240,7 +258,10 @@ exports.updateEmployee = async (req, res) => {
         );
        
         res.status(200).json(updatedEmployee);
-    } catch (error) { }
+    } catch (error) { 
+
+        res.status(404).json("not working");
+    }
 };
 
 //DELETE EMPLOYEE
