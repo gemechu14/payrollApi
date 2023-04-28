@@ -395,7 +395,7 @@ employeeSchema.pre('save',async function (next) {
   let employee = this;
 
 const idformat1=await idformat.find({companyId:employee?.companyId});
-console.log("let check what is happering",idformat1[0]?.prefix)
+
   if (!employee.id_number) {
     mongoose
       .model('Employee', employeeSchema)
