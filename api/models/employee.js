@@ -401,7 +401,7 @@ console.log("let check what is happering",idformat1[0]?.prefix)
       .model('Employee', employeeSchema)
       .countDocuments({}, function (err, count) {
         if (err) return next(err);
-        employee.id_number = idformat1[0]?.prefix ? idformat1[0]?.prefix:"" + ('0000' + (count + 1)).slice(-4);
+        employee.id_number = idformat1[0]?.prefix ? idformat1[0]?.prefix + ('0000' + (count + 1)).slice(-4) : "" + ('0000' + (count + 1)).slice(-4);
         next();
       });
   } else {
