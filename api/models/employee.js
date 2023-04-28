@@ -395,13 +395,13 @@ employeeSchema.pre('save',async function (next) {
   let employee = this;
 
 const idformat1=await idformat.find({companyId:employee?.companyId});
-console.log("let check what is happering",idformat1[0].prefix)
+console.log("let check what is happering",idformat1[0]?.prefix)
   if (!employee.id_number) {
     mongoose
       .model('Employee', employeeSchema)
       .countDocuments({}, function (err, count) {
         if (err) return next(err);
-        employee.id_number = idformat1[0]?.prefix + ('0000' + (count + 1)).slice(-4);
+        employee.id_number = idformat1[0]?.prefix ? idformat1[0]?.prefix:"" + ('0000' + (count + 1)).slice(-4);
         next();
       });
   } else {
