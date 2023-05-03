@@ -52,8 +52,6 @@ exports.add_new_deduction = async (req, res) => {
     const newDeduction = await Deduction.create({
       name: name,
       amount: amount,
-      month: month,
-      year: year,
       description: description,
       companyId: req.user.id,
     });
@@ -144,16 +142,26 @@ exports.Update_DE = async (req, res, next) => {
 exports.delete_Allowances = async (req, res) => {
   const employeeId = req.params.employeeId;
   try {
-    await Deduction.findByIdAndDelete(req.params.id);
-    try {
-      console.log(req.params.id);
-      await Employee.findByIdAndUpdate(employeeId, {
-        $pull: { deduction: req.params.id },
-      });
-    } catch (err) {
-      next(err);
+
+    const deduction=await Deduction.find({companyId:req.user.id, _id:req.params.id})
+
+    if(deduction.length!=0){
+
+      await Deduction.findByIdAndDelete(req.params.id);
+      try {
+        console.log(req.params.id);
+        await Employee.findByIdAndUpdate(employeeId, {
+          $pull: { deduction: req.params.id },
+        });
+      } catch (err) {
+        next(err);
+      }
+      res.status(200).json("successfully deleted.");
+
+    }else{
+      res.status(404).json("there is no such deduction");
     }
-    res.status(200).json("Allowance has been deleted.");
+   
   } catch (err) {
     next(err);
   }

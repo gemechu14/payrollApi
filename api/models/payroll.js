@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-
 const payrollmodel = mongoose.Schema({
   payrollID: {
     type: String,
@@ -35,30 +34,43 @@ const payrollmodel = mongoose.Schema({
     enum:['Percentage','Amount']
     
   },
-
-  employeer_Contribution: {
-    type: String,
-   
-  },
-
-  employee_Contribution: {
-    type: String,
-    
-  },
+ grossSalary:{type:Number,default:0},
+ taxableIncome: { type: Number, default: 0 },
+totalDeduction: { type: Number, default: 0 },
+totalAllowance: { type: Number, default: 0 },
+NetSalary: { type: Number, default: 0 },
+employee_pension_amount: { type: Number, default: 0 },
+employer_pension_amount: { type: Number, default: 0 },
 
   //TAX EXAMPTION
-  taxable_income_limit: {
-    type: String,
-  },
+  // taxable_income_limit: {
+  //   type: String,
+  // },
 
-  exampt_age_limit: {
-    type: String,
-  },
+  // exampt_age_limit: {
+  //   type: String,
+  // },
 
-  exampt_percentage: {
+  // exampt_percentage: {
+  //   type: String,
+  // },
+  status: {
     type: String,
+    enum: ['created', 'ordered', 'pending', 'approved'],
+    default: 'created'
   },
-
+  isRollbacked: {
+    type: Boolean,
+    default: false
+  },
+  isPaid: {
+    type: Boolean,
+    default: false
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now
+  },
 });
 
 

@@ -8,6 +8,13 @@ router.post('/',
     middleware.restrictTo('Companyadmin'),
     allowanceController.add_Allowance);
 
+   
+router.put('/:gradeId/:allowanceId',
+    middleware.protect,
+    middleware.restrictTo('Companyadmin'),
+    allowanceController.Add_Allowance_to_Grade);
+
+
 //CREATE
 router.post('/:gradeId',
     middleware.protect,
@@ -15,15 +22,23 @@ router.post('/:gradeId',
     allowanceController.Add_Allowance_to_Grade);
 
 
+    router.put('/:id',
+    
+        middleware.protect,
+        middleware.restrictTo('Companyadmin'),
+        allowanceController.updateAllowance);
+    
+    
+
 //UPDATE
-router.put('/:id',
+router.post('/:gradeId/:id',
     middleware.protect,
     middleware.restrictTo('Companyadmin'),
     allowanceController.Update_Allowances),
 
 
     ///DELETE
-    router.delete('/:employeeId/:id',
+    router.delete('/:gradeId/:id',
         middleware.protect,
         middleware.restrictTo('Companyadmin'),
         allowanceController.delete_Allowances);

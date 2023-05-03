@@ -11,9 +11,16 @@ const middleware=require('../middleware/auth.js')
   //DELETE
   router.delete('/:id/:payrollId',
   middleware.protect,
-middleware.restrictTo('Companyadmin'),
-  
+middleware.restrictTo('Companyadmin'),  
 taxSlabController.delete_TaxSlab);
+
+
+
+//DELETE
+router.delete('/:id',
+  middleware.protect,
+  middleware.restrictTo('Companyadmin'),
+  taxSlabController.delete_SINGLE_TAXSLAB);
 
 //GET SINGLE Payroll
 router.get('/find/:id',

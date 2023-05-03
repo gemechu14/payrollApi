@@ -11,12 +11,17 @@ middleware.restrictTo('Companyadmin'),
 deductionController.add_new_deduction);
 
 
+router.post('/:employeeId',
+  middleware.protect,
+  middleware.restrictTo('Companyadmin'),
+  deductionController.Add_Deduction);
 
 
 //UPDATE
 router.put('/:employeeId/:id',
 middleware.protect,
 middleware.restrictTo('Companyadmin'),
+
 
 deductionController.Update_DE),
   //DELETE

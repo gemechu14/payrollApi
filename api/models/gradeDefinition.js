@@ -1,8 +1,22 @@
 const mongoose = require('mongoose');
 
 const gradeDefinitionSchema = mongoose.Schema({
-  gradeName: { type: String, required: true, unique: true },
-  basicSalary: { type: String, required: true, default: 0 },
+  gradeName: { type: String, required: true },
+  // basicSalary: { type: String, required: true, default: 0 },
+  monthlySalaryMin: { type: Number ,required:true},
+  monthlySalaryMax: { type: Number, required: true },
+ description:{type:String}, 
+  allowance: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+
+      ref: "GradeAllowance",
+    },
+  ],
+  companyId: { type: String },
+
+
+
   // housingAllowance: {
   //  amount:{type: Number, default: 0},
   //  isTaxable:{ type:Boolean, default:false }    
@@ -44,14 +58,7 @@ const gradeDefinitionSchema = mongoose.Schema({
 
   // },
 
-  allowance: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
 
-      ref: "GradeAllowance",
-    },
-  ],
-companyId:{type:String},
   // otherEarning: {
   //   amount:{type: Number, default: 0},
   //   isTaxable:{ type:Boolean, default:false }

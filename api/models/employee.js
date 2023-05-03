@@ -2,12 +2,9 @@ const mongoose = require("mongoose");
 const validator = require('validator');
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
-
 const idformat=require('./defineIDFormat.js');
 const employeeSchema = mongoose.Schema({
   // BASIC INFO
-
-
   fullname: {
     type: String,
     required: true,
@@ -42,6 +39,8 @@ const employeeSchema = mongoose.Schema({
   id_number: {
     type: String,
   },
+  employeeTIN:{type:String},
+  
 
   // //     //CONTACT INFO
   email: {
@@ -99,98 +98,13 @@ const employeeSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  // housingAllowance: {
-  //   amount: { type: Number, default: 0 },
-  //   isTaxable: { type: Boolean, default: false }
-  // },
-  // positionAllowance: {
-  //   amount: { type: Number, default: 0 },
-  //   isTaxable: { type: Boolean, default: false }
-  // },
-  // hardshipAllowance: {
-  //   amount: { type: Number, default: 0 },
-  //   isTaxable: { type: Boolean, default: false }
-  // },
-  // desertAllowance: {
-  //   amount: { type: Number, default: 0 },
-  //   isTaxable: { type: Boolean, default: false }
-  // },
-  // transportAllowance: {
-  //   amount: { type: Number, default: 0 },
-  //   isTaxable: { type: Boolean, default: false }
-  // },
-  // cashIndeminityAllowance: {
-  //   amount: { type: Number, default: 0 },
-  //   isTaxable: { type: Boolean, default: false }
-  // },
-  // fieldAllowance: {
-  //   amount: { type: Number, default: 0 },
-  //   isTaxable: { type: Boolean, default: false }
-  // },
+
   overtimeEarning: {type: Number, default: 0 },
-  
-  otherEarning: {  type: Number, default: 0 },
-  
-  lateSittingOverTime:   { type: Number, default: 0 },
-   
-  arrears:  { type: Number, default: 0 },
-    
-  
-  dayDeduction: { type: Number, default: 0 },
-  
-  socialSecurity: {
-    type: Number,
-    default: 0,
-  },
-  providentFund: {
-    type: Number,
-    default: 0,
-  },
-  EOTBDeduction: {
-    type: Number,
-    default: 0,
-  },
-  TaxDeduction: {
-    type: Number,
-    default: 0,
-  },
+  Acting: { type: Number, default: 0 },
 
-  // payrollInfo: {
-  // year: [String],
-  // month:{
-  //     month:[String],
-  //     payroll: [
-  //       {
-  //         type: mongoose.Schema.Types.ObjectId,
 
-  //         ref: 'Payroll',
-  //       }
-
-  //     ],
-  // },
-
-  //    },
-
-  // payrollInfo: [{
-  // name: [String],
-  // year:[{
-  // month: [{
-  //     month: [String],
-  //     payroll: [
-  //       {
-  //         type: mongoose.Schema.Types.ObjectId,
-
-  //         ref: 'Payroll',
-  //       }
-
-  //     ],
-  // },
-  // ]}]
-  // }],
   sumOfAllowance: { type: Number, default: 0 },
   sumOfDeduction: { type: Number, default: 0 },
-
-
   
   payslip:
     [
@@ -212,49 +126,11 @@ const employeeSchema = mongoose.Schema({
 
        }
     },
-    
-   
+     
   ]
 
 ,
-  year: [
-    {
-      name: {
-        type: String,
-   
-      },
-      month: [
-        {
-          name: {
-            type: String,
-            // unique:true,
-          },
-          arrears: String,
-          lateSittingOverTime: String,
-          dayDeduction: String,
-          EOTBDeduction: String,
-          netSalary: String,
-          // payrollStatus: {
-          //     type: Boolean,
-          //     default: false
-          // },
-          payrollStatus: { type: Boolean, default: false },
-
-          payroll: [
-            {
-              type: mongoose.Schema.Types.ObjectId,
-              ref: "Payroll",
-            },
-          ],
-        },
-      ],
-    },
-  ],
-
-  netSalary: {
-    type: Number,
-  },
-
+  
   allowance: [
     {
       type: mongoose.Schema.Types.ObjectId,
@@ -262,16 +138,22 @@ const employeeSchema = mongoose.Schema({
       ref: "Allowance",
     },
   ],
+  
   gradeId: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "GradeDefinition",
     },
   ],
+  loanId: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Loan",
+    },
+  ],
 
   department: {
     type: mongoose.Schema.Types.ObjectId,
-
     ref: "Department",
     // required: true
   },
@@ -281,22 +163,8 @@ const employeeSchema = mongoose.Schema({
   position: {
     type: String,
   },
-  pension: {
-    type: Number,
-    default: 0
-  },
-  total_allowance: {
-    type: Number,
-    default: 0
-  },
-  total_deduction: {
-    type: Number,
-    default: 0
-  },
-  payroll_isApproved: {
-    type: Boolean,
-    default: "false",
-  },
+
+
   payroll: [
     {
       type: mongoose.Schema.Types.ObjectId,
@@ -305,21 +173,9 @@ const employeeSchema = mongoose.Schema({
     },
   ],
 
-
-
   passwordChangedAt: Date,
   passwordResetToken: String,
   passwordResetExpires: Date,
-  // year1:[ {
-  //     type: mongoose.Schema.Types.ObjectId,
-
-  //     ref: 'year',
-  //     month:[
-
-  //     ]
-  //     // required: true
-
-  // }],
 
   deduction: [
     {
@@ -327,15 +183,8 @@ const employeeSchema = mongoose.Schema({
       ref: "Deduction",
     },
   ],
-  // img:
-  // {
-  //      data: Buffer,
-  //      contentType: String
-  // }
+
 });
-// employeeSchema.index({ "year.name": 1, "year.month.name": 1 }, { unique: true })
-
-
 
 employeeSchema.pre('save', async function (next) {
   //only run this function if password was actually modified
@@ -401,10 +250,12 @@ const idformat1=await idformat.find({companyId:employee?.companyId});
       .model('Employee', employeeSchema)
       .countDocuments({}, function (err, count) {
         if (err) return next(err);
-        employee.id_number = idformat1[0]?.prefix ? idformat1[0]?.prefix + ('0000' + (count + 1)).slice(-4) : "" + ('0000' + (count + 1)).slice(-4);
+        employee.id_number = idformat1[0]?.prefix ? idformat1[0]?.prefix + ('0000' + (count + 1)).slice(-4) : "" + ('0000' + (count + 1)).slice(-4).save();
+              
         next();
       });
   } else {
+    console.log('not working')
     next();
   }
 });

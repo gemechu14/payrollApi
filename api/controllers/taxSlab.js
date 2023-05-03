@@ -94,12 +94,27 @@ exports.add_taxslab = async (req, res) => {
 //add taxslab
 
 exports.add_only_taxslab = async (req, res) => {
-  const newTaxSlab = new TaxSlab(req.body);
-  try {
-    const savedTaxSlab = await newTaxSlab.save();
-    console.log(req.body);
 
-    res.status(200).json({ savedTaxSlab });
+
+  
+  
+  
+  try {
+    const { from_Salary, to_Salary, income_tax_payable, deductible_Fee } = req.body;
+    const newTaxable = await TaxSlab.create({
+      from_Salary: from_Salary,
+      to_Salary: to_Salary,
+      income_tax_payable: income_tax_payable,
+      deductible_Fee: deductible_Fee,
+      companyId: req.user.id,
+    });
+
+    //const savedPayroll = await newPayroll.save();
+
+    console.log(req.body);
+    res.status(200).json({
+      newTaxable,
+    });
   } catch (err) {
     res.status(404).json({
       error: err,
@@ -137,7 +152,7 @@ exports.generalTaxslab = async (req, res, next) => {
     // const savedTaxSlab = await newTaxSlab.save();
     // console.log(req.body);
 
-    const taxslabs = await TaxSlab.find({
+    const taxslabs = await TaxSlab.find({  
       $and: [
         { to_Salary: to_Salary },
         { from_Salary: from_Salary },
@@ -162,4 +177,21 @@ exports.generalTaxslab = async (req, res, next) => {
     res.status(404).json(err);
 
   }
+}
+
+
+exports.delete_SINGLE_TAXSLAB=async(req,res,next)=>{
+
+try {
+  
+
+const deletedTaxslab=  await TaxSlab.findByIdAndDelete(req.params.id);
+res.status(200).json('deleted successfully')
+
+
+
+} catch (err) {
+res.status(404).json((err))  
+}
+
 }

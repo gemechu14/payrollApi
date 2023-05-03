@@ -1,34 +1,21 @@
-const GradeDefinition = require('../models/gradeDefinition.js')
+const LoanDefinition = require('../models/defineLoan.js');
+const Employee = require('../models/employee.js');
 const mongoose = require('mongoose')
-const Allowance=require('../models/gradeAllowance.js')
 
-exports.add_new_Grade = async (req, res) => {
+
+exports.add_loan = async (req, res) => {
     try {
         const {
-            gradeName,
-            monthlySalaryMax,
-            monthlySalaryMin,
-            description       
+            name,
+            description,
         } = req.body;
-
-
-
-        // const gradeDefinition=await GradeDefinition.find({companyId:req.user.id});
-
-   
-
-
-        const newgGrade = await GradeDefinition.create({
-            gradeName: gradeName, 
-            monthlySalaryMax:monthlySalaryMax,
-            monthlySalaryMin:monthlySalaryMin,
-            description:description, 
+        const newloanDefinition = await LoanDefinition.create({
+            name: name,
+            description: description,
             companyId: req.user.id
         })
 
-
-        console.log(req.body);
-        res.status(200).json('New Job grade added');
+        res.status(200).json({ newloanDefinition });
 
     } catch (err) {
         res.status(404).json({ error: err });
@@ -38,44 +25,70 @@ exports.add_new_Grade = async (req, res) => {
 
 
 // GET ALL
-exports.get_All_Grade = async (req, res, next) => {
+exports.get_All_loan = async (req, res, next) => {
     const failed = true;
-    // if(failed) return next(createError(401,"You are not authenticated"))
+
 
     try {
-        const grades = await GradeDefinition.find({ companyId: req.user.id }).populate("allowance");
-        
-        res.status(200).json(grades);
+        const loan = await LoanDefinition.find({ companyId: req.user.id });
+        res.status(200).json({ count: loan.length, loan });
     } catch (err) {
         next(err);
     }
 };
 // GET one
-exports.get_single_Grades= async (req, res) => {
+exports.get_one = async (req, res) => {
     try {
-        const grades = await GradeDefinition.findById({ companyId: req.user.id, _id: req.params.id });
-        res.status(200).json(grades);
+        const loan = await LoanDefinition.findById({ companyId: req.user.id, _id: req.params.id });
+        res.status(200).json(loan);
     } catch (error) {
-        res.status(500).json(error);
+        res.status(404).json(error);
     }
 };
 // UPDATE
 
-exports.updateGrades = async (req, res) => {
+exports.updateLoan = async (req, res) => {
     try {
-        const updatedGrades = await GradeDefinition.findByIdAndUpdate({
+        const updatedLoan = await LoanDefinition.findByIdAndUpdate({
             companyId: req.user.id,
             _id: req.params.id
         }, {
             $set: req.body
         }, { new: true });
-        res.status(200).json(updatedGrades);
+        res.status(200).json(updatedLoan);
     } catch (error) {
+        res.status(404).json(error)
 
-        error
     }
-}; 
+};
 
+
+exports.Create_Loan = async (req, res, next) => {
+
+    const employeeId = req.params.employeeId;
+    const newAllowance = new Allowance(req.body);
+    try {
+        const savedLoan = await newAllowance.save();
+        try {
+
+            await Employee.findByIdAndUpdate(employeeId, {
+                $push: {
+                    laonId: savedLoan._id
+                }
+
+            }, {
+                new: true,
+                useFindAndModify: false
+            });
+        } catch (err) {
+            next(err);
+        }
+
+        res.status(200).json(savedLoan);
+    } catch (err) {
+        next(err);
+    }
+};
 
 
 // /UPDATE
@@ -108,23 +121,22 @@ exports.Update_Allowances = async (req, res, next) => {
 
 
 // DELETE Allowances
-exports.delete_Grades = async (req, res,next) => {
-   
+exports.delete_Allowances = async (req, res) => {
+    const employeeId = req.params.employeeId;
     try {
+        await Allowance.findByIdAndDelete(req.params.id);
+        try {
+            await Employee.findByIdAndUpdate(employeeId, {
+                $pull: {
+                    allowance: req.params.id
+                }
+            });
+        } catch (err) {
+            next(err);
+        }
 
-        const grades=await GradeDefinition.find(mongoose.Types.ObjectId(req.params.id));
-   
-        if(grades.length!=0){
-            console.log(grades)
-             await GradeDefinition.findByIdAndDelete(req.params.id);
-             res.status(200).json("Grades has been deleted.");
-        }
-        else{
-            res.status(200).json("there is no such Grade.");
-        }
-     
-       
-          
+
+        res.status(200).json("Allowance has been deleted.");
     } catch (err) {
         next(err);
     }
@@ -146,14 +158,10 @@ exports.deleteAllowances = async (req, res) => {
 
 
 // ADD EXISTING ALLOWANCE TO EMPLOY
-
-
 exports.addExistingAllowances = async (req, res, next) => {
     try {
         const allowanceId = req.params.allowanceId;
         const employeeId = req.params.employeeId;
-        console.log(allowanceId);
-        console.log(employeeId);
         const check = await Employee.find({ _id: employeeId });
 
         if (!check[0].allowance.includes(mongoose.Types.ObjectId(allowanceId))) {
@@ -191,34 +199,3 @@ exports.deleteAllowance = async (req, res, next) => {
 
     }
 }
-
-
-//UPDATE GRADEDEFINITION AND ALLOWANCE 
-exports.Update_Allowances_and_GradeDefn = async (req, res, next) => {
-
-    const gradeId = req.params.gradeId;
-    const allowanceId = req.params.allowanceId;
- 
-    try {
-        await Allowance.findByIdAndUpdate(allowanceId,{
-            isTaxable:true
-        },{
-            new: true,
-                useFindAndModify: false
-        })
-      
-            await GradeDefinition.findByIdAndUpdate(gradeId, {
-                   basicSalary: 1000000000
-                
-            }, {
-                new: true,
-                useFindAndModify: false
-            });
-        res.status(200).json('done');
-        } 
-
-       
-    catch (err) {
-        next(err);
-    }
-};

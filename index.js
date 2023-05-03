@@ -33,6 +33,7 @@ const TrialRoute=require('./api/routes/trial.js');
 const scheduler=require('./api/utils/jobs.js');
 const gradeDefinition=require('./api/routes/gradeDefinition.js');
 const gradeAllowance=require('./api/routes/gradeAllowance.js');
+const pension=require('./api/routes/Pension.js')
 //Security
 
 //DATA SANITIZATION AGAINST NO SQL QUERY ENJECTION
@@ -65,10 +66,14 @@ const employeeRoute = require('./api/routes/employee.js');
 const allowanceRoute = require('./api/routes/Allowance.js');
 const deductionRoute = require('./api/routes/deduction.js');
 const payrollMonthRoute = require('./api/routes/payrollMonth.js');
-const SubscriptionRoute=require('./api/routes/subscription.js')
+const SubscriptionRoute=require('./api/routes/subscription.js');
 
+const approverRoute=require('./api/routes/approverRoute.js');
+const defineloanRoute=require('./api/routes/loanDefinition.js')
+// const payrollApprovementMethod=require('./api/routes/payrollApprovementRoute.js')
+const loanRoute=require('./api/routes/loan.js')
 const IDFormatRoute = require('./api/routes/id_format.js');
-
+const approvalMethodRoute=require('./api/routes/approvalMethodRoute.js')
 
 const cors = require('cors');
 mongoose.Promise = global.Promise;
@@ -251,6 +256,11 @@ app.use('/subscription',SubscriptionRoute);
 app.use('/gradeDefinition',gradeDefinition);
 app.use('/gradeAllowance', gradeAllowance);
 app.use('/idformat', IDFormatRoute);
+app.use('/api', approverRoute);
+app.use('/api', approvalMethodRoute);
+app.use('/pension',pension);
+app.use('/defineloan',defineloanRoute)
+app.use('/loan',loanRoute)
 
 app.use(bodyParser.json());
 app.use('/api',authenticationRoute);

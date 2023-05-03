@@ -14,6 +14,9 @@ const department = require("../models/department.js");
 const nodemailer = require('nodemailer')
 const sendEmail = require('../utils/email.js');
 
+const GradeDefinition=require('../models/gradeDefinition.js')
+
+
 const IDFormat = require("../models/defineIDFormat.js");
 
 //const createError=required('../utils/error.js');
@@ -76,6 +79,7 @@ exports.add_employee = async (req, res, next) => {
             paymentMethod,
             department,
             pension,
+            gradeId,
             separationDate,
             basicSalary,
             housingAllowance,
@@ -96,7 +100,7 @@ exports.add_employee = async (req, res, next) => {
             TaxDeduction,
             netSalary,
             position,
-            // contact_name,
+            contact_name,
             emergency_contact_Info,
             contact_phoneNumber,
             relationship
@@ -111,7 +115,15 @@ exports.add_employee = async (req, res, next) => {
          
         });
 
+//CHECK GRADEDEFINITION
+        const gradeDefinition=await GradeDefinition.find({companyId:req.user.id,_id:gradeId});
 
+       //GET EMPLOYEE DATA
+       const emp=await Employee.find({companyId:req.user.id})
+console.log((emp.length))
+        //console.log(gradeDefinition);
+         console.log(gradeDefinition[0]?.monthlySalaryMax);
+        console.log(gradeDefinition[0]?.monthlySalaryMin);
 
         const newDepartment = await Department.find({
             companyName: req.user.CompanyName,
@@ -125,13 +137,29 @@ exports.add_employee = async (req, res, next) => {
         if (!department || department == undefined) {
             console.log("no department");
         }
+        const idformat1 = await IDFormat.find({ companyId: req.user.id });
 
+        if(!gradeId){
+
+            res.status(404).json('please enter employee grade')
+        }
+        if(!basicSalary){
+            res.status(404).json('Please enter basicsalary')
+        }
+        //console.log(idformat1)
+
+        if (  basicSalary < gradeDefinition[0]?.monthlySalaryMin || basicSalary > gradeDefinition[0]?.monthlySalaryMax) {
+            res.status(404).json('Basicsalary must be between ' + gradeDefinition[0]?.monthlySalaryMin + '  and  ' + gradeDefinition[0]?.monthlySalaryMax)
+
+             }
+
+      else{
 
         const newEmployee = await Employee({
             fullname: fullname,
             nationality: nationality,
             sex: sex,
-            id_number: id_number,
+            id_number: idformat1[0]?.prefix ? idformat1[0]?.prefix + ('0000' + (emp.length + 1)).slice(-4) : "" + ('0000' + (emp.length + 1)).slice(-4),
             email: email,
             department: department ? department : generalDepartment,
             images: images,
@@ -141,11 +169,11 @@ exports.add_employee = async (req, res, next) => {
             date_of_birth: date_of_birth,
             optionalNumber: optionalNumber,
             password: req.user.CompanyName.substring(0, 4) + '0000',
-            // emergency_contact_Info: {
-            //     contact_name: emergency_contact_Info.contact_name,
-            //     relationship: emergency_contact_Info.relationship,
-            //     contact_phoneNumber: emergency_contact_Info.contact_phoneNumber
-            // },
+            emergency_contact_Info: {
+                contact_name: contact_name,
+                relationship: relationship,
+                contact_phoneNumber: contact_phoneNumber
+            },
 
             hireDate: hireDate,
             joiningDate: joiningDate,
@@ -203,7 +231,7 @@ exports.add_employee = async (req, res, next) => {
 
         // });
 
-
+      }
     } catch (err) {
         next(createError.createError(404, err));
 
@@ -691,7 +719,6 @@ exports.createEmployeeFile = async (req, res, next) => {
                             //     text
                             // });
                         }
-
                         res.status(200).json({
                             status: "success",
                             message: 'Employee Registered successfully',
@@ -771,7 +798,7 @@ exports.sendEmail = async (req, res, next) => {
 
 
 
-exports.addApprovers = async (req, res, next) => {
+exports.add = async (req, res, next) => {
     try {
 
 
@@ -781,3 +808,4 @@ exports.addApprovers = async (req, res, next) => {
 
     }
 }
+
