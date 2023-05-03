@@ -3,8 +3,8 @@ const mongoose = require('mongoose');
 const gradeDefinitionSchema = mongoose.Schema({
   gradeName: { type: String, required: true },
   // basicSalary: { type: String, required: true, default: 0 },
-  monthlySalaryMin: { type: Number ,required:true},
-  monthlySalaryMax: { type: Number, required: true },
+  monthlySalaryMin: { type: Number },
+  monthlySalaryMax: { type: Number, },
  description:{type:String}, 
   allowance: [
     {

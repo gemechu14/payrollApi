@@ -133,7 +133,6 @@ console.log((emp.length))
 
         generalDepartment = mongoose.Types.ObjectId(newDepartment[0]?._id);
 
-
         if (!department || department == undefined) {
             console.log("no department");
         }
