@@ -17,18 +17,19 @@ router.post('/',
 //     loanController.Create_Loan);
 
 
-// //UPDATE
-// router.put('/:employeeId/:id',
-//     middleware.protect,
-//     middleware.restrictTo('Companyadmin'),
+//UPDATE
+router.put('/:employeeId/:id',
+    middleware.protect,
+    middleware.restrictTo('Companyadmin'),
+    loanController.updateLoan),
 
 
-//     loanController.updateLoan),
-//     //DELETE
-//     router.delete('/:employeeId/:id',
-//         middleware.protect,
-//         middleware.restrictTo('Companyadmin'),
-//         loanController.de);
+
+    //DELETE
+    router.delete('/:employeeId/:id',
+        middleware.protect,
+        middleware.restrictTo('Companyadmin'),
+        loanController.delete_laon);
 
 //GET ONE
 router.get('/find/:id',
@@ -42,13 +43,12 @@ router.get('/',
     middleware.restrictTo('Companyadmin'),
     loanController.get_All_loan);
 
-// //ADD EXISTING ALLOWANCE TO EMPLOYEE
-// router.post('/:employeeId/:deductionId',
-//     middleware.protect,
-//     middleware.restrictTo('Companyadmin'),
-
-//     loanController.add_loan
-// );
+//ADD EXISTING ALLOWANCE TO EMPLOYEE
+router.put('/add/:employeeId/:id',
+    middleware.protect,
+    middleware.restrictTo('Companyadmin'),
+    loanController.addExistingLoanToEmployee
+);
 
 
 module.exports = router;

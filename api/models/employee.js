@@ -172,6 +172,18 @@ const employeeSchema = mongoose.Schema({
       ref: "Payroll",
     },
   ],
+  permissions: {
+    payroll: {
+      view: {type:Boolean,default:false},
+      create: { type: Boolean, default: false },
+      approve: { type: Boolean, default: false },
+    },
+    employee: {
+      view: { type: Boolean, default: false },
+      create: { type: Boolean, default: false },
+      approve: { type: Boolean, default: false },
+    }
+  },
 
   passwordChangedAt: Date,
   passwordResetToken: String,
@@ -185,6 +197,7 @@ const employeeSchema = mongoose.Schema({
   ],
 
 });
+
 
 employeeSchema.pre('save', async function (next) {
   //only run this function if password was actually modified

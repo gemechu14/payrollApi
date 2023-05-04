@@ -6,7 +6,7 @@ const mongoose = require("mongoose");
 const year = require("../models/year.js");
 const month = require("../models/month.js");
 const moment = require('moment');
-const gradeDefinition=require('../models/gradeDefinition.js')
+const gradeDefinition = require('../models/gradeDefinition.js')
 
 exports.add_payroll = async (req, res, next) => { // const newPayroll = new Payroll(req.body);
 
@@ -68,7 +68,8 @@ exports.add_payroll = async (req, res, next) => { // const newPayroll = new Payr
 // GET ALL
 exports.get_All_Payroll = async (req, res, next) => {
     try {
-        const payrolls = await Payroll.find({ companyId: req.user.id }).populate("taxSlab");
+        console.log(req.user)
+        const payrolls = await Payroll.find({ companyId: req.user.companyId }).populate("taxSlab");
         res.status(200).json({ count: payrolls.length, payrolls });
     } catch (err) {
         next(err);
@@ -142,31 +143,6 @@ exports.add_payroll_to_Employee = async (req, res, next) => {
             EOTBDeduction,
             payrollStatus
         } = req.body;
-
-        // year: [{
-        // name:'2013',
-        // month:[
-        //     {
-        //       name:'Jan',
-        //       payroll:'63eb2c646e8057d17e62cde8'
-        //      },
-        //      {
-        //       name:'FEB',
-        //       payroll:'63eb2c646e8057d17e62cde8'
-        //      },
-
-        // ]
-
-        // }
-
-        // ]
-
-        // const emp=await Employee.find({department:departmentId});
-        // console.log(emp);
-
-        // console.log(emp.department);
-
-        // console.log(departmentId);
 
         const updated = await Employee.updateMany({
             department: departmentId
@@ -303,14 +279,10 @@ exports.get_All_pm = async (req, res, next) => {
             console.log("data", data);
         });
         try {
-            // console.log(req.body);
-            // // const check_month=await Employee.find({department:departmentId,})
+
             console.log("data length:", data.length);
             for (var i = 0; i < data.length; i++) {
                 console.log("i", i);
-                //     // const d1=  await Employee.find({  _id: mongoose.Types.ObjectId(data[i]._id) });
-                //     // console.log(d1[i].year[0].month[0].name);
-                // for (let j = 0; j < data[i].year.length; j++) {
                 const conditions = data[i].year.filter((item) => item.name.includes(year));
 
                 console.log(data[i].year)
@@ -339,13 +311,6 @@ exports.get_All_pm = async (req, res, next) => {
                             $pull: {
                                 "year.$.month": {
                                     name: month,
-                                    // // netSalary: netSalary,
-                                    // payroll: payrollId,
-                                    // arrears: data[i].arrears,
-                                    // lateSittingOverTime: data[i].lateSittingOverTime,
-                                    // dayDeduction: data[i].dayDeduction,
-                                    // EOTBDeduction: data[i].EOTBDeduction,
-                                    // payrollStatus: data[i].payrollStatus,
                                 }
                             }
                         });
@@ -361,10 +326,6 @@ exports.get_All_pm = async (req, res, next) => {
                             }
                         }, {
                             $push: {
-                                // lateSittingOverTime: 10,
-                                // "arrears": 10,
-                                // "dayDeduction": 10,
-                                // "EOTBDeduction": 10,
 
                                 "year.$.month": {
                                     name: month,
@@ -388,25 +349,7 @@ exports.get_All_pm = async (req, res, next) => {
                             }
                         });
 
-                        // const emp4 = await Employee.updateOne(
-                        // {
-                        //     _id: mongoose.Types.ObjectId(data[i]._id),
-                        //     year: { $elemMatch: { name: { $eq: year } } },
-                        // },
-                        // {
-                        //     $set: {
-                        //       lateSittingOverTime: 910,
-                        //       // "arrears": 10,
-                        //       // "dayDeduction": 10,
-                        //       // "EOTBDeduction": 10,
 
-                        //       //EOTBDeduction:'6'
-
-                        //     },
-                        // }
-                        // );
-
-                        // console.log(emp);
                     } else {
                         console.log("year but not month");
                         const emp = await Employee.updateOne({
@@ -546,7 +489,7 @@ exports.payrollCalculation = async (req, res, next) => {
                     hardshipAllowance: doc.hardshipAllowance,
                     desertAllowance: doc.desertAllowance,
                     basicSalary: doc.basicSalary,
-                    gradeId:doc.gradeId
+                    gradeId: doc.gradeId
 
 
                     // payrollStatus: doc.payrollStatus,
@@ -565,10 +508,10 @@ exports.payrollCalculation = async (req, res, next) => {
             const year = data[i].payslip?.filter((item) => item?.year?.includes("2023"));
             //CHECK  SELECTED MONTH AND YEAR 
             if (month.length && year.length) {
-                     
-                const empdata = await gradeDefinition.find({ _id: data[i].gradeId })            
+
+                const empdata = await gradeDefinition.find({ _id: data[i].gradeId })
                 let allowanceLength = empdata[0]?.allowance.length
-           
+
 
 
 
@@ -605,7 +548,7 @@ exports.payrollCalculation = async (req, res, next) => {
             }
 
 
-                 }
+        }
 
 
 
@@ -656,15 +599,15 @@ exports.get_calculation = async (req, res, next) => {
             console.log("data", data);
         });
         try {
-        
+
             console.log("data length:", data.length);
             for (var i = 0; i < data.length; i++) {
                 console.log("i", i);
-             
+
                 const conditions = data[i].year.filter((item) => item.name.includes(year));
                 if (conditions.length) {
                     const filteredMonth = conditions[0].month.filter((item) => item.name.includes(month));
-                 
+
                     if (filteredMonth.length) {
                         console.log("year and month");
                         const emp = await Employee.updateOne({
@@ -687,7 +630,7 @@ exports.get_calculation = async (req, res, next) => {
                             $pull: {
                                 "year.$.month": {
                                     name: month,
-                                 
+
                                 }
                             }
                         });
@@ -703,7 +646,7 @@ exports.get_calculation = async (req, res, next) => {
                             }
                         }, {
                             $set: {
-                           
+
 
                                 "year.$.month": {
                                     name: month,
@@ -812,5 +755,39 @@ exports.get_calculation = async (req, res, next) => {
 };
 
 
+
+
+//GIVE PERMISSION
+
+exports.grantPermission = async (req, res, next) => {
+
+    try {
+
+        await Employee.findOneAndUpdate({ _id: req.params.id },
+            {
+
+                $set: { [`permissions.${key}.${value}`]: true }
+
+            }, { new: true },
+
+
+
+            function (err, doc) {
+                if (err) {
+                    console.log('Error updating user permissions:', err);
+                    res.status(404).json(err)
+                } else {
+                    console.log('User permissions updated successfully:', doc);
+                    res.status(200).json(doc)
+                }
+            });
+
+
+    } catch (err) {
+
+        res.status(404).json(err)
+
+    }
+}
 
 

@@ -114,17 +114,17 @@ exports.Create_Loan = async (req, res, next) => {
 
 
 // /UPDATE
-exports.Update_Allowances = async (req, res, next) => {
+exports.Update_Loan = async (req, res, next) => {
 
     const employeeId = req.params.employeeId;
-    const newAllowance = new Allowance(req.body);
+    const newLoan = new Loan(req.body);
     try {
         const savedAllowance = await newAllowance.save();
         try {
 
             await Employee.findByIdAndUpdate(employeeId, {
                 $push: {
-                    allowance: req.body.id
+                    loanId: req.body.id
                 }
 
             }, {
@@ -231,3 +231,49 @@ exports.deleteAllowance = async (req, res, next) => {
 
     }
 }
+
+
+
+exports.updateLoan = async (req, res) => {
+    try {
+        const updatedLoan = await Allowance.findByIdAndUpdate({
+            companyId: req.user.id,
+            _id: req.params.id
+        }, {
+            $set: req.body
+        }, { new: true });
+        res.status(200).json("updated successfully");
+    } catch (error) {
+
+        error
+    }
+};
+
+
+//ADD EXISTING Deduction TO EMPLOY
+
+exports.addExistingLoanToEmployee = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const employeeId = req.params.employeeId;
+console.log(id,employeeId)
+    const check = await Employee.find({ _id: employeeId });
+
+    if (!check[0].loanId.includes(mongoose.Types.ObjectId(id))) {
+      const updated = await Employee.findByIdAndUpdate(
+        employeeId,
+        {
+          $push: { loanId: id },
+        },
+        { new: true, useFindAndModify: false }
+      )
+       
+
+      res.status(200).json(updated);
+    } else {
+      res.status(404).json("already added");
+    }
+  } catch (err) {
+    next(err);
+  }
+};
