@@ -10,13 +10,13 @@ gradeDefinition.add_new_Grade);
 
 
 router.get('/',
-middleware.protect,
-middleware.restrictTo('Companyadmin'),
+    middleware.protectUser,
+    middleware.checkPermissions({ name: 'grade', value: 'view' }),
 gradeDefinition.get_All_Grade);
 
 router.get('/:id',
-middleware.protect,
-middleware.restrictTo('Companyadmin'),
+    middleware.protectUser,
+    middleware.checkPermissions({ name: 'grade', value: 'view' }),
 gradeDefinition.get_single_Grades);
 
 router.delete("/:id",

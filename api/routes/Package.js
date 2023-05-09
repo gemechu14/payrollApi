@@ -12,7 +12,7 @@ router.post("/", packageController.createPlan
 );
 router.get("/",
     middleware.protectUser,
-    middleware.checkPermissions({ name: 'payroll' }),
+    middleware.checkPermissions({ name: 'payroll', value:'approve' }),
 
 
     // checkPermissions({ name: 'employee' }),

@@ -2,6 +2,12 @@ const express = require('express');
 const router = express.Router();
 const payrollController = require('../controllers/payroll.js');
 const middleware=require('../middleware/auth.js')
+
+
+const { Worker } = require('worker_threads')
+
+
+
 //CREATE
 router.post('/',
 middleware.protect,
@@ -60,6 +66,12 @@ middleware.restrictTo('Companyadmin'),
 
 payrollController.get_All_pm);
 
+router.get('/checkpay/',  middleware.protect,
+  middleware.restrictTo('Companyadmin'),
+
+  payrollController.checkPay);
+
+
 
 //ADD PAYROLL TO EMPLOYEE
 router.put('/pay1/:id/',
@@ -73,15 +85,35 @@ router.post('/payrollCalc/:departmentId',
   middleware.restrictTo('Companyadmin'),
   payrollController.payrollCalculation);
 
+//PAYROLL Calculation
+router.get('/payrollCalculation/:employeeId',
+  middleware.protect,
+  middleware.restrictTo('Companyadmin'),
+  payrollController.runPayrollForAllEmp);
+
+
+//PAYROLL Calculation
+router.get('/payrollCalculation1',
+  middleware.protect,
+  middleware.restrictTo('Companyadmin'),
+  payrollController.calculatePayrollForAllEmployee);
+
+
+//GET PAYROLL FOR SPECIC MONTH
+
+router.get('/payrollForMonth',
+  middleware.protect,
+  middleware.restrictTo('Companyadmin'),
+  payrollController.getPayrollForSpecificMonth);
+
+
 
 // Middleware function to check user permissions
 function checkPermissions(permission) {
   return function (req, res, next) {
     // Get the user's permissions from the database
     const userPermissions = req.user.permissions;
-console.log(req.user)
-    console.log("tahu",userPermissions);
-    console.log("permission",permission)
+
     // Check if the user has the required permission
     if (userPermissions[permission].view) {
       // User has permission, allow access to the route
@@ -105,6 +137,41 @@ console.log(req.user)
 
 
 
+router.get('/run-payroll', 
+
+middleware.protect,
+middleware.restrictTo('Companyadmin'),
+
+   async (req, res) => {
+  // Set the response type to text/event-stream
+  
+  
+  const worker = new Worker('./api/routes/worker.js')
+
+  res.set({
+    'Content-Type': 'text/event-stream',
+    'Cache-Control': 'no-cache',
+    'Connection': 'keep-alive'
+  });
+
+  // Send a message to the worker thread
+  worker.postMessage({status: 'start', user:req.user.id});
+  console.log("user",req.user.id)
+  // Listen for messages from the worker thread
+  worker.on('message', (message) => {
+    if (message.type === 'progress') {
+      // Send progress updates to the frontend
+      res.write(`data: ${JSON.stringify({ type: 'progress', value: message.value })}\n\n`);
+    } else if (message.type === 'complete') {
+      // Send a complete message to the frontend
+      res.write(`data: ${JSON.stringify({ type: 'complete' })}\n\n`);
+      // Terminate the worker thread
+      worker.terminate();
+      // End the response
+      res.end();
+    }
+  });
+});
 
 
 

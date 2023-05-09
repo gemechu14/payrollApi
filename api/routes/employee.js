@@ -93,24 +93,32 @@ router.get(
 //GET ALL
 router.get(
     "/",
-    middleware.protect,
-    middleware.restrictTo("Companyadmin"),
+    middleware.protectUser,
+    middleware.checkPermissions({ name: 'employee', value: 'view' }),
     employeeController.get_All_Employee
 );
 
 router.get(
     "/find",
-    middleware.protect,
-    middleware.restrictTo("Companyadmin"),
+    middleware.protectUser,
+    middleware.checkPermissions({ name: 'employee', value: 'view' }),
     employeeController.getbydept
 );
-//SEARCH EMPLOYEE
 
-router.get(
-    "/:id",
+//GRANT PERMISSION
 
+
+router.put(
+    "/permission/:id",
     middleware.protect,
     middleware.restrictTo("Companyadmin"),
+    employeeController.grantPermission
+);
+//SEARCH EMPLOYEE
+router.get(
+    "/:id",
+    middleware.protectUser,
+    middleware.checkPermissions({ name: 'employee', value: 'view' }),
     employeeController.searchAllEmployee
 );
 
@@ -246,15 +254,15 @@ router.get(
 
 router.get(
     "/dept/:departmentId",
-    middleware.protect,
-    middleware.restrictTo("Companyadmin"),
+    middleware.protectUser,
+    middleware.checkPermissions({ name: 'employee', value: 'view' }),
     employeeController.get_By_Department
 );
 
 router.get(
     "/pending/:departmentId",
-    middleware.protect,
-    middleware.restrictTo("Companyadmin"),
+    middleware.protectUser,
+    middleware.checkPermissions({ name: 'payroll', value: 'view' }),
     employeeController.get_Pending_Payroll
 );
 

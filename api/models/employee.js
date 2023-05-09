@@ -36,20 +36,19 @@ const employeeSchema = mongoose.Schema({
     enum: ['Single', 'Married', 'Divorced'],
     default: 'Single',
   },
-  id_number: {
+id_number: {
     type: String,
   },
-  employeeTIN:{type:String},
-  
+employeeTIN:{type:String}, 
 
   // //     //CONTACT INFO
-  email: {
+email: {
     type: String,
     required: true,
     unique: true,
   },
 
-  phoneNumber: {
+phoneNumber: {
     type: String,
     required: true,
   },
@@ -119,7 +118,7 @@ const employeeSchema = mongoose.Schema({
       sumOfAllowance: { type: Number, default: 0 },
       sumOfDeduction: { type: Number, default: 0 },
       netSalary: { type: Number ,default:0},
-      payrollId: [{  type: mongoose.Schema.Types.ObjectId, ref: "Payroll",} ],
+        payrollId: [{ type: mongoose.Schema.Types.ObjectId, ref: "Payroll",} ],
       approval: { 
         counter: { type: Number, default: 0 },            
         isApproved:{type:Boolean, default:false}
@@ -130,8 +129,23 @@ const employeeSchema = mongoose.Schema({
   ]
 
 ,
-  
+  payroll: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+
+      ref: "Payroll",
+    },
+  ],
+
   allowance: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+
+      ref: "GradeAllowance",
+    },
+  ],
+  
+  personal_allowance: [
     {
       type: mongoose.Schema.Types.ObjectId,
 
@@ -145,6 +159,8 @@ const employeeSchema = mongoose.Schema({
       ref: "GradeDefinition",
     },
   ],
+
+
   loanId: [
     {
       type: mongoose.Schema.Types.ObjectId,
@@ -164,14 +180,13 @@ const employeeSchema = mongoose.Schema({
     type: String,
   },
 
+  // payroll: [
+  //   {
+  //     type: mongoose.Schema.Types.ObjectId,
 
-  payroll: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-
-      ref: "Payroll",
-    },
-  ],
+  //     ref: "Payroll",
+  //   },
+  // ],
   permissions: {
     payroll: {
       view: {type:Boolean,default:false},
@@ -179,6 +194,26 @@ const employeeSchema = mongoose.Schema({
       approve: { type: Boolean, default: false },
     },
     employee: {
+      view: { type: Boolean, default: false },
+      create: { type: Boolean, default: false },
+      approve: { type: Boolean, default: false },
+    },
+    deduction: {
+      view: { type: Boolean, default: false },
+      create: { type: Boolean, default: false },
+      approve: { type: Boolean, default: false },
+    }, 
+    allowance: {
+      view: { type: Boolean, default: false },
+      create: { type: Boolean, default: false },
+      approve: { type: Boolean, default: false },
+    },
+    grade: {
+      view: { type: Boolean, default: false },
+      create: { type: Boolean, default: false },
+      approve: { type: Boolean, default: false },
+    },
+    taxslab: {
       view: { type: Boolean, default: false },
       create: { type: Boolean, default: false },
       approve: { type: Boolean, default: false },

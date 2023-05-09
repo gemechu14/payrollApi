@@ -9,24 +9,19 @@ router.post('/',
     allowanceController.add_Allowance);
 
    
-router.put('/:gradeId/:allowanceId',
-    middleware.protect,
-    middleware.restrictTo('Companyadmin'),
-    allowanceController.Add_Allowance_to_Grade);
-
 
 //CREATE
-router.post('/:gradeId',
+router.put('/:gradeId',
     middleware.protect,
     middleware.restrictTo('Companyadmin'),
     allowanceController.Add_Allowance_to_Grade);
 
 
-    router.put('/:id',
+    router.put('/update/:id',
     
         middleware.protect,
         middleware.restrictTo('Companyadmin'),
-        allowanceController.updateAllowance);
+        allowanceController.updateAllowances);
     
     
 
@@ -38,7 +33,7 @@ router.post('/:gradeId/:id',
 
 
     ///DELETE
-    router.delete('/:gradeId/:id',
+    router.delete('/:gradeId/:allowanceId',
         middleware.protect,
         middleware.restrictTo('Companyadmin'),
         allowanceController.delete_Allowances);
@@ -56,7 +51,7 @@ router.get('/',
     allowanceController.get_All_Allowance);
 
 //ADD EXISTING ALLOWANCE TO EMPLOYEE
-router.post('/:allowanceId/:gradeId', middleware.protect,
+router.put('/add/:gradeId/:allowanceId', middleware.protect,
     middleware.restrictTo('Companyadmin'), allowanceController.addExistingAllowances);
 
 //DELETE Allowance
@@ -65,5 +60,11 @@ router.post('/:allowanceId/:gradeId', middleware.protect,
     middleware.restrictTo('Companyadmin'),
     allowanceController.delete_from_allowancecollection_Allowances);
 
+
+//UPDATE
+router.put('/update/:gradeId/:allowanceId',
+middleware.protect,
+middleware.restrictTo('Companyadmin'), 
+allowanceController.updateGradeandAllowance);
 
 module.exports = router;

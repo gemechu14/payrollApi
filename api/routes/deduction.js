@@ -4,7 +4,6 @@ const deductionController = require('../controllers/deduction.js');
 const middleware=require('../middleware/auth.js')
 //CREATE
 router.post('/',
-
 middleware.protect,
 middleware.restrictTo('Companyadmin'),
 

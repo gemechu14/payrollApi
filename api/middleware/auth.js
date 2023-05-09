@@ -6,21 +6,22 @@ const Employee = require('../models/employee.js')
 
 //Check 
 
-exports.checkPermissions=(permission) =>{
+exports.checkPermissions = ({ name, value }) => {
 
   // console.log('per', permission.name)
   return function (req, res, next) {
-    // console.log(req.user)
-    console.log('hello', req.user.role)
+    // console.log("permission",permission)
+    // console.log(name, value)
+    // console.log('hello', req.user.role)
     if (req.user.role === 'employee') {
       // Get the user's permissions from the database
       const userPermissions = req.user.permissions;
 
       // console.log("userPermissions", userPermissions);
-      console.log("permission", userPermissions[`${permission.name}`].view)
+      console.log("permission", userPermissions[`${name}`][`${value}`])
       // console.log("first",userPermissions[permission])
       // Check if the user has the required permission
-      if (userPermissions[`${permission.name}`].view) {
+      if (userPermissions[`${name}`][`${value}`]) {
         // User has permission, allow access to the route
         next();
       } else {

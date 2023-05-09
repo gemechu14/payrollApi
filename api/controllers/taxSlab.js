@@ -141,7 +141,7 @@ exports.add_taxslab_on_payroll = async (req, res) => {
   }
 };
 
-//exports.updatePayroll=async(req,res)
+// exports.update=async(req,res)
 
 
 

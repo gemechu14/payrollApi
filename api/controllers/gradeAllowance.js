@@ -1,18 +1,37 @@
 const Allowance = require('../models/gradeAllowance.js');
 const mongoose = require('mongoose')
-const GradeDefinition = require('../models/gradeDefinition.js')
+const GradeDefinition = require('../models/gradeDefinition.js');
+const Employee=require("../models/employee.js")
 
 exports.add_Allowance = async (req, res) => {
     try {
         const {
             name,
             amount,
-            description
+            isTaxable,
+            percent,
+            netAmount,
+            description,
+            taxable_income_limit,
+            is_Exempted,
+            starting_from,
+            exempted_on_Allowance_amount,
         } = req.body;
+
+        // if(!name ||!amout){
+        //     res.stats
+        // }
         const newAllowance = await Allowance.create({
             name: name,
             amount: amount,
             description: description,
+            isTaxable: isTaxable,
+            percent: percent,
+            netAmount: netAmount,
+            taxable_income_limit: taxable_income_limit,
+            is_Exempted: is_Exempted,
+            starting_from: starting_from,
+            exempted_on_Allowance_amount: exempted_on_Allowance_amount,
             companyId: req.user.id
         })
 
@@ -47,10 +66,11 @@ exports.get_single_Allowance = async (req, res) => {
     }
 };
 // UPDATE
-
-exports.updateAllowance = async (req, res) => {
-    try {
-        const updatedAllowance = await Allowance.findByIdAndUpdate({
+exports.updateAllowances = async (req, res) => {
+    try 
+    {
+     
+          const updatedAllowance = await Allowance.findOneAndUpdate({
             companyId: req.user.id,
             _id: req.params.id
         }, {
@@ -66,33 +86,33 @@ exports.updateAllowance = async (req, res) => {
 
 //ADD ALLOWANCE TO GRADE 
 exports.Create_Allowances = async (req, res, next) => {
-    
+
     try {
         const gradeId = req.params.gradeId;
-        const  allowanceId=req.params.allowanceId;
+        const allowanceId = req.params.allowanceId;
         console.log(gradeId);
         console.log(allowanceId);
-      
-const gradedefinition=await GradeDefinition.find({companyId:req.user.id,allowance:allowanceId});
-console.log("gradedefinition",gradedefinition.length)
 
-if(gradedefinition.length==0){
+        const gradedefinition = await GradeDefinition.find({ companyId: req.user.id, allowance: allowanceId });
+        console.log("gradedefinition", gradedefinition.length)
 
-     const data=   await GradeDefinition.findByIdAndUpdate(gradeId, {
-            $push: {
-                allowance: allowanceId
-            }
+        if (gradedefinition.length == 0) {
 
-        }, {
-            new: true,
-            useFindAndModify: false
-        });
+            const data = await GradeDefinition.findByIdAndUpdate(gradeId, {
+                $push: {
+                    allowance: allowanceId
+                }
 
-        res.status(200).json('Allowance successfully added to Job Grade');
-    }
-    else{
-    res.status(200).json('Allowance allready added');
-    }
+            }, {
+                new: true,
+                useFindAndModify: false
+            });
+
+            res.status(200).json('Allowance successfully added to Job Grade');
+        }
+        else {
+            res.status(200).json('Allowance allready added');
+        }
     } catch (err) {
         res.status(404).json(err);
     }
@@ -108,6 +128,9 @@ exports.Update_Allowances = async (req, res, next) => {
         const savedAllowance = await newAllowance.save();
         try {
 
+
+
+              
             await GradeDefinition.findByIdAndUpdate(gradeId, {
                 $push: {
                     allowance: req.body.id
@@ -117,6 +140,17 @@ exports.Update_Allowances = async (req, res, next) => {
                 new: true,
                 useFindAndModify: false
             });
+
+            await Employee.findByIdAndUpdate(gradeId, {
+                $push: {
+                    allowance: req.body.id
+                }
+
+            }, {
+                new: true,
+                useFindAndModify: false
+            });
+
         } catch (err) {
             next(err);
         }
@@ -130,45 +164,47 @@ exports.Update_Allowances = async (req, res, next) => {
 
 // DELETE Allowances
 exports.delete_Allowances = async (req, res) => {
-    const gradeId = req.params.employeeId;
-    try {
-        const allowanceid = await Allowance.find(mongoose.Types.ObjectId(req.params.id));
-if(allowanceid.length!=0){
 
-    await Allowance.findByIdAndDelete(req.params.id);
     try {
-        console.log(req.params.id);
-        await GradeDefinition.findByIdAndUpdate(gradeId, {
-            $pull: {
-                allowance: req.params.id
-            }
-        });
-    } catch (err) {
-        next(err);
-    }
-    
-    res.status(200).json("Allowance has been deleted.");
+        const gradeId = req.params.gradeId;
+        const allowanceid = await Allowance.find(mongoose.Types.ObjectId(req.params.allowanceId));
+        const checkGrade = await GradeDefinition.find({ allowance: req.params.allowanceId });
+               if (  checkGrade.length != 0 &&allowanceid.length!=0 ) {
+            await GradeDefinition.findByIdAndUpdate(gradeId, {
+                $pull: {
+                    allowance: req.params.allowanceId
+                }
+            });
 
-}
-else{
-    res.status(200).json("There is no such allowance.");
-}
+            res.status(200).json("Allowance has been deleted.");
+
+        }
+        else {
+            res.status(404).json("There is no such allowance In the Grade.");
+        }
 
     } catch (err) {
-        next(err);
+        res.status(404).json("Something gonna wrong");
     }
 };
 
 
 // DELETE Allowances
 exports.delete_from_allowancecollection_Allowances = async (req, res) => {
-   
+
     try {
-        console.log('delete')
-       // await Allowance.findByIdAndDelete(req.params.id);
+        const allowanceid = await Allowance.find(mongoose.Types.ObjectId(req.params.id));
+        if (allowanceid.length != 0) {
 
+            await Allowance.findByIdAndDelete(req.params.id);
 
-      //  res.status(200).json("Allowance has been deleted.");
+            res.status(200).json("Allowance has been deleted.");
+
+        }
+        else {
+            res.status(200).json("There is no such allowance.");
+        }
+
     } catch (err) {
         next(err);
     }
@@ -182,12 +218,17 @@ exports.addExistingAllowances = async (req, res, next) => {
     try {
         const allowanceId = req.params.allowanceId;
         const gradeId = req.params.gradeId;
-        console.log(allowanceId);
- 
-        const check = await Grade.find({ _id: employeeId });
+
+
+        const check = await GradeDefinition.find({ _id: gradeId });
+        console.log(check.length)
+
+        if (check.length == 0) {
+            res.status(404).json('something gonna wrong')
+        }
 
         if (!check[0].allowance.includes(mongoose.Types.ObjectId(allowanceId))) {
-            const updated = await Grade.findByIdAndUpdate(gradeId, {
+            const updated = await GradeDefinition.findByIdAndUpdate(gradeId, {
                 $push: {
                     allowance: allowanceId
                 }
@@ -197,7 +238,18 @@ exports.addExistingAllowances = async (req, res, next) => {
                 useFindAndModify: false
             });
 
-            res.status(200).json(updated);
+
+
+             const updated1 = await Employee.findOneAndUpdate({gradeId}, {
+                $push: {
+                    allowance: allowanceId
+                }
+
+            }, {
+                new: true,
+                useFindAndModify: false
+            });
+            res.status(200).json("Allowance added successfully");
         } else {
             res.status(404).json('already added')
         }
@@ -227,29 +279,60 @@ exports.deleteAllowance = async (req, res, next) => {
 
 exports.Add_Allowance_to_Grade = async (req, res, next) => {
     const gradeId = req.params.gradeId;
-    const data = { ...req.body, companyId:req.user.id };
-    const newDeduction = new Allowance(data
-        );
+    const data = { ...req.body, companyId: req.user.id };
+    const newAllowance = new Allowance(data
+    );
     console.log(gradeId);
-    console.log(newDeduction);
+    console.log(newAllowance);
     try {
-
-        
-        const savedDeduction = await newDeduction.save();
+        const savedAllowance = await newAllowance.save();
         try {
             await GradeDefinition.findByIdAndUpdate(
                 gradeId,
                 {
-                    $push: { allowance: savedDeduction._id },
+                    $push: { allowance: savedAllowance._id },
                 },
                 { new: true, useFindAndModify: false }
             );
+
+            await Employee.findOneAndUpdate(
+                {gradeId},
+                {
+                    $push: { allowance: savedAllowance._id },
+                },
+                { new: true, useFindAndModify: false }
+            );
+
+           
         } catch (err) {
             next(err);
         }
 
-        res.status(200).json(savedDeduction);
+        res.status(200).json(savedAllowance);
     } catch (err) {
         next(err);
     }
 };
+
+
+exports.updateGradeandAllowance=async(req,res,next)=>{
+
+    try {
+        const gradeId=req.params?.gradeId;
+        const allowanceId=req.params?.allowanceId;
+        console.log(req.body)
+        console.log(gradeId)
+        console.log(allowanceId)
+        const updatedAllowance = await GradeDefinition.findOneAndUpdate({
+            companyId: req.user.id,
+            _id: gradeId,
+            allowance:allowanceId
+        }, {
+            $set: req.body
+        }, { new: true });
+        res.status(200).json(updatedAllowance);
+
+    } catch (err) {
+        res.status(404).json(err)
+    }
+}

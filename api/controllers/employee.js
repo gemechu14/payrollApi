@@ -186,6 +186,7 @@ console.log((emp.length))
             //Salary Information
 
             basicSalary: basicSalary,
+            gradeId:gradeId,
             housingAllowance: housingAllowance,
             positionAllowance: positionAllowance,
             hardshipAllowance: hardshipAllowance,
@@ -243,12 +244,15 @@ exports.get_All_Employee = async (req, res, next) => {
         const employee = await Employee.find({ companyId: req.user.id })
             .populate("department")
             .populate("allowance")
-            .populate("payroll")
+            // .populate("payroll")
             .populate("deduction")
             .populate("gradeId");
+            
         res.status(200).json({
             count: employee.length,
-            employee,
+            employee:{
+                name:employee
+            },
         });
     } catch (err) {
         next(createError.createError(404, err));
@@ -264,7 +268,7 @@ exports.get_single_Employee = async (req, res) => {
         })
             .populate("department")
             .populate("allowance")
-            .populate("payroll")
+            // .populate("payroll")
             .populate("deduction");
         res.status(200).json({
             count: employee.length,
@@ -796,14 +800,44 @@ exports.sendEmail = async (req, res, next) => {
 }
 
 
+exports.grantPermission = async (req, res, next) => {
 
-exports.add = async (req, res, next) => {
     try {
 
+        const { key, value } = req.body;
+        const employee = await Employee.find({companyId:req.user.id, _id:req.params.id});
+        // Get the current value of the permission
+        const currentValue = employee[0].permissions[key][value];
 
+        // Use the $bit operator to toggle the value
+        const newValue = !currentValue;
+
+        console.log(newValue);
+
+////  $set: { [`permissions.${key}.${value}`]: true }
+            await Employee.findOneAndUpdate({ _id: req.params.id },   {         
+                $set: { [`permissions.${key}.${value}`]: newValue }
+            },            
+
+             { new: true },
+        );
+
+
+            // function (err, doc) {
+            //     if (err) {
+            //         console.log('Error updating user permissions:', err);
+            //         res.status(404).json("Error updating user permissions")
+            //     } else {
+            //         console.log('User permissions updated successfully:', doc);
+            //        res.status(200).json(doc);
+            //     }
+            // });
+                    res.status(200).json("Done ");
 
 
     } catch (err) {
+
+        res.status(404).json(err)
 
     }
 }
