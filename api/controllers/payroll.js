@@ -7,8 +7,8 @@ const year = require("../models/year.js");
 const month = require("../models/month.js");
 const moment = require('moment');
 const gradeDefinition = require('../models/gradeDefinition.js');
-const payroll = require("../models/payroll.js");
-const Pension = require('../models/Pension.js');
+// const payroll = require("../models/payroll.js");
+const Pension = require('../models/pension.js');
 const TaxSlab = require('../models/taxSlabs.js')
 
 exports.add_payroll = async (req, res, next) => {
@@ -833,7 +833,12 @@ exports.runPayrollForAllEmp = async (req, res, next) => {
                                 console.log(`Payroll saved for employee ${employee.fullname}:`, savedPayroll);
 
                             } catch (err) {
-                                res.status(404).json("error occurred")
+                                res.status(404).json("error occurred"
+                                
+                                
+                                
+                                
+                                )
                             }
 
 
@@ -893,9 +898,7 @@ exports.calculatePayrollForAllEmployee = async (req, res, next) => {
 
             //console.log(employee.basicSalary)
 
-
-
-            let totalDeduction = 0;
+                let totalDeduction = 0;
             // let totalAllowance= 0;
 
 
@@ -934,7 +937,7 @@ exports.calculatePayrollForAllEmployee = async (req, res, next) => {
             employee.deduction.forEach((deduction) => {
                 totalDeduction += deduction.amount;
             });
-            console.log(`Total  Allowance: ${totalDeduction}`);
+            console.log(`Total  Deduction: ${totalDeduction}`);
 
 
 

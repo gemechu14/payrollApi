@@ -220,6 +220,13 @@ phoneNumber: {
     }
   },
 
+
+  customRole:[
+     {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "customRole",
+  }],
+
   passwordChangedAt: Date,
   passwordResetToken: String,
   passwordResetExpires: Date,
@@ -228,6 +235,12 @@ phoneNumber: {
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Deduction",
+    },
+  ],
+  generaldeduction: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "GeneralDeduction",
     },
   ],
 

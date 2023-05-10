@@ -34,6 +34,8 @@ const scheduler = require("./api/utils/jobs.js");
 const gradeDefinition = require("./api/routes/gradeDefinition.js");
 const gradeAllowance = require("./api/routes/gradeAllowance.js");
 const pension = require("./api/routes/Pension.js");
+const roleRoute = require("./api/routes/customRole.js");
+
 //Security
 
 //DATA SANITIZATION AGAINST NO SQL QUERY ENJECTION
@@ -64,6 +66,7 @@ const userRoute = require("./api/routes/user.js");
 const employeeRoute = require("./api/routes/employee.js");
 const allowanceRoute = require("./api/routes/Allowance.js");
 const deductionRoute = require("./api/routes/deduction.js");
+const generalDeductionRoute = require("./api/routes/generalDeduction.js");
 const payrollMonthRoute = require("./api/routes/payrollMonth.js");
 const SubscriptionRoute = require("./api/routes/subscription.js");
 
@@ -73,8 +76,6 @@ const defineloanRoute = require("./api/routes/loanDefinition.js");
 const loanRoute = require("./api/routes/loan.js");
 const IDFormatRoute = require("./api/routes/id_format.js");
 const approvalMethodRoute = require("./api/routes/approvalMethodRoute.js");
-
-const newPayrollRoute = require("./api/routes/NewPayroll.js");
 
 const cors = require("cors");
 mongoose.Promise = global.Promise;
@@ -226,6 +227,7 @@ app.use("/user", userRoute);
 app.use("/employee", employeeRoute);
 app.use("/allowance", allowanceRoute);
 app.use("/deduction", deductionRoute);
+app.use("/generaldeduction", generalDeductionRoute);
 app.use("/payrollMonth", payrollMonthRoute);
 app.use("/package", PackageRoute);
 app.use("/trial", TrialRoute);
@@ -234,13 +236,12 @@ app.use("/gradeDefinition", gradeDefinition);
 app.use("/gradeAllowance", gradeAllowance);
 app.use("/idformat", IDFormatRoute);
 app.use("/api", approverRoute);
+
+app.use("/role", roleRoute);
 app.use("/api", approvalMethodRoute);
 app.use("/pension", pension);
 app.use("/defineloan", defineloanRoute);
 app.use("/loan", loanRoute);
-
-// my route
-app.use("/newPayroll", newPayrollRoute);
 
 app.use(bodyParser.json());
 app.use("/api", authenticationRoute);
