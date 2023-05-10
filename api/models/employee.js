@@ -220,6 +220,20 @@ phoneNumber: {
     }
   },
 
+
+
+
+  // customRole:{
+
+  //   "  ":permition{
+  // taxslab: {
+  //   view: { type: Boolean, default: false },
+  //   create: { type: Boolean, default: false },
+  //   approve: { type: Boolean, default: false },
+  // }
+  //   }
+  // },
+
   passwordChangedAt: Date,
   passwordResetToken: String,
   passwordResetExpires: Date,
