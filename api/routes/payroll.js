@@ -137,41 +137,41 @@ function checkPermissions(permission) {
 
 
 
-router.get('/run-payroll', 
+// router.get('/run-payroll', 
 
-middleware.protect,
-middleware.restrictTo('Companyadmin'),
+// middleware.protect,
+// middleware.restrictTo('Companyadmin'),
 
-   async (req, res) => {
-  // Set the response type to text/event-stream
+//    async (req, res) => {
+//   // Set the response type to text/event-stream
   
   
-  const worker = new Worker('./api/routes/worker.js')
+//   const worker = new Worker('./api/routes/worker.js')
 
-  res.set({
-    'Content-Type': 'text/event-stream',
-    'Cache-Control': 'no-cache',
-    'Connection': 'keep-alive'
-  });
+//   res.set({
+//     'Content-Type': 'text/event-stream',
+//     'Cache-Control': 'no-cache',
+//     'Connection': 'keep-alive'
+//   });
 
-  // Send a message to the worker thread
-  worker.postMessage({status: 'start', user:req.user.id});
-  console.log("user",req.user.id)
-  // Listen for messages from the worker thread
-  worker.on('message', (message) => {
-    if (message.type === 'progress') {
-      // Send progress updates to the frontend
-      res.write(`data: ${JSON.stringify({ type: 'progress', value: message.value })}\n\n`);
-    } else if (message.type === 'complete') {
-      // Send a complete message to the frontend
-      res.write(`data: ${JSON.stringify({ type: 'complete' })}\n\n`);
-      // Terminate the worker thread
-      worker.terminate();
-      // End the response
-      res.end();
-    }
-  });
-});
+//   // Send a message to the worker thread
+//   worker.postMessage({status: 'start', user:req.user.id});
+//   console.log("user",req.user.id)
+//   // Listen for messages from the worker thread
+//   worker.on('message', (message) => {
+//     if (message.type === 'progress') {
+//       // Send progress updates to the frontend
+//       res.write(`data: ${JSON.stringify({ type: 'progress', value: message.value })}\n\n`);
+//     } else if (message.type === 'complete') {
+//       // Send a complete message to the frontend
+//       res.write(`data: ${JSON.stringify({ type: 'complete' })}\n\n`);
+//       // Terminate the worker thread
+//       worker.terminate();
+//       // End the response
+//       res.end();
+//     }
+//   });
+// });
 
 
 

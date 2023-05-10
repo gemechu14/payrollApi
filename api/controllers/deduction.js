@@ -197,3 +197,42 @@ exports.addExistingDeduction = async (req, res, next) => {
     next(err);
   }
 };
+
+
+
+//ADD DEDUCTION TO ALL EMPLOYEE 
+
+exports.addExistingDeductionToAllEmployee = async (req, res, next) => {
+  try {
+    const deductionId = req.params.deductionId; 
+
+ 
+
+    if (!check[0].deduction.includes(mongoose.Types.ObjectId(deductionId))) {
+      const updated = await Employee.findByIdAndUpdate(
+        employeeId,
+        {
+          $push: { deduction: deductionId },
+        },
+        { new: true, useFindAndModify: false }
+      )
+        .populate("deduction")
+        .populate("allowance");
+
+      res.status(200).json(updated);
+    } else {
+      res.status(404).json("already added");
+    }
+  } catch (err) {
+    next(err);
+  }
+};
+
+
+
+
+//ADD DEDUCTION TO EMPLOYEE UNDER SPECIFIC DEPARTMENT
+
+
+
+//ADD DEDUCTION TO EMPLOYEE UNDER SPECIFFIC JOB GRADE
