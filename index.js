@@ -27,7 +27,6 @@ const multer = require("multer");
 const cron = require("node-cron");
 const User = require("./api/models/userModel.js");
 const moment = require("moment");
-
 const PackageRoute = require("./api/routes/Package.js");
 const TrialRoute = require("./api/routes/trial.js");
 const scheduler = require("./api/utils/jobs.js");
@@ -35,7 +34,7 @@ const gradeDefinition = require("./api/routes/gradeDefinition.js");
 const gradeAllowance = require("./api/routes/gradeAllowance.js");
 const pension = require("./api/routes/Pension.js");
 const roleRoute = require("./api/routes/customRole.js");
-
+const newPayrollRoute = require("./api/routes/NewPayroll.js");
 //Security
 
 //DATA SANITIZATION AGAINST NO SQL QUERY ENJECTION
@@ -222,6 +221,7 @@ app.use("/payroll", payrollRoute);
 app.use("/taxExamption", taxExamptionDateRoute);
 app.use("/providentFund", providentFundRoute);
 app.use("/taxSlab", taxSlabRoute);
+app.use("/newPayroll", newPayrollRoute);
 app.use("/auth", authRoute);
 app.use("/user", userRoute);
 app.use("/employee", employeeRoute);
