@@ -1,4 +1,4 @@
-const CustomRole = require("../models/customRole.JS");
+const CustomRole = require("../models/customRole.js");
 //const Deduction=require('../models/deduction.js');
 const Employee = require("../models/employee.js");
 const mongoose = require("mongoose");
@@ -10,16 +10,15 @@ exports.get_All_Role = async (req, res, next) => {
     const failed = true;
 
     try {
-        const CustomRole = await CustomRole.find({ companyId: req.user.id });
+        const customRole = await CustomRole.find({companyId:req.user.id});
         res.status(200).json({
-            count: CustomRole.length,
-            CustomRole,
+            count: customRole.length,
+            customRole,
         });
     } catch (err) {
         next(createError.createError(404, err));
     }
 };
-
 
 //GET one
 exports.get_one = async (req, res) => {
@@ -46,22 +45,23 @@ exports.updateDeduction = async (req, res) => {
 
 
 ///////////////
-exports.add_new_deduction = async (req, res) => {
+exports.add_new_Role = async (req, res) => {
     try {
-        const { name, amount, month, year, description } = req.body;
-        const newDeduction = await Deduction.create({
-            name: name,
-            amount: amount,
-            description: description,
+        const { name, permissions, employees } = req.body;
+
+        
+        const role1 = new CustomRole({
+            name,
+            permissions: permissions,
             companyId: req.user.id,
         });
 
-        //const savedPayroll = await newPayroll.save();
+        // Save the new role document to the database
+       const savedRole = await role1.save();
 
-        console.log(req.body);
-        res.status(200).json({
-            newDeduction,
-        });
+      res.status(200).json(savedRole)
+
+
     } catch (err) {
         res.status(404).json({
             error: err,
@@ -69,47 +69,24 @@ exports.add_new_deduction = async (req, res) => {
     }
 };
 
-//ADD
 
-exports.Add_Deduction = async (req, res, next) => {
-    const employeeId = req.params.employeeId;
-    const newDeduction = new Deduction(req.body);
-    console.log(employeeId);
-    try {
-        const savedDeduction = await newDeduction.save();
-        try {
-            await Employee.findByIdAndUpdate(
-                employeeId,
-                {
-                    $push: { deduction: savedDeduction._id },
-                },
-                { new: true, useFindAndModify: false }
-            );
-        } catch (err) {
-            next(err);
-        }
-
-        res.status(200).json(savedDeduction);
-    } catch (err) {
-        next(err);
-    }
-};
 
 //DELETE DEDUCTION
-
-exports.delete_Deduction = async (req, res) => {
-    const employeeId = req.params.employeeId;
+exports.delete_Role = async (req, res) => {
+    const roleId = req.params.roleId;
     try {
-        await Deduction.findByIdAndDelete(req.params.id);
-        try {
-            console.log(req.params.id);
-            await Employee.findByIdAndUpdate(employeeId, {
-                $pull: { deduction: req.params.id },
-            });
-        } catch (err) {
-            next(err);
+        const role=await CustomRole.find({companyId:req.user.id,_id:roleId});
+        console.log(role.length)
+
+        if(role.length!=0){
+            await CustomRole.findByIdAndDelete(req.params.roleId);
+
+            res.status(200).json("Role has been deleted.");
+
+        }else{
+            res.status(404).json('There is  no such Role ')
         }
-        res.status(200).json("Deductin has been deleted.");
+       
     } catch (err) {
         next(err);
     }
@@ -169,25 +146,25 @@ exports.delete_Allowances = async (req, res) => {
 
 //ADD EXISTING Deduction TO EMPLOY
 
-exports.addExistingDeduction = async (req, res, next) => {
+exports.addExistingRoleToEmployee = async (req, res, next) => {
     try {
-        const deductionId = req.params.deductionId;
+        const roleId = req.params.roleId;
         const employeeId = req.params.employeeId;
-
-        console.log(deductionId);
+        console.log(roleId);
 
         const check = await Employee.find({ _id: employeeId });
+        console.log(check[0])
 
-        if (!check[0].deduction.includes(mongoose.Types.ObjectId(deductionId))) {
+        if (!check[0]?.customRole.includes(mongoose.Types.ObjectId(roleId))) {
             const updated = await Employee.findByIdAndUpdate(
                 employeeId,
                 {
-                    $push: { deduction: deductionId },
+                    $push: { customRole: roleId },
                 },
                 { new: true, useFindAndModify: false }
             )
-                .populate("deduction")
-                .populate("allowance");
+                
+             
 
             res.status(200).json(updated);
         } else {

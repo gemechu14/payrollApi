@@ -17,7 +17,7 @@ router.post('/:employeeId',
 
 
 //UPDATE
-router.put('/:employeeId/:id',
+router.post('/:employeeId/:id',
 middleware.protect,
 middleware.restrictTo('Companyadmin'),
 
@@ -45,7 +45,7 @@ middleware.restrictTo('Companyadmin'),
 deductionController.get_All_Deduction);
 
 //ADD EXISTING ALLOWANCE TO EMPLOYEE
-router.post('/:employeeId/:deductionId',
+router.put('/:employeeId/:deductionId',
 middleware.protect,
 middleware.restrictTo('Companyadmin'),
 

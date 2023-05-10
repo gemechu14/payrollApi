@@ -2,9 +2,25 @@ const mongoose = require('mongoose');
 
 const customRoleSchema = mongoose.Schema({
     name: { type: String, required: true, },
-    permissionType: { type: String },
-    role: { type: String },
-    description: { type: String },
+
+    permissions: [{
+        module: {
+            type: String,
+        // default:"employee"
+        },
+        read: {   
+            type: Boolean,
+            default: false
+        },
+        write: {
+            type: Boolean,
+            default: false
+        },
+        approve: {
+            type: Boolean,
+            default: false
+        }}]
+    ,
     companyId: { type: String }
 });
 

@@ -937,7 +937,7 @@ exports.calculatePayrollForAllEmployee = async (req, res, next) => {
             employee.deduction.forEach((deduction) => {
                 totalDeduction += deduction.amount;
             });
-            console.log(`Total  Allowance: ${totalDeduction}`);
+            console.log(`Total  Deduction: ${totalDeduction}`);
 
 
 

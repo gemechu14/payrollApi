@@ -33,7 +33,8 @@ const TrialRoute=require('./api/routes/trial.js');
 const scheduler=require('./api/utils/jobs.js');
 const gradeDefinition=require('./api/routes/gradeDefinition.js');
 const gradeAllowance=require('./api/routes/gradeAllowance.js');
-const pension=require('./api/routes/Pension.js')
+const pension=require('./api/routes/Pension.js');
+const roleRoute=require('./api/routes/customRole.js')
 //Security
 
 //DATA SANITIZATION AGAINST NO SQL QUERY ENJECTION
@@ -259,6 +260,8 @@ app.use('/gradeDefinition',gradeDefinition);
 app.use('/gradeAllowance', gradeAllowance);
 app.use('/idformat', IDFormatRoute);
 app.use('/api', approverRoute);
+
+app.use('/role', roleRoute)
 app.use('/api', approvalMethodRoute);
 app.use('/pension',pension);
 app.use('/defineloan',defineloanRoute)

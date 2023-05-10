@@ -221,18 +221,11 @@ phoneNumber: {
   },
 
 
-
-
-  // customRole:{
-
-  //   "  ":permition{
-  // taxslab: {
-  //   view: { type: Boolean, default: false },
-  //   create: { type: Boolean, default: false },
-  //   approve: { type: Boolean, default: false },
-  // }
-  //   }
-  // },
+  customRole:[
+     {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "customRole",
+  }],
 
   passwordChangedAt: Date,
   passwordResetToken: String,
