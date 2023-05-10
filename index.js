@@ -65,6 +65,7 @@ const userRoute = require('./api/routes/user.js');
 const employeeRoute = require('./api/routes/employee.js');
 const allowanceRoute = require('./api/routes/Allowance.js');
 const deductionRoute = require('./api/routes/deduction.js');
+const generalDeductionRoute = require('./api/routes/generalDeduction.js');
 const payrollMonthRoute = require('./api/routes/payrollMonth.js');
 const SubscriptionRoute=require('./api/routes/subscription.js');
 
@@ -249,6 +250,7 @@ app.use('/user', userRoute);
 app.use('/employee', employeeRoute);
 app.use('/allowance', allowanceRoute)
 app.use('/deduction', deductionRoute);
+app.use('/generaldeduction', generalDeductionRoute);
 app.use('/payrollMonth', payrollMonthRoute);
 app.use('/package',PackageRoute);
 app.use('/trial',TrialRoute);

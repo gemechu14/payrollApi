@@ -1,4 +1,4 @@
-const Deduction = require("../models/deduction.js");
+const GeneralDeduction = require("../models/generalDeductin.js");
 //const Deduction=require('../models/deduction.js');
 const Employee = require("../models/employee.js");
 const mongoose = require("mongoose");
@@ -10,7 +10,7 @@ exports.get_All_Deduction = async (req, res, next) => {
   const failed = true;
 
   try {
-    const deduction = await Deduction.find({ companyId: req.user.id });
+      const deduction = await GeneralDeduction.find({ companyId: req.user.id });
     res.status(200).json({
       count: deduction.length,
       deduction,
@@ -24,7 +24,7 @@ exports.get_All_Deduction = async (req, res, next) => {
 //GET one
 exports.get_single_Deduction = async (req, res) => {
   try {
-    const deduction = await Deduction.findById(req.params.id);
+      const deduction = await GeneralDeduction.findById(req.params.id);
 
 
     res.status(200).json(deduction);
@@ -35,7 +35,7 @@ exports.get_single_Deduction = async (req, res) => {
 //UPDATE
 exports.updateDeduction = async (req, res) => {
   try {
-    const updatedDeduction = await Deduction.findByIdAndUpdate(
+      const updatedDeduction = await GeneralDeduction.findByIdAndUpdate(
       req.params.id,
       { $set: req.body },
       { new: true }
@@ -49,7 +49,7 @@ exports.updateDeduction = async (req, res) => {
 exports.add_new_deduction = async (req, res) => {
   try {
     const { name, amount, month, year, description } = req.body;
-    const newDeduction = await Deduction.create({
+      const newDeduction = await GeneralDeduction.create({
       name: name,
       amount: amount,
       description: description,
@@ -73,7 +73,7 @@ exports.add_new_deduction = async (req, res) => {
 
 exports.Add_Deduction = async (req, res, next) => {
   const employeeId = req.params.employeeId;
-  const newDeduction = new Deduction(req.body);
+    const newDeduction = new GeneralDeduction(req.body);
   console.log(employeeId);
   try {
     const savedDeduction = await newDeduction.save();
@@ -100,8 +100,9 @@ exports.Add_Deduction = async (req, res, next) => {
 exports.delete_Deduction = async (req, res) => {
   const employeeId = req.params.employeeId;
   try {
-    await Deduction.findByIdAndDelete(req.params.id);
-    res.status(200).json("Deduction has been deleted.");
+      await GeneralDeduction.findByIdAndDelete(req.params.id);
+
+    res.status(200).json("Deductin has been deleted.");
   } catch (err) {
     next(err);
   }
@@ -109,7 +110,7 @@ exports.delete_Deduction = async (req, res) => {
 
 exports.Update_DE = async (req, res, next) => {
   const employeeId = req.params.employeeId;
-  const newDeduction = new Deduction(req.body);
+    const newDeduction = new GeneralDeduction(req.body);
   try {
     const savedDeduction = await newDeduction.save();
     try {
@@ -135,7 +136,7 @@ exports.delete_Allowances = async (req, res) => {
   const employeeId = req.params.employeeId;
   try {
 
-    const deduction = await Deduction.find({ companyId: req.user.id, _id: req.params.id })
+      const deduction = await GeneralDeduction.find({ companyId: req.user.id, _id: req.params.id })
 
     if (deduction.length != 0) {
 
@@ -200,7 +201,7 @@ exports.addExistingDeductionToAllEmployee = async (req, res, next) => {
   const employeeData=  await Employee.updateMany(
       { companyId: req.user.id },
     {
-      $set: { deduction: deductionId },
+        $set: { generaldeduction: deductionId },
      }, 
     { new: true }   
       );
@@ -221,15 +222,14 @@ res.status(500).json("Sothing gonna wrong")
 
 
 //ADD DEDUCTION TO EMPLOYEE UNDER SPECIFIC DEPARTMENT
-
-exports.addExistingDeductionToAllEmployee = async (req, res, next) => {
+exports.addExistingDeductionToAllEmployeeUnderSpecificDepartment = async (req, res, next) => {
   try {
     const departmentId = req.params.departmentId;
     const deductionId=req.params.deductionId;
     const employeeData = await Employee.updateMany(
       { department: departmentId },
       {
-        $set: { deduction: deductionId },
+          $set: { generaldeduction: deductionId },
       },
       { new: true }
     );
@@ -242,7 +242,7 @@ exports.addExistingDeductionToAllEmployee = async (req, res, next) => {
 
 
   } catch (err) {
-    res.status(500).json("Sothing gonna wrong")
+    res.status(500).json("Something gonna wrong")
   }
 };
 
@@ -250,3 +250,26 @@ exports.addExistingDeductionToAllEmployee = async (req, res, next) => {
 
 
 //ADD DEDUCTION TO EMPLOYEE UNDER SPECIFFIC JOB GRADE
+exports.addExistingDeductionToAllEmployeeUnderTheSameJob = async (req, res, next) => {
+    try {
+        const gradeId = req.params.gradeId;
+        const deductionId = req.params.deductionId;
+        const employeeData = await Employee.updateMany(
+            { gradeId: gradeId },
+            {
+                $set: { deduction: deductionId },
+            },
+            { new: true }
+        );
+        console.log(`${employeeData.modifiedCount} documents updated`);
+
+        if (employeeData.modifiedCount == 0) {
+            res.status(200).json('Deduction is already added')
+        } else
+            res.status(200).json("Added Successfully");
+
+
+    } catch (err) {
+        res.status(500).json("Something gonna wrong")
+    }
+};

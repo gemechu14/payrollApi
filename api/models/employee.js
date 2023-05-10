@@ -244,6 +244,12 @@ phoneNumber: {
       ref: "Deduction",
     },
   ],
+  generaldeduction: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "GeneralDeduction",
+    },
+  ],
 
 });
 

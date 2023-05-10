@@ -7,7 +7,7 @@ const year = require("../models/year.js");
 const month = require("../models/month.js");
 const moment = require('moment');
 const gradeDefinition = require('../models/gradeDefinition.js');
-const payroll = require("../models/payroll.js");
+// const payroll = require("../models/payroll.js");
 const Pension = require('../models/Pension.js');
 const TaxSlab = require('../models/taxSlabs.js')
 
