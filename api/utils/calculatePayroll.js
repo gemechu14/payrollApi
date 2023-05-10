@@ -145,6 +145,8 @@ exports.fetchData = async (message) => {
 
     const newPayroll = new Payroll({ ...payrollData, companyId: message.user });
 
+    await mongoose.disconnect();
+
     return payrollData;
 
     // console.log("newPayroll", newPayroll);
