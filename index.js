@@ -221,7 +221,7 @@ app.use("/payroll", payrollRoute);
 app.use("/taxExamption", taxExamptionDateRoute);
 app.use("/providentFund", providentFundRoute);
 app.use("/taxSlab", taxSlabRoute);
-app.use("/newPayroll", newPayrollRoute);
+app.use("/runPayroll", newPayrollRoute);
 app.use("/auth", authRoute);
 app.use("/user", userRoute);
 app.use("/employee", employeeRoute);

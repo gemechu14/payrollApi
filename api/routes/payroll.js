@@ -108,6 +108,13 @@ router.get('/payrollCalculation1',
   middleware.restrictToAll('Companyadmin'),
   payrollController.calculatePayrollForAllEmployee);
 
+  //PAYROLL CALCULATION FOR ONE EMPLOYEE
+router.get('/employee/payslip',
+  middleware.protectAll,
+  middleware.restrictToAll('Companyadmin'),
+  payrollController.generatePayslipForEmployee);
+
+
 
 //GET PAYROLL FOR SPECIC MONTH
 

@@ -834,10 +834,10 @@ exports.runPayrollForAllEmp = async (req, res, next) => {
 
                             } catch (err) {
                                 res.status(404).json("error occurred"
-                                
-                                
-                                
-                                
+
+
+
+
                                 )
                             }
 
@@ -871,10 +871,10 @@ exports.calculatePayrollForAllEmployee = async (req, res, next) => {
         //GET PENSION
         const pension = await Pension.find();
 
-        console.log("pension",pension)
+        console.log("pension", pension)
         employee_pension = pension[0]?.employeeContribution ? (pension[0]?.employeeContribution) : 1;
         employer_pension = pension[0]?.employerContribution ? (pension[0]?.employerContribution) : 1;
-// console.log("first",employee_pension)
+        // console.log("first",employee_pension)
         //GET TAX RULE
         const taxslab = await TaxSlab.find({ companyId: req.user.id });
 
@@ -900,7 +900,7 @@ exports.calculatePayrollForAllEmployee = async (req, res, next) => {
 
             //console.log(employee.basicSalary)
 
-                let totalDeduction = 0;
+            let totalDeduction = 0;
             // let totalAllowance= 0;
 
 
@@ -966,15 +966,15 @@ exports.calculatePayrollForAllEmployee = async (req, res, next) => {
 
             const payrollData = {
 
-                payrollName: moment().format('MMMM') +" Payroll",              
+                payrollName: moment().format('MMMM') + " Payroll",
                 month: moment().format('MMMM'),
                 year: moment().format('YYYY'),
                 // employeeId: employee._id,
                 // taxable_income_limit: "600",
                 // exampt_age_limit: "65",
                 // exampt_percentage: "0",
-                overtime:employee.overtime,
-                acting:employee.acting,
+                overtime: employee.overtime,
+                acting: employee.acting,
                 grossSalary: (employee.Acting + employee.overtimeEarning + totalAllowance + Number(employee.basicSalary) + employee.basicSalary * (employer_pension * 1 / 100)).toFixed(2),
                 taxableIncome: totalTaxable.toFixed(2),
                 incomeTax: totalTaxableIncome.toFixed(2),
@@ -986,32 +986,32 @@ exports.calculatePayrollForAllEmployee = async (req, res, next) => {
 
             }
             Data.push(payrollData)
-           
-    //  await Employee.findByIdAndUpdate(employee._id,{
 
-    //  })
-            const newPayroll = new Payroll({ ...payrollData, });
+            //  await Employee.findByIdAndUpdate(employee._id,{
+
+            //  })
+            const newPayroll = new Payroll({ ...payrollData, companyId: req.user.id });
             try {
-             //GET ALL PAYROLL 
+                //GET ALL PAYROLL 
                 const getPayroll = await Payroll.find({ month: moment().format('MMMM'), year: moment().format('YYYY') });
-              console.log("length",getPayroll.length)
-              
+                console.log("length", getPayroll.length)
+
                 if (getPayroll.length == 0) {
-              //   const newpay = await newPayroll.save();
-                numProcessed++;
-               // console.log(newpay)
-                console.log(`Payroll processed for employee ${employee.fullname}.  `, payrollData);
-                 // Notify any progress callbacks that new progress information is available
-                // for (const callback of progressCallbacks) {
-                //     callback(getProgress());
-                // }
+                    //   const newpay = await newPayroll.save();
+                    numProcessed++;
+                    // console.log(newpay)
+                    console.log(`Payroll processed for employee ${employee.fullname}.  `, payrollData);
+                    // Notify any progress callbacks that new progress information is available
+                    // for (const callback of progressCallbacks) {
+                    //     callback(getProgress());
+                    // }
                 }
-                else{
+                else {
                     res.status(404).json('Payroll is defined for this month ');
                 }
-                      
-       
-               
+
+
+
             } catch (error) {
                 numErrors++;
                 console.error(`Error processing payroll for employee ${employee.fullname}:`, error);
@@ -1045,10 +1045,10 @@ exports.calculatePayrollForAllEmployee = async (req, res, next) => {
 //   }
 
 
-exports.getPayrollForSpecificMonth= async(req,res,next)=>{
-let payrollData='';
+exports.getPayrollForSpecificMonth = async (req, res, next) => {
+    let payrollData = '';
     try {
-        const payroll =await Payroll.find({month:"May"}).populate('employeeId');
+        const payroll = await Payroll.find({ month: "May" }).populate('employeeId');
         res.status(200).json({
             payroll
         })
@@ -1076,9 +1076,60 @@ async function fetchData() {
 
 exports.checkPay = async (req, res,) => {
     try {
-        const a=await fetchData();
+        const a = await fetchData();
         res.status(200).json(a)
     } catch (error) {
 
     }
 }
+
+
+exports.generatePayslipForEmployee = async (req, res, next) => {
+
+    try {
+
+        const { employeeId, month } = req.body;
+        const payroll = await Payroll.find({
+            employeeId,
+            month
+        }).populate('employeeId');
+
+        console.log(payroll)
+        // if (!payroll) {
+        //     throw new Error('Payroll not found');
+        // }
+        // // 
+        const employee = payroll[0].employeeId;
+        const netSalary = payroll.netSalary;
+
+        const payslip = {
+            fullname: employee.fullname,
+            basicSalary: employee.basicSalary,
+            email: employee.email,
+            taxableIncome: payroll[0].taxableIncome,
+            totalDeduction: payroll[0].totalDeduction,
+            totalAllowance: payroll[0].totalAllowance,
+            acting: payroll[0].acting,
+            overtime: payroll[0].overtime,
+            incomeTax: payroll[0].incomeTax,
+            employer_pension_amount: payroll[0].employer_pension_amount,
+            employee_pension_amount: payroll[0].employeeContribution,
+            grossSalary: payroll[0].grossSalary,
+            NetSalary: payroll[0].NetSalary
+
+
+
+
+        };
+        res.status(200).json(payslip)
+        // return payslip;        
+
+        console.log(month)
+    } catch (err) {
+        res.status(500).json(err)
+
+    }
+
+};
+
+

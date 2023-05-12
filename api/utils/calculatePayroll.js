@@ -99,7 +99,7 @@ exports.fetchData = async (message) => {
         income_tax_payable = taxslabs.income_tax_payable;
         totalTaxableIncome =
           totalTaxable *
-            (income_tax_payable == 0 ? 1 : income_tax_payable / 100) -
+          (income_tax_payable == 0 ? 1 : income_tax_payable / 100) -
           deductible_Fee;
         //  console.log(tax)
       } else {
@@ -114,10 +114,12 @@ exports.fetchData = async (message) => {
       totalDeduction +
       employee.basicSalary * ((employee_pension * 1) / 100);
 
-    const payrollData = {
+    let payrollData = {
+      employeeId: employee.id,
       payrollName: moment().format("MMMM") + " Payroll",
       month: moment().format("MMMM"),
       year: moment().format("YYYY"),
+      
       overtime: employee.overtime,
       acting: employee.acting,
       grossSalary: (
@@ -144,8 +146,11 @@ exports.fetchData = async (message) => {
       ),
     };
     // Data.push(payrollData);
+    
 
     const newPayroll = new Payroll({ ...payrollData, companyId: message.user });
+     await newPayroll.save();
+    payrollData.fullname = employee.fullname
 
     await mongoose.disconnect();
 

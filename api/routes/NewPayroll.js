@@ -68,8 +68,8 @@ router.get("/", async (req, res) => {
 // );
 
 router.post("/",
-  middleware.protect,
-  middleware.restrictTo("Companyadmin"),
+  middleware.protectAll,
+  middleware.restrictToAll('Companyadmin'),
   async (req, res) => {
     res.set({
       "Content-Type": "text/event-stream",
@@ -79,7 +79,7 @@ router.post("/",
     const getPayroll = await Payroll.find({ month: moment().format('MMMM'), companyId: req.user.id, year: moment().format('YYYY') });
     console.log("length", getPayroll.length)
 
-    if (getPayroll.length != 0) {
+    if (getPayroll.length == 0) {
       res.status(409);
       res.write(
         `data: ${JSON.stringify({
