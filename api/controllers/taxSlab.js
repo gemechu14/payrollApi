@@ -5,7 +5,7 @@ const createError = require("../utils/error.js");
 //GET ALL
 exports.get_All_TaxSlab = async (req, res, next) => {
   try {
-    const taxSlab = await TaxSlab.find({ companyId: req.user.id });
+    const taxSlab = await TaxSlab.find();
     res.status(200).json({
       count: taxSlab.length,
       taxSlab,
@@ -25,24 +25,6 @@ exports.get_single_TaxSlab = async (req, res) => {
 };
 //UPDATE
 
-//DELETE
-exports.delete_TaxSlab = async (req, res, next) => {
-  const payrollId = req.params.payrollId;
-  try {
-    await TaxSlab.findByIdAndDelete(req.params.id);
-    try {
-      console.log(req.params.id);
-      await Payroll.findByIdAndUpdate(payrollId, {
-        $pull: { taxSlab: req.params.id },
-      });
-    } catch (err) {
-      next(err);
-    }
-    res.status(200).json("Taxslab has been deleted.");
-  } catch (err) {
-    next(err);
-  }
-};
 
 // ADD TAXSLAB
 
@@ -55,15 +37,15 @@ exports.add_taxslab = async (req, res) => {
     // const savedTaxSlab = await newTaxSlab.save();
     // console.log(req.body);
 
-    const taxslabs = await TaxSlab.find({
-      $and: [
-        { companyId: req.user.id },
-        { to_Salary: to_Salary },
-        { from_Salary: from_Salary },
-      ],
-    });
-    console.log(taxslabs.length);
-    console.log(!taxslabs);
+    // const taxslabs = await TaxSlab.find({
+    //   $and: [
+    //     { companyId: req.user.id },
+    //     { to_Salary: to_Salary },
+    //     { from_Salary: from_Salary },
+    //   ],
+    // });
+    // console.log(taxslabs.length);
+    // console.log(!taxslabs);
     if (!taxslabs || taxslabs.length == 0) {
       try {
         const savedTaxSlab = await TaxSlab.create({
@@ -106,13 +88,14 @@ exports.add_only_taxslab = async (req, res) => {
       to_Salary: to_Salary,
       income_tax_payable: income_tax_payable,
       deductible_Fee: deductible_Fee,
-      companyId: req.user.id,
+     
     });
 
     //const savedPayroll = await newPayroll.save();
 
     console.log(req.body);
     res.status(200).json({
+      message:"Registered successfully",
       newTaxable,
     });
   } catch (err) {
@@ -158,7 +141,8 @@ exports.generalTaxslab = async (req, res, next) => {
         { from_Salary: from_Salary },
       ],
     });
-    if (!taxslabs || taxslabs.length == 0) {
+    if (!taxslabs || taxslabs.length == 0) 
+    {
 
       const savedTaxSlab = await TaxSlab.create({
         deductible_Fee: deductible_Fee,
@@ -171,9 +155,13 @@ exports.generalTaxslab = async (req, res, next) => {
 
       res.status(200).json({ savedTaxSlab });
 
+    } else {
+      res.status(409).json("already registed");
     }
 
-  } catch (err) {
+  } 
+  
+  catch (err) {
     res.status(404).json(err);
 
   }
@@ -195,3 +183,19 @@ res.status(404).json((err))
 }
 
 }
+
+
+
+//UPDATE
+
+//UPDATE
+exports.updateTaxslab = async (req, res) => {
+  try {
+    const updatedTax = await TaxSlab.findByIdAndUpdate(
+      req.params.id,
+      { $set: req.body },
+      { new: true }
+    );
+    res.status(200).json(updatedTax);
+  } catch (error) { }
+};

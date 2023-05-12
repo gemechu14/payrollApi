@@ -7,7 +7,6 @@ router.post(
   "/",
   middleware.protect,
   middleware.restrictTo({ deduction: "write" }),
-
   deductionController.add_new_deduction
 );
 
@@ -30,7 +29,7 @@ router.post(
   router.delete(
     "/:id",
     middleware.protect,
-    middleware.restrictTo("Companyadmin"),
+    middleware.restrictTo({ deduction: "write" }),
     deductionController.delete_Allowances
   );
 
@@ -45,7 +44,6 @@ router.get(
 //GET ALL
 router.get(
   "/",
-
   middleware.protect,
   middleware.restrictTo({ deduction: "read" }),
   deductionController.get_All_Deduction
@@ -55,8 +53,7 @@ router.get(
 router.put(
   "/:employeeId/:deductionId",
   middleware.protect,
-  middleware.restrictTo("Companyadmin"),
-
+  middleware.restrictTo({ deduction: "write" }),
   deductionController.addExistingDeduction
 );
 
@@ -72,7 +69,7 @@ router.put(
 router.put(
   "/addToDepartment/:departmentId/:deductionId",
   middleware.protect,
-  middleware.restrictTo("Companyadmin"),
+  middleware.restrictTo({ deduction: "write" }),
   deductionController.addExistingDeductionToAllEmployee
 );
 module.exports = router;

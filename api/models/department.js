@@ -19,7 +19,9 @@ const departmentSchema = mongoose.Schema({
     required:true
   },
 
- 
+  companyId: {
+    type: String,
+  },
 });
 
 module.exports = mongoose.model('Department', departmentSchema);

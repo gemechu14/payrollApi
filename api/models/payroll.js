@@ -37,6 +37,8 @@ const payrollmodel = mongoose.Schema({
     enum:['Percentage','Amount']
     
   },
+overtime:{type:Number,default:0},
+acting: { type: Number, default: 0 },
 grossSalary:{type:Number,default:0},
 taxableIncome: { type: Number, default: 0 },
 incomeTax: { type: Number, default: 0 },

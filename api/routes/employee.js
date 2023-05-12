@@ -62,7 +62,7 @@ const upload = multer({
 router.post(
     "/",
     middleware.protect,
-    middleware.restrictTo("Companyadmin"),
+    middleware.restrictTo({ employee: "write" }),
     upload.single("images"),
     employeeController.add_employee
 );
@@ -71,15 +71,15 @@ router.post(
 //UPDATE
 router.put(
         "/:employeeId",
-        middleware.protect,
-        middleware.restrictTo("Companyadmin"),
+    middleware.protect,
+    middleware.restrictTo({ employee: "write" }),
         employeeController.updateEmployee
     ),
     //DELETE
     router.delete(
         "/:key",
-        middleware.protect,
-        middleware.restrictTo("Companyadmin"),
+        middleware.protectAll,
+        middleware.restrictToAll('Companyadmin'),
         employeeController.delete_Employee
     );
 
@@ -93,15 +93,15 @@ router.get(
 //GET ALL
 router.get(
     "/",
-    middleware.protectUser,
-    middleware.checkPermissions({ name: 'employee', value: 'view' }),
+    middleware.protect,
+    middleware.restrictTo({ employee: "read" }),
     employeeController.get_All_Employee
 );
 
 router.get(
     "/find",
-    middleware.protectUser,
-    middleware.checkPermissions({ name: 'employee', value: 'view' }),
+    middleware.protect,
+    middleware.restrictTo({ employee: "read" }),
     employeeController.getbydept
 );
 
@@ -111,137 +111,23 @@ router.get(
 router.put(
     "/permission/:id",
     middleware.protect,
-    middleware.restrictTo("Companyadmin"),
+    middleware.restrictTo({ employee: "update" }),
     employeeController.grantPermission
 );
 //SEARCH EMPLOYEE
 router.get(
     "/:id",
-    middleware.protectUser,
-    middleware.checkPermissions({ name: 'employee', value: 'view' }),
+    middleware.protect,
+    middleware.restrictTo({ employee: "read" }),
     employeeController.searchAllEmployee
 );
 
-/////
-router.post(
-    "/gammee",
-    middleware.protect,
-    middleware.restrictTo("Companyadmin"),
-    upload.single("file"),
-    async(req, res, next) => {
-        try {
-            let newPath = null;
-            if (req.file) {
-                console.log("images");
-                const { originalname, path } = req.file;
-                const parts = originalname.split(".");
-                const ext = parts[parts.length - 1];
-                newPath = path + "." + ext;
-                fs.renameSync(path, newPath);
-            }
 
-            const {
-                fullname,
-                nationality,
-                sex,
-                id_number,
-                email,
-
-                date_of_birth,
-                images,
-                phoneNumber,
-                optionalNumber,
-                emergency_contact,
-                hireDate,
-                joiningDate,
-                employeeCode,
-                employeeType,
-                accountTitle,
-                accountNumber,
-                paymentMethod,
-                department,
-
-                separationDate,
-                basicSalary,
-                housingAllowance,
-                positionAllowance,
-                hardshipAllowance,
-                desertAllowance,
-                transportAllowance,
-                cashIndeminityAllowance,
-                fieldAllowance,
-                overtimeEarning,
-                otherEarning,
-                lateSittingOverTime,
-                arrears,
-                dayDeduction,
-                socialSecurity,
-                providentFund,
-                EOTBDeduction,
-                TaxDeduction,
-                netSalary,
-            } = req.body;
-
-            const newEmployee = await Employee.create({
-                fullname: fullname,
-                nationality: nationality,
-                sex: sex,
-                id_number: id_number,
-                email: email,
-                department: department,
-
-                phoneNumber: phoneNumber, //
-                date_of_birth: date_of_birth,
-                optionalNumber: optionalNumber,
-                emergency_contact: emergency_contact,
-
-                hireDate: hireDate,
-                joiningDate: joiningDate,
-                employeeCode: employeeCode,
-                employeeType: employeeType,
-                accountTitle: accountTitle,
-                accountNumber: accountNumber,
-                paymentMethod: paymentMethod,
-                separationDate: separationDate,
-
-                //Salary Information
-                basicSalary: basicSalary,
-                housingAllowance: housingAllowance,
-                positionAllowance: positionAllowance,
-                hardshipAllowance: hardshipAllowance,
-                desertAllowance: desertAllowance,
-                transportAllowance: transportAllowance,
-                cashIndeminityAllowance: cashIndeminityAllowance,
-                fieldAllowance: fieldAllowance,
-                overtimeEarning: overtimeEarning,
-                otherEarning: otherEarning,
-                lateSittingOverTime: lateSittingOverTime,
-                arrears: arrears,
-                dayDeduction: dayDeduction,
-                socialSecurity: socialSecurity,
-                providentFund: providentFund,
-                EOTBDeduction: EOTBDeduction,
-                TaxDeduction: TaxDeduction,
-                netSalary: netSalary,
-                companyId: req.user.id,
-                images: newPath ? newPath : null,
-            });
-
-            res.status(200).json({
-
-                employee: newEmployee,
-            });
-        } catch (err) {
-            next(err);
-
-        }
-    }
-);
 
 router.post(
     "/setApprover",
-    middleware.protect,
-    middleware.restrictTo("Companyadmin"),
+    middleware.protectAll,
+    middleware.restrictToAll('Companyadmin'),
     employeeController.setApprovers
 );
 
@@ -254,15 +140,15 @@ router.get(
 
 router.get(
     "/dept/:departmentId",
-    middleware.protectUser,
-    middleware.checkPermissions({ name: 'employee', value: 'view' }),
+    middleware.protect,
+    middleware.restrictTo({ employee: "read" }),
     employeeController.get_By_Department
 );
 
 router.get(
     "/pending/:departmentId",
-    middleware.protectUser,
-    middleware.checkPermissions({ name: 'payroll', value: 'view' }),
+    middleware.protect,
+    middleware.restrictTo({ employee: "read" }),
     employeeController.get_Pending_Payroll
 );
 

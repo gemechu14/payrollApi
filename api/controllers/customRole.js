@@ -46,16 +46,24 @@ exports.add_new_Role = async (req, res) => {
   try {
     const { name, permissions, employees } = req.body;
 
-    const role1 = new CustomRole({
-      name,
-      permissions: permissions,
-      companyId: req.user.id,
-    });
+    const checkName=await CustomRole.find({companyId: req.user.id, name:name});
+    if (checkName.length==0){
+      const role1 = new CustomRole({
+        name,
+        permissions: permissions,
+        companyId: req.user.id,
+      });
 
-    // Save the new role document to the database
-    const savedRole = await role1.save();
+      // Save the new role document to the database
+      const savedRole = await role1.save();
 
-    res.status(200).json(savedRole);
+      res.status(200).json(savedRole);
+
+    }else{
+      res.status(409).json('Name already exist')
+    }
+
+   
   } catch (err) {
     res.status(404).json({
       error: err,

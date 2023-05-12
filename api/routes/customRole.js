@@ -5,30 +5,30 @@ const middleware = require("../middleware/auth.js");
 //CREATE
 router.get(
   "/",
-  middleware.protect,
-  middleware.restrictTo("Companyadmin"),
+  middleware.protectAll,
+  middleware.restrictToAll('Companyadmin'),
   roleController.get_All_Role
 );
 
 router.post(
   "/",
-  middleware.protect,
-  middleware.restrictTo("Companyadmin"),
+  middleware.protectAll,
+  middleware.restrictToAll('Companyadmin'),
   roleController.add_new_Role
 );
 
 router.delete(
   "/:roleId",
-  middleware.protect,
-  middleware.restrictTo("Companyadmin"),
+  middleware.protectAll,
+  middleware.restrictToAll('Companyadmin'),
   roleController.delete_Role
 );
 
 //UPDATE
 router.put(
   "/:employeeId/:roleId",
-  middleware.protect,
-  middleware.restrictTo("Companyadmin"),
+  middleware.protectAll,
+  middleware.restrictToAll('Companyadmin'),
   roleController.addExistingRoleToEmployee
 ),
   //     //DELETE

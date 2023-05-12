@@ -11,7 +11,13 @@ exports.get_All_Deduction = async (req, res, next) => {
   try {
     if (req.user.role === "Companyadmin") {
       deduction = await Deduction.find({ companyId: req.user.id });
-    } else {
+    } 
+    else if(req.user.role=== 'superAdmin'){
+
+      deduction = await Deduction.find();
+
+    }
+    else {
       deduction = await Deduction.find({ companyId: req.user.companyId });
     }
     res.status(200).json({

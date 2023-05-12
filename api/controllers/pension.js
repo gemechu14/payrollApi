@@ -8,32 +8,42 @@ const Pension=require('../models/pension.js')
 exports.add_Pension = async (req, res) => {
     try {
         const {
-       employeeContribution,
+         employeeContribution,
          employerContribution
         } = req.body;
-        const newPension = await Pension.create({
-            employeeContribution:employeeContribution,
-            employerContribution:employerContribution,         
-            companyId: req.user.id
-        });
+        const checkPension=await Pension.find();
+        if(checkPension.length==0){
 
+
+            const newPension = await Pension.create({
+                employeeContribution: employeeContribution,
+                employerContribution: employerContribution,
+
+            });
+
+            res.status(200).json({
+                message: 'Registered successfully',
+                newPension
+            });
+        }
+        else{
+            res.status(409).json({
+                message:"You cant add new pension instead use update option"
+            })
+        }
       
-        res.status(200).json({ newPension });
 
     } catch (err) {
-        res.status(404).json({ error: err });
+        res.status(500).json("Something gonna wrong");
     }
 };
 
 
-
 // GET ALL
 exports.get_All_pension = async (req, res, next) => {
-    const failed = true;
-
-
+   
     try {
-        const pension = await Pension.find({ companyId: req.user.id });
+        const pension = await Pension.find();
         res.status(200).json({ count: pension.length, pension });
     } catch (err) {
         next(err);
@@ -49,16 +59,20 @@ exports.get_single_Allowance = async (req, res) => {
     }
 };
 // UPDATE
-
-exports.updateAllowance = async (req, res) => {
+exports.updatePension1 = async (req, res) => {
     try {
-        const updatedAllowance = await Allowance.findByIdAndUpdate({
-            companyId: req.user.id,
+        const updatedPension = await Pension.findByIdAndUpdate({
+           
             _id: req.params.id
         }, {
             $set: req.body
         }, { new: true });
-        res.status(200).json(updatedAllowance);
+        res.status(200).json({
+            message:"updated successfully",
+            updatedPension
+}
+            
+            );
     } catch (error) {
         res.status(404).json(error)
 
@@ -66,131 +80,27 @@ exports.updateAllowance = async (req, res) => {
 };
 
 
-exports.Create_Allowances = async (req, res, next) => {
-
-    const employeeId = req.params.employeeId;
-    const newAllowance = new Allowance(req.body);
-    try {
-        const savedAllowance = await newAllowance.save();
-        try {
-
-            await Employee.findByIdAndUpdate(employeeId, {
-                $push: {
-                    allowance: savedAllowance._id
-                }
-
-            }, {
-                new: true,
-                useFindAndModify: false
-            });
-        } catch (err) {
-            next(err);
-        }
-
-        res.status(200).json(savedAllowance);
-    } catch (err) {
-        next(err);
-    }
-};
 
 
-// /UPDATE
-exports.Update_Allowances = async (req, res, next) => {
-
-    const employeeId = req.params.employeeId;
-    const newAllowance = new Allowance(req.body);
-    try {
-        const savedAllowance = await newAllowance.save();
-        try {
-
-            await Employee.findByIdAndUpdate(employeeId, {
-                $push: {
-                    allowance: req.body.id
-                }
-
-            }, {
-                new: true,
-                useFindAndModify: false
-            });
-        } catch (err) {
-            next(err);
-        }
-
-        res.status(200).json(savedAllowance);
-    } catch (err) {
-        next(err);
-    }
-};
-
-
-// DELETE Allowances
+// DELETE Pension
 exports.delete_pension = async (req, res) => {
-    const employeeId = req.params.employeeId;
+   
     try {
-        await Pension.findByIdAndDelete(req.params.id);
-       
-        
 
-        res.status(200).json("pension has been deleted.");
-    } catch (err) {
-        next(err);
-    }
-};
-
-
-// DELETE Allowances
-exports.deleteAllowances = async (req, res) => {
-    const employeeId = req.params.employeeId;
-    try {
-        await Allowance.findByIdAndDelete(req.params.id);
-
-
-        res.status(200).json("Allowance has been deleted.");
-    } catch (err) {
-        next(err);
-    }
-};
-
-
-// ADD EXISTING ALLOWANCE TO EMPLOY
-exports.addExistingAllowances = async (req, res, next) => {
-    try {
-        const allowanceId = req.params.allowanceId;
-        const employeeId = req.params.employeeId;
-        const check = await Employee.find({ _id: employeeId });
-
-        if (!check[0].allowance.includes(mongoose.Types.ObjectId(allowanceId))) {
-            const updated = await Employee.findByIdAndUpdate(employeeId, {
-                $push: {
-                    allowance: allowanceId
-                }
-
-            }, {
-                new: true,
-                useFindAndModify: false
-            });
-
-            res.status(200).json(updated);
-        } else {
-            res.status(404).json('already added')
+        const checkPension=await Pension.findById(req.params.id);
+        console.log(checkPension)
+        if(checkPension.length!=0){
+            await Pension.findByIdAndDelete(req.params.id);
+            res.status(200).json("pension has been deleted.");
         }
+        else{      
+
+            res.status(404).json("There is no such file ");
+        }
+      
     } catch (err) {
-        next(err);
+        res.status(500).json("something gona wrong ");
     }
+};
 
-}
 
-
-exports.deleteAllowance = async (req, res, next) => {
-
-    try {
-
-        const deletedAllowance = await Allowance.findByIdAndDelete(req.params.id);
-
-        res.status(200).json(deletedAllowance);
-
-    } catch (error) {
-        next(error)
-
-    }
-}

@@ -6,7 +6,7 @@ const middleware = require('../middleware/auth.js')
 router.post('/',
 
     middleware.protect,
-    middleware.restrictTo('Companyadmin'),
+    middleware.restrictTo({ deduction: "write" }),
     loanController.add_loan
 );
 
@@ -20,7 +20,7 @@ router.post('/',
 //UPDATE
 router.put('/:employeeId/:id',
     middleware.protect,
-    middleware.restrictTo('Companyadmin'),
+    middleware.restrictTo({ deduction: "update" }),
     loanController.updateLoan),
 
 
@@ -28,25 +28,25 @@ router.put('/:employeeId/:id',
     //DELETE
     router.delete('/:employeeId/:id',
         middleware.protect,
-        middleware.restrictTo('Companyadmin'),
+        middleware.restrictTo({ deduction: "delete" }),
         loanController.delete_laon);
 
 //GET ONE
 router.get('/find/:id',
     middleware.protect,
-    middleware.restrictTo('Companyadmin'),
+    middleware.restrictTo({ deduction: "read" }),
     loanController.get_one);
 //GET ALL 
 router.get('/',
 
     middleware.protect,
-    middleware.restrictTo('Companyadmin'),
+    middleware.restrictTo({ deduction: "read" }),
     loanController.get_All_loan);
 
 //ADD EXISTING ALLOWANCE TO EMPLOYEE
 router.put('/add/:employeeId/:id',
     middleware.protect,
-    middleware.restrictTo('Companyadmin'),
+    middleware.restrictTo({ deduction: "update" }),
     loanController.addExistingLoanToEmployee
 );
 

@@ -37,7 +37,7 @@ exports.fetchData = async (message) => {
     await connect();
     let employer_pension = 0;
     let employee_pension = 0;
-    const pension = await Pension.find({ companyId: message.user });
+    const pension = await Pension.find();
     employee_pension = pension[0]?.employeeContribution
       ? pension[0]?.employeeContribution
       : 1;
@@ -45,7 +45,7 @@ exports.fetchData = async (message) => {
       ? pension[0]?.employerContribution
       : 1;
     //GET TAX RULE
-    const taxslab = await TaxSlab.find({ companyId: message.user });
+    const taxslab = await TaxSlab.find();
     const employee = await Employee.findOne({ _id: message.employeeId })
       .populate("deduction")
       .populate("allowance");
@@ -118,6 +118,8 @@ exports.fetchData = async (message) => {
       payrollName: moment().format("MMMM") + " Payroll",
       month: moment().format("MMMM"),
       year: moment().format("YYYY"),
+      overtime: employee.overtime,
+      acting: employee.acting,
       grossSalary: (
         employee.Acting +
         employee.overtimeEarning +

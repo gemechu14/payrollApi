@@ -869,10 +869,12 @@ exports.calculatePayrollForAllEmployee = async (req, res, next) => {
         let employee_pension = 0;
         let data = '';
         //GET PENSION
-        const pension = await Pension.find({ companyId: req.user.id });
+        const pension = await Pension.find();
+
+        console.log("pension",pension)
         employee_pension = pension[0]?.employeeContribution ? (pension[0]?.employeeContribution) : 1;
         employer_pension = pension[0]?.employerContribution ? (pension[0]?.employerContribution) : 1;
-
+// console.log("first",employee_pension)
         //GET TAX RULE
         const taxslab = await TaxSlab.find({ companyId: req.user.id });
 
@@ -909,8 +911,6 @@ exports.calculatePayrollForAllEmployee = async (req, res, next) => {
             let totalExempted = 0;
             let totalTaxableIncome = 0;
             let overallTotalDeduction = 0;
-
-
             //TOTAL ALLOWANCES
             employee.allowance.forEach((allowance) => {
                 totalAllowance += allowance.amount;
@@ -938,10 +938,6 @@ exports.calculatePayrollForAllEmployee = async (req, res, next) => {
                 totalDeduction += deduction.amount;
             });
             console.log(`Total  Deduction: ${totalDeduction}`);
-
-
-
-
             totalTaxable += Number(employee.basicSalary);
 
 
@@ -977,6 +973,8 @@ exports.calculatePayrollForAllEmployee = async (req, res, next) => {
                 // taxable_income_limit: "600",
                 // exampt_age_limit: "65",
                 // exampt_percentage: "0",
+                overtime:employee.overtime,
+                acting:employee.acting,
                 grossSalary: (employee.Acting + employee.overtimeEarning + totalAllowance + Number(employee.basicSalary) + employee.basicSalary * (employer_pension * 1 / 100)).toFixed(2),
                 taxableIncome: totalTaxable.toFixed(2),
                 incomeTax: totalTaxableIncome.toFixed(2),
@@ -989,13 +987,16 @@ exports.calculatePayrollForAllEmployee = async (req, res, next) => {
             }
             Data.push(payrollData)
            
-            const newPayroll = new Payroll({ ...payrollData, companyId: req.user.id });
+    //  await Employee.findByIdAndUpdate(employee._id,{
+
+    //  })
+            const newPayroll = new Payroll({ ...payrollData, });
             try {
              //GET ALL PAYROLL 
-                const getPayroll = await Payroll.find({ month: moment().format('MMMM'), companyId: req.user.id, year: moment().format('YYYY') });
+                const getPayroll = await Payroll.find({ month: moment().format('MMMM'), year: moment().format('YYYY') });
               console.log("length",getPayroll.length)
               
-                if (getPayroll.length != 0) {
+                if (getPayroll.length == 0) {
               //   const newpay = await newPayroll.save();
                 numProcessed++;
                // console.log(newpay)

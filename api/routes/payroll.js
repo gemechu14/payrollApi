@@ -10,16 +10,26 @@ const { Worker } = require('worker_threads')
 
 //CREATE
 router.post('/',
-middleware.protect,
-middleware.restrictTo('Companyadmin'),
+  middleware.protect,
+  middleware.restrictTo({ payroll: "write" }),
 payrollController.add_payroll);
 //UPDATE
-router.put('/:id', payrollController.updatePayroll),
+router.put('/:id', 
+  middleware.protect,
+  middleware.restrictTo({ payroll: "write" }),
+
+payrollController.updatePayroll),
   //DELETE
-  router.delete('/:id', payrollController.delete_Payroll);
+  router.delete('/:id', 
+    middleware.protect,
+    middleware.restrictTo({ payroll: "write" }),
+  payrollController.delete_Payroll);
 
 //GET SINGLE Payroll
-router.get('/find/:id',payrollController.get_single_payroll);
+router.get('/find/:id',
+  middleware.protect,
+  middleware.restrictTo({ payroll: "read" }),
+payrollController.get_single_payroll);
 
 
 
@@ -94,8 +104,8 @@ router.get('/payrollCalculation/:employeeId',
 
 //PAYROLL Calculation
 router.get('/payrollCalculation1',
-  middleware.protect,
-  middleware.restrictTo('Companyadmin'),
+  middleware.protectAll,
+  middleware.restrictToAll('Companyadmin'),
   payrollController.calculatePayrollForAllEmployee);
 
 

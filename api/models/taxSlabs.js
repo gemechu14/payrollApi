@@ -23,8 +23,9 @@ const taxSlabmodel = mongoose.Schema({
     type: String,
 
   },
-  companyId: {
-    type: String
+  isActive: {
+    type: Boolean,
+    default:true
   }
 
 

@@ -1,11 +1,14 @@
 const Department = require('../models/department.js');
 const Employee = require('../models/employee.js');
-const moment = require('moment')
+const moment = require('moment');
+const { findById } = require('../models/userModel.js');
 exports.add_dept = async (req, res) => {
 
     try {
         const employeeId = req.params.employeeId;
         const { deptName, location } = req.body;
+
+        
         const departmentName = await Department.find({
             $and: [
                 {
@@ -18,7 +21,13 @@ exports.add_dept = async (req, res) => {
         const len = departmentName.length;
         console.log(departmentName.length);
         if (!departmentName || departmentName.length == 0) {
-            const newDept = await Department.create({ companyName: req.user.CompanyName, deptName: deptName, location: location });
+            const newDept = await Department.create(
+                { 
+                    companyName: req.user.CompanyName, 
+                    deptName: deptName, 
+                    location: location,
+                    companyId:req.user.id
+                });
          
             console.log(req.body);
 
@@ -70,8 +79,15 @@ exports.updateDept = async (req, res) => {
 // DELETE
 exports.delete_Dept = async (req, res) => {
     try {
-        await Department.findByIdAndDelete(req.params.id);
-        res.status(200).json('Department has been deleted');
+        const dept=await Department.find({_id:req.params.id});
+        console.log(dept.length==0)
+        if(dept.length!=0){
+            await Department.findByIdAndDelete(req.params.id);
+            res.status(200).json('Department has been deleted');
+        }else{
+            res.status(500).json('There is no such department')
+        }
+      
     } catch (error) {
         res.status(500).json(error);
     }

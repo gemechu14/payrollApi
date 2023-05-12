@@ -4,37 +4,37 @@ const express = require("express");
 const router = express.Router();
 
 router.post("/",
-middleware.protect,
-middleware.restrictTo('Companyadmin'),
+    middleware.protectAll,
+    middleware.restrictToAll('Companyadmin'),
 gradeDefinition.add_new_Grade);
 
 
 router.get('/',
-    middleware.protectUser,
-    middleware.checkPermissions({ name: 'grade', value: 'view' }),
+    middleware.protectAll,
+    middleware.restrictToAll('Companyadmin'),
 gradeDefinition.get_All_Grade);
 
 router.get('/:id',
-    middleware.protectUser,
-    middleware.checkPermissions({ name: 'grade', value: 'view' }),
+    middleware.protectAll,
+    middleware.restrictToAll('Companyadmin'),
 gradeDefinition.get_single_Grades);
 
 router.delete("/:id",
-middleware.protect,
-middleware.restrictTo('Companyadmin'),
+    middleware.protectAll,
+    middleware.restrictToAll('Companyadmin'),
 gradeDefinition.delete_Grades);
 
 
 router.put("/:id",
-    middleware.protect,
-    middleware.restrictTo('Companyadmin'),
+    middleware.protectAll,
+    middleware.restrictToAll('Companyadmin'),
     gradeDefinition.updateGrades);
 
 
 
 router.put("/:gradeId/:allowanceId",
-    middleware.protect,
-    middleware.restrictTo('Companyadmin'),
+    middleware.protectAll,
+    middleware.restrictToAll('Companyadmin'),
     gradeDefinition.Update_Allowances_and_GradeDefn);
 
 

@@ -87,7 +87,6 @@ const createSendTokenAdmin = (user, statusCode, res) => {
 
 const addTrial = async (email, status, res) => {
 
-
   const userEmail = newUser.email;
   console.log(email);
   let nextpaymentDate;
