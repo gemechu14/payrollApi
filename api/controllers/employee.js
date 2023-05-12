@@ -142,96 +142,97 @@ console.log((emp.length))
 
             res.status(404).json('please enter employee grade')
         }
-        if(!basicSalary){
+        else if(!basicSalary){
             res.status(404).json('Please enter basicsalary')
         }
         //console.log(idformat1)
-
-        if (  basicSalary < gradeDefinition[0]?.monthlySalaryMin || basicSalary > gradeDefinition[0]?.monthlySalaryMax) {
+ 
+ else   if (  basicSalary < gradeDefinition[0]?.monthlySalaryMin || basicSalary > gradeDefinition[0]?.monthlySalaryMax) {
             res.status(404).json('Basicsalary must be between ' + gradeDefinition[0]?.monthlySalaryMin + '  and  ' + gradeDefinition[0]?.monthlySalaryMax)
 
-             }
+        } 
+        else {
 
-      else{
+            const newEmployee = await Employee({
+                fullname: fullname,
+                nationality: nationality,
+                sex: sex,
+                id_number: idformat1[0]?.prefix ? idformat1[0]?.prefix + ('0000' + (emp.length + 1)).slice(-4) : "" + ('0000' + (emp.length + 1)).slice(-4),
+                email: email,
+                department: department ? department : generalDepartment,
+                images: images,
+                position: position,
+                pension: pension,
+                phoneNumber: phoneNumber,
+                date_of_birth: date_of_birth,
+                optionalNumber: optionalNumber,
+                password: req.user.CompanyName.substring(0, 4) + '0000',
+                emergency_contact_Info: {
+                    contact_name: contact_name,
+                    relationship: relationship,
+                    contact_phoneNumber: contact_phoneNumber
+                },
 
-        const newEmployee = await Employee({
-            fullname: fullname,
-            nationality: nationality,
-            sex: sex,
-            id_number: idformat1[0]?.prefix ? idformat1[0]?.prefix + ('0000' + (emp.length + 1)).slice(-4) : "" + ('0000' + (emp.length + 1)).slice(-4),
-            email: email,
-            department: department ? department : generalDepartment,
-            images: images,
-            position: position,
-            pension: pension,
-            phoneNumber: phoneNumber,
-            date_of_birth: date_of_birth,
-            optionalNumber: optionalNumber,
-            password: req.user.CompanyName.substring(0, 4) + '0000',
-            emergency_contact_Info: {
-                contact_name: contact_name,
-                relationship: relationship,
-                contact_phoneNumber: contact_phoneNumber
-            },
+                hireDate: hireDate,
+                joiningDate: joiningDate,
+                employeeCode: employeeCode,
+                employeeType: employeeType,
+                accountTitle: accountTitle,
+                accountNumber: accountNumber,
+                paymentMethod: paymentMethod,
+                separationDate: separationDate,
 
-            hireDate: hireDate,
-            joiningDate: joiningDate,
-            employeeCode: employeeCode,
-            employeeType: employeeType,
-            accountTitle: accountTitle,
-            accountNumber: accountNumber,
-            paymentMethod: paymentMethod,
-            separationDate: separationDate,
+                //Salary Information
 
-            //Salary Information
+                basicSalary: basicSalary,
+                gradeId: gradeId,
+                housingAllowance: housingAllowance,
+                positionAllowance: positionAllowance,
+                hardshipAllowance: hardshipAllowance,
+                desertAllowance: desertAllowance,
+                transportAllowance: transportAllowance,
+                cashIndeminityAllowance: cashIndeminityAllowance,
+                fieldAllowance: fieldAllowance,
+                overtimeEarning: overtimeEarning,
+                otherEarning: otherEarning,
+                lateSittingOverTime: lateSittingOverTime,
+                arrears: arrears,
+                dayDeduction: dayDeduction,
+                socialSecurity: socialSecurity,
+                providentFund: providentFund,
+                EOTBDeduction: EOTBDeduction,
+                TaxDeduction: TaxDeduction,
+                netSalary: netSalary,
+                companyId: req.user.id,
 
-            basicSalary: basicSalary,
-            gradeId:gradeId,
-            housingAllowance: housingAllowance,
-            positionAllowance: positionAllowance,
-            hardshipAllowance: hardshipAllowance,
-            desertAllowance: desertAllowance,
-            transportAllowance: transportAllowance,
-            cashIndeminityAllowance: cashIndeminityAllowance,
-            fieldAllowance: fieldAllowance,
-            overtimeEarning: overtimeEarning,
-            otherEarning: otherEarning,
-            lateSittingOverTime: lateSittingOverTime,
-            arrears: arrears,
-            dayDeduction: dayDeduction,
-            socialSecurity: socialSecurity,
-            providentFund: providentFund,
-            EOTBDeduction: EOTBDeduction,
-            TaxDeduction: TaxDeduction,
-            netSalary: netSalary,
-            companyId: req.user.id,
-
-        });
-   
-        newEmployee.save(function (err) {
-            if (err) return next(err);
-            res.status(201).json({
-                success: true,
-                message: 'Employee saved successfully',
-                employee: newEmployee,
             });
-        });
 
-        const text = 'Your password is   ' + req.user.CompanyName + '0000' + '    please change your password ';
+            newEmployee.save(function (err) {
+                if (err) return next(err);
+                res.status(201).json({
+                    success: true,
+                    message: 'Employee saved successfully',
+                    employee: newEmployee,
+                });
+            });
 
-        // await sendEmail({
-        //     email: email,
-        //     subject: 'You are successfully registed on CoopPayroll SAAS ',
-        //     text
-        // });
-        // res.status(200).json({
-        //     status: "success",
-        //     message: 'Employee Registered successfully',
+            const text = 'Your password is   ' + req.user.CompanyName + '0000' + '    please change your password ';
+
+            // await sendEmail({
+            //     email: email,
+            //     subject: 'You are successfully registed on CoopPayroll SAAS ',
+            //     text
+            // });
+            // res.status(200).json({
+            //     status: "success",
+            //     message: 'Employee Registered successfully',
 
 
-        // });
+            // });
 
-      }
+        }
+
+    
     } catch (err) {
         next(createError.createError(404, err));
 
