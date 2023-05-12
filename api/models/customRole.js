@@ -16,7 +16,11 @@ const customRoleSchema = mongoose.Schema({
             type: Boolean,
             default: false
         },
-        approve: {
+        delete: {
+            type: Boolean,
+            default: false
+        },
+        update: {
             type: Boolean,
             default: false
         }}]
